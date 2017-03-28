@@ -1,6 +1,7 @@
 package com.teamc.mira.iwashere.domain.repository;
 
-import com.kodelabs.boilerplate.domain.model.SampleModel;
+
+import com.teamc.mira.iwashere.domain.model.SampleModel;
 
 /**
  * A sample repository with CRUD operations on a model.
