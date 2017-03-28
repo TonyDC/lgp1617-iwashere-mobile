@@ -1,7 +1,8 @@
 package com.teamc.mira.iwashere.domain.executor.impl;
 
-import com.kodelabs.boilerplate.domain.executor.Executor;
-import com.kodelabs.boilerplate.domain.interactors.base.AbstractInteractor;
+
+import com.teamc.mira.iwashere.domain.executor.Executor;
+import com.teamc.mira.iwashere.domain.interactors.base.AbstractInteractor;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;

@@ -1,6 +1,7 @@
 package com.teamc.mira.iwashere.domain.executor;
 
-import com.kodelabs.boilerplate.domain.interactors.base.AbstractInteractor;
+
+import com.teamc.mira.iwashere.domain.interactors.base.AbstractInteractor;
 
 /**
  * This executor is responsible for running interactors on background threads.

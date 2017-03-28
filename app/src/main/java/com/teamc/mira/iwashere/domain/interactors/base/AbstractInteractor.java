@@ -1,7 +1,8 @@
 package com.teamc.mira.iwashere.domain.interactors.base;
 
-import com.kodelabs.boilerplate.domain.executor.Executor;
-import com.kodelabs.boilerplate.domain.executor.MainThread;
+
+import com.teamc.mira.iwashere.domain.executor.Executor;
+import com.teamc.mira.iwashere.domain.executor.MainThread;
 
 /**
  * Created by dmilicic on 8/4/15.
@@ -15,7 +16,7 @@ import com.kodelabs.boilerplate.domain.executor.MainThread;
  */
 public abstract class AbstractInteractor implements Interactor {
 
-    protected Executor   mThreadExecutor;
+    protected Executor mThreadExecutor;
     protected MainThread mMainThread;
 
     protected volatile boolean mIsCanceled;

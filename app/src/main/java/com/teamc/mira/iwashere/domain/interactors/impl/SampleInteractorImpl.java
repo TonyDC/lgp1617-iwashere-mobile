@@ -1,10 +1,11 @@
 package com.teamc.mira.iwashere.domain.interactors.impl;
 
-import com.kodelabs.boilerplate.domain.executor.Executor;
-import com.kodelabs.boilerplate.domain.executor.MainThread;
-import com.kodelabs.boilerplate.domain.interactors.SampleInteractor;
-import com.kodelabs.boilerplate.domain.interactors.base.AbstractInteractor;
-import com.kodelabs.boilerplate.domain.repository.Repository;
+import com.teamc.mira.iwashere.domain.executor.Executor;
+import com.teamc.mira.iwashere.domain.executor.MainThread;
+import com.teamc.mira.iwashere.domain.interactors.SampleInteractor;
+import com.teamc.mira.iwashere.domain.interactors.base.AbstractInteractor;
+import com.teamc.mira.iwashere.domain.repository.Repository;
+import com.teamc.mira.iwashere.domain.interactors.SampleInteractor;
 
 /**
  * This is an interactor boilerplate with a reference to a model repository.
@@ -17,7 +18,7 @@ public class SampleInteractorImpl extends AbstractInteractor implements SampleIn
 
     public SampleInteractorImpl(Executor threadExecutor,
                                 MainThread mainThread,
-                                Callback callback, Repository repository) {
+                                SampleInteractor.Callback callback, Repository repository) {
         super(threadExecutor, mainThread);
         mCallback = callback;
         mRepository = repository;
