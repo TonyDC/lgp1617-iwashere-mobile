@@ -14,7 +14,7 @@
     <string name="hint_email">Email</string>
     <string name="hint_password">Password</string>
     <string name="hint_name">Fullname</string>
-    <string name="btn_login">LOGIN</string>
+    <string name="btn_login">LOG IN</string>
     <string name="btn_link_to_register">Not a member? Get registered in #iwashere now!</string>
     <string name="btn_link_to_login">Already registered. Login Me!</string>
     <string name="title_activity_reset_password">ResetPasswordActivity</string>
@@ -28,4 +28,8 @@
     <string name="btn_sign_out">Sign Out</string>
     <string name="lbl_forgot_password">Forgot password?</string>
     <string name="forgot_password_msg">We just need your registered Email Id to sent you password reset instructions.</string>
+    <string name="nickname">Nickname</string>
+    <string name="hint_date_of_birth">Date of Birth</string>
+    <string name="hint_surname">Surname</string>
+    <string name="hint_firstname">Name</string>
 </resources>
