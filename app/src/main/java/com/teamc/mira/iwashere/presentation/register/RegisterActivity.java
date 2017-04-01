@@ -14,7 +14,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.teamc.mira.iwashere.IWasHere;
+import com.teamc.mira.iwashere.IWasHereActivity;
 import com.teamc.mira.iwashere.R;
 import com.teamc.mira.iwashere.presentation.main.MainActivity;
 
@@ -31,7 +31,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_signup);
+        setContentView(R.layout.activity_register);
 
         // Buttons
         findViewById(R.id.btn_sign_up).setOnClickListener(this);
@@ -55,7 +55,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
     @Override
     public void onBackPressed() {
-        Intent intent = new Intent(this, IWasHere.class);
+        Intent intent = new Intent(this, IWasHereActivity.class);
         startActivity(intent);
         finish();
     }
@@ -64,7 +64,6 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     public void onClick(View v) {
         int i = v.getId();
         if (i == R.id.btn_sign_up) {
-            // TODO email, pswd logic
             String email = inputEmail.getText().toString().trim();
             String password = inputPassword.getText().toString().trim();
             // TODO other inputs
@@ -105,9 +104,9 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         } else if (i == R.id.btn_sign_up_google) {
             startActivity(new Intent(this, GoogleActivity.class));
             finish();
-        } else if (i == R.id.btn_sign_up) {
-            // TODO facebook
+        } else if (i == R.id.btn_sign_up_fb) {
+            startActivity(new Intent(this, FacebookActivity.class));
+            finish();
         }
-        finish();
     }
 }

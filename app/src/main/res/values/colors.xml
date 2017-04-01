@@ -17,6 +17,6 @@
     <color name="btn_login_bg">#eceef1</color>
     <color name="lbl_name">#333333</color>
     <color name="btn_logut_bg">#ff6861</color>
-    <color name="btn_login_fb">#3B5998</color>
-    <color name="btn_login_google">#dd4b39</color>
+    <color name="blue_fb">#3B5998</color>
+    <color name="red_google">#dd4b39</color>
 </resources>

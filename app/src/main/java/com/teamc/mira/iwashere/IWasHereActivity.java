@@ -13,9 +13,9 @@ import com.teamc.mira.iwashere.presentation.register.RegisterActivity;
 /*
  * This class is a Splash Screen
  */
-public class IWasHere extends AppCompatActivity implements View.OnClickListener {
+public class IWasHereActivity extends AppCompatActivity implements View.OnClickListener {
 
-    public final static String TAG = IWasHere.class.getCanonicalName();
+    public final static String TAG = IWasHereActivity.class.getCanonicalName();
     private FirebaseAuth auth;
 
     @Override
@@ -31,7 +31,7 @@ public class IWasHere extends AppCompatActivity implements View.OnClickListener 
         auth = FirebaseAuth.getInstance();
 
         if (auth.getCurrentUser() != null) {
-            startActivity(new Intent(IWasHere.this, MainActivity.class));
+            startActivity(new Intent(IWasHereActivity.this, MainActivity.class));
             finish();
         }
 

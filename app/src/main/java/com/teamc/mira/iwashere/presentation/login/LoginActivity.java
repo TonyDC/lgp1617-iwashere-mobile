@@ -14,9 +14,10 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.teamc.mira.iwashere.IWasHere;
+import com.teamc.mira.iwashere.IWasHereActivity;
 import com.teamc.mira.iwashere.R;
 import com.teamc.mira.iwashere.presentation.main.MainActivity;
+import com.teamc.mira.iwashere.presentation.register.FacebookActivity;
 import com.teamc.mira.iwashere.presentation.register.GoogleActivity;
 import com.teamc.mira.iwashere.presentation.register.RegisterActivity;
 
@@ -45,7 +46,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         auth = FirebaseAuth.getInstance();
 
         if (auth.getCurrentUser() != null) {
-            startActivity(new Intent(LoginActivity.this, IWasHere.class));
+            startActivity(new Intent(LoginActivity.this, IWasHereActivity.class));
             finish();
         }
 
@@ -56,7 +57,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     @Override
     public void onBackPressed() {
-        Intent intent = new Intent(this, IWasHere.class);
+        Intent intent = new Intent(this, IWasHereActivity.class);
         startActivity(intent);
         finish();
     }
@@ -67,11 +68,15 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         if (i == R.id.btn_sign_up) {
             startActivity(new Intent(this, RegisterActivity.class));
             finish();
+        } else if (i == R.id.btn_reset_password) {
+            startActivity(new Intent(this, ResetPasswordActivity.class));
+            finish();
         } else if (i == R.id.btn_login_google) {
             startActivity(new Intent(this, GoogleActivity.class));
             finish();
-        } else if (i == R.id.btn_reset_password) {
-            startActivity(new Intent(this, ResetPasswordActivity.class));
+        } else if (i == R.id.btn_login_fb) {
+            startActivity(new Intent(this, FacebookActivity.class));
+            finish();
         } else if (i == R.id.btn_login) {
             String email = inputEmail.getText().toString();
             final String password = inputPassword.getText().toString();

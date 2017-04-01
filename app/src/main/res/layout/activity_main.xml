@@ -4,8 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
     android:background="@color/white"
+    android:fitsSystemWindows="true"
     tools:context=".presentation.main.MainActivity">
 
     <android.support.design.widget.AppBarLayout
@@ -38,7 +38,7 @@
             android:id="@+id/textView_user_mail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="User mail: "
+            android:text="@string/user_email"
             android:textAlignment="center"
             android:textColor="@android:color/black" />
 
@@ -46,7 +46,7 @@
             android:id="@+id/textView_user_id"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="User ID: "
+            android:text="@string/user_id"
             android:textAlignment="center"
             android:textColor="@android:color/black" />
 
