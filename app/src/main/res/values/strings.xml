@@ -16,13 +16,13 @@
     <string name="hint_password">Password</string>
     <string name="hint_confirm_password">Confirm Password</string>
     <string name="hint_name">Fullname</string>
-    <string name="btn_login">LOGIN</string>
+    <string name="btn_login">LOG IN</string>
     <string name="btn_link_to_register">Not a member? Get registered in #iwashere now!</string>
     <string name="btn_link_to_login">Already registered. Login Me!</string>
     <string name="title_activity_reset_password">ResetPasswordActivity</string>
     <string name="btn_forgot_password">Forgot your password?</string>
     <string name="btn_reset_password">Reset Password</string>
-    <string name="btn_back"><![CDATA[<< Back]]></string>
+    <string name="btn_back"><![CDATA[<< back]]></string>
     <string name="hint_new_email">New Email</string>
     <string name="btn_change">Change</string>
     <string name="btn_send">Send</string>
@@ -30,4 +30,24 @@
     <string name="btn_sign_out">Sign Out</string>
     <string name="lbl_forgot_password">Forgot password?</string>
     <string name="forgot_password_msg">We just need your registered Email Id to sent you password reset instructions.</string>
+    <string name="nickname">Nickname</string>
+    <string name="hint_date_of_birth">Date of Birth</string>
+    <string name="hint_surname">Surname</string>
+    <string name="hint_firstname">Name</string>
+
+    <string name="facebook_app_id">1835727553359465</string>
+    <string name="fb_login_protocol_scheme">fb1835727553359465</string>
+    <string name="title_activity_google">Google Sign in</string>
+    <string name="title_activity_facebook">Facebook Sign in</string>
+    <string name="or">or</string>
+    <string name="log_in_with">Log in with</string>
+    <string name="register_with">Register with</string>
+    <string name="register_with_facebook">Register with Facebook</string>
+    <string name="register_with_google">Register with Google</string>
+    <string name="iwashere_icon">iwashere icon</string>
+    <string name="log_in_with_facebook">Log in with Facebook</string>
+    <string name="log_in_with_google">Log in with Google</string>
+    <string name="user_id">User ID:</string>
+    <string name="user_email">User email:</string>
+    <string name="wait">Wait a moment</string>
 </resources>
