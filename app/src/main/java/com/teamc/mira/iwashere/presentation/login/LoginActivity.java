@@ -19,7 +19,7 @@ import com.teamc.mira.iwashere.R;
 import com.teamc.mira.iwashere.presentation.main.MainActivity;
 import com.teamc.mira.iwashere.presentation.register.FacebookActivity;
 import com.teamc.mira.iwashere.presentation.register.GoogleActivity;
-import com.teamc.mira.iwashere.presentation.register.RegisterActivity;
+import com.teamc.mira.iwashere.presentation.register.SignupActivity;
 
 /**
  * Created by Duart on 27/03/2017.
@@ -66,7 +66,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     public void onClick(View v) {
         int i = v.getId();
         if (i == R.id.btn_sign_up) {
-            startActivity(new Intent(this, RegisterActivity.class));
+            startActivity(new Intent(this, SignupActivity.class));
             finish();
         } else if (i == R.id.btn_reset_password) {
             startActivity(new Intent(this, ResetPasswordActivity.class));
