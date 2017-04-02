@@ -18,7 +18,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.teamc.mira.iwashere.R;
 import com.teamc.mira.iwashere.presentation.login.LoginActivity;
-import com.teamc.mira.iwashere.presentation.register.SignupActivity;
+import com.teamc.mira.iwashere.presentation.signup.SignupActivity;
 
 /**
  * Created by Duart on 27/03/2017.

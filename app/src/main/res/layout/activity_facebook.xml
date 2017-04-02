@@ -5,6 +5,6 @@
     android:layout_height="match_parent"
     android:background="@color/blue_fb"
     android:fitsSystemWindows="true"
-    tools:context=".presentation.register.FacebookActivity">
+    tools:context=".presentation.signup.FacebookActivity">
 
 </android.support.design.widget.CoordinatorLayout>

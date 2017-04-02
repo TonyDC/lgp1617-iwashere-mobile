@@ -8,7 +8,7 @@ import android.view.View;
 import com.google.firebase.auth.FirebaseAuth;
 import com.teamc.mira.iwashere.presentation.login.LoginActivity;
 import com.teamc.mira.iwashere.presentation.main.MainActivity;
-import com.teamc.mira.iwashere.presentation.register.SignupActivity;
+import com.teamc.mira.iwashere.presentation.signup.SignupActivity;
 
 /*
  * This class is a Splash Screen

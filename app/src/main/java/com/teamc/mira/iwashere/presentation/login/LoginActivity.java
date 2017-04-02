@@ -17,9 +17,9 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.teamc.mira.iwashere.IWasHereActivity;
 import com.teamc.mira.iwashere.R;
 import com.teamc.mira.iwashere.presentation.main.MainActivity;
-import com.teamc.mira.iwashere.presentation.register.FacebookActivity;
-import com.teamc.mira.iwashere.presentation.register.GoogleActivity;
-import com.teamc.mira.iwashere.presentation.register.SignupActivity;
+import com.teamc.mira.iwashere.presentation.signup.FacebookActivity;
+import com.teamc.mira.iwashere.presentation.signup.GoogleActivity;
+import com.teamc.mira.iwashere.presentation.signup.SignupActivity;
 
 /**
  * Created by Duart on 27/03/2017.

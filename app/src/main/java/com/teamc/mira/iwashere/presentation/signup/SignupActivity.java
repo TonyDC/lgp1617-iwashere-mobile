@@ -1,4 +1,4 @@
-package com.teamc.mira.iwashere.presentation.register;
+package com.teamc.mira.iwashere.presentation.signup;
 
 import android.content.Intent;
 import android.os.Bundle;
