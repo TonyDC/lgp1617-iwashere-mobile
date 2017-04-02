@@ -1,10 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     tools:context=".presentation.signup.SignupActivity">
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_gravity="center|bottom"
+        android:layout_marginBottom="20dp"
+        android:visibility="gone" />
 
     <ScrollView
         android:layout_width="match_parent"
@@ -74,10 +83,10 @@
                 android:layout_height="wrap_content">
 
                 <EditText
-                    android:id="@+id/nickname"
+                    android:id="@+id/username"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/nickname"
+                    android:hint="@string/username"
                     android:inputType="text"
                     android:maxLines="1"
                     android:textColor="@android:color/black" />
@@ -119,6 +128,7 @@
                     android:textColor="@android:color/black" />
 
             </android.support.design.widget.TextInputLayout>
+
             <Button
                 android:id="@+id/btn_sign_up"
                 style="?android:textAppearanceSmall"
@@ -133,12 +143,4 @@
         </LinearLayout>
 
     </ScrollView>
-
-    <ProgressBar
-        android:id="@+id/progressBar"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:layout_gravity="center|bottom"
-        android:layout_marginBottom="20dp"
-        android:visibility="gone" />
 </android.support.design.widget.CoordinatorLayout>
