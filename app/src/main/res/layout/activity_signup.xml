@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context=".presentation.register.RegisterActivity">
+    tools:context=".presentation.register.SignupActivity">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -107,55 +107,18 @@
                 android:layout_height="wrap_content">
 
                 <EditText
-                    android:id="@+id/name"
+                    android:id="@+id/confirm_password"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:focusableInTouchMode="true"
-                    android:hint="@string/hint_firstname"
-                    android:imeActionId="@+id/name"
+                    android:hint="@string/hint_confirm_password"
+                    android:imeActionId="@+id/login"
                     android:imeOptions="actionUnspecified"
-                    android:inputType="textPersonName"
+                    android:inputType="textPassword"
                     android:maxLines="1"
                     android:textColor="@android:color/black" />
 
             </android.support.design.widget.TextInputLayout>
-
-            <android.support.design.widget.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <EditText
-                    android:id="@+id/surname"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:focusableInTouchMode="true"
-                    android:hint="@string/hint_surname"
-                    android:imeActionId="@+id/surname"
-                    android:imeOptions="actionUnspecified"
-                    android:inputType="textPersonName"
-                    android:maxLines="1"
-                    android:textColor="@android:color/black" />
-
-            </android.support.design.widget.TextInputLayout>
-
-            <android.support.design.widget.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <EditText
-                    android:id="@+id/date_of_birth"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:focusableInTouchMode="true"
-                    android:hint="@string/hint_date_of_birth"
-                    android:imeActionId="@+id/date_of_birth"
-                    android:imeOptions="actionUnspecified"
-                    android:inputType="date"
-                    android:maxLines="1"
-                    android:textColor="@android:color/black" />
-
-            </android.support.design.widget.TextInputLayout>
-
             <Button
                 android:id="@+id/btn_sign_up"
                 style="?android:textAppearanceSmall"

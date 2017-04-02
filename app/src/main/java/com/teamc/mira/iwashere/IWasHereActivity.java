@@ -8,7 +8,7 @@ import android.view.View;
 import com.google.firebase.auth.FirebaseAuth;
 import com.teamc.mira.iwashere.presentation.login.LoginActivity;
 import com.teamc.mira.iwashere.presentation.main.MainActivity;
-import com.teamc.mira.iwashere.presentation.register.RegisterActivity;
+import com.teamc.mira.iwashere.presentation.register.SignupActivity;
 
 /*
  * This class is a Splash Screen
@@ -53,7 +53,7 @@ public class IWasHereActivity extends AppCompatActivity implements View.OnClickL
         if (i == R.id.main_sign_in_btn) {
             startActivity(new Intent(this, LoginActivity.class));
         } else if (i == R.id.main_sign_up_btn) {
-            startActivity(new Intent(this, RegisterActivity.class));
+            startActivity(new Intent(this, SignupActivity.class));
         }
         finish();
     }

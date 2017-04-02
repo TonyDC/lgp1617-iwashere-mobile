@@ -18,7 +18,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.teamc.mira.iwashere.R;
 import com.teamc.mira.iwashere.presentation.login.LoginActivity;
-import com.teamc.mira.iwashere.presentation.register.RegisterActivity;
+import com.teamc.mira.iwashere.presentation.register.SignupActivity;
 
 /**
  * Created by Duart on 27/03/2017.
@@ -232,7 +232,7 @@ public class MainActivity extends AppCompatActivity {
                         public void onComplete(@NonNull Task<Void> task) {
                             if (task.isSuccessful()) {
                                 Toast.makeText(MainActivity.this, "Your profile is deleted:( Create a account now!", Toast.LENGTH_SHORT).show();
-                                startActivity(new Intent(MainActivity.this, RegisterActivity.class));
+                                startActivity(new Intent(MainActivity.this, SignupActivity.class));
                                 finish();
                                 progressBar.setVisibility(View.GONE);
                             } else {

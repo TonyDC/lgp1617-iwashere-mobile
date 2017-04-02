@@ -22,7 +22,7 @@ import com.teamc.mira.iwashere.presentation.main.MainActivity;
  * Created by Duart on 27/03/2017.
  */
 
-public class RegisterActivity extends AppCompatActivity implements View.OnClickListener {
+public class SignupActivity extends AppCompatActivity implements View.OnClickListener {
 
     private EditText inputEmail, inputPassword;
     private ProgressBar progressBar;
@@ -31,7 +31,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_register);
+        setContentView(R.layout.activity_signup);
 
         // Buttons
         findViewById(R.id.btn_sign_up).setOnClickListener(this);
@@ -84,19 +84,19 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
             progressBar.setVisibility(View.VISIBLE);
             //create user
-            auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(RegisterActivity.this, new OnCompleteListener<AuthResult>() {
+            auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(SignupActivity.this, new OnCompleteListener<AuthResult>() {
                 @Override
                 public void onComplete(@NonNull Task<AuthResult> task) {
-                    Toast.makeText(RegisterActivity.this, "createUserWithEmail:onComplete:" + task.isSuccessful(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(SignupActivity.this, "createUserWithEmail:onComplete:" + task.isSuccessful(), Toast.LENGTH_SHORT).show();
                     progressBar.setVisibility(View.GONE);
                     // If sign in fails, display a message to the user. If sign in succeeds
                     // the auth state listener will be notified and logic to handle the
                     // signed in user can be handled in the listener.
                     if (!task.isSuccessful()) {
-                        Toast.makeText(RegisterActivity.this, "Authentication failed." + task.getException(),
+                        Toast.makeText(SignupActivity.this, "Authentication failed." + task.getException(),
                                 Toast.LENGTH_SHORT).show();
                     } else {
-                        startActivity(new Intent(RegisterActivity.this, MainActivity.class));
+                        startActivity(new Intent(SignupActivity.this, MainActivity.class));
                         finish();
                     }
                 }
