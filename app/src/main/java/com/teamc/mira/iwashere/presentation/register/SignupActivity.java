@@ -1,4 +1,4 @@
-package com.teamc.mira.iwashere.presentation.login;
+package com.teamc.mira.iwashere.presentation.register;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -17,42 +17,40 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.teamc.mira.iwashere.IWasHereActivity;
 import com.teamc.mira.iwashere.R;
 import com.teamc.mira.iwashere.presentation.main.MainActivity;
-import com.teamc.mira.iwashere.presentation.register.FacebookActivity;
-import com.teamc.mira.iwashere.presentation.register.GoogleActivity;
-import com.teamc.mira.iwashere.presentation.register.SignupActivity;
 
 /**
  * Created by Duart on 27/03/2017.
  */
 
-public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
+public class SignupActivity extends AppCompatActivity implements View.OnClickListener {
 
     private EditText inputEmail, inputPassword;
-    private FirebaseAuth auth;
     private ProgressBar progressBar;
+    private FirebaseAuth auth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        setContentView(R.layout.activity_signup);
 
         // Buttons
-        findViewById(R.id.btn_login).setOnClickListener(this);
-        findViewById(R.id.btn_login_fb).setOnClickListener(this);
-        findViewById(R.id.btn_login_google).setOnClickListener(this);
-        findViewById(R.id.btn_reset_password).setOnClickListener(this);
+        findViewById(R.id.btn_sign_up).setOnClickListener(this);
+        findViewById(R.id.btn_sign_up_fb).setOnClickListener(this);
+        findViewById(R.id.btn_sign_up_google).setOnClickListener(this);
 
         //Get Firebase auth instance
         auth = FirebaseAuth.getInstance();
 
-        if (auth.getCurrentUser() != null) {
-            startActivity(new Intent(LoginActivity.this, IWasHereActivity.class));
-            finish();
-        }
-
         inputEmail = (EditText) findViewById(R.id.email);
         inputPassword = (EditText) findViewById(R.id.password);
+        // TODO other inputs
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        progressBar.setVisibility(View.GONE);
     }
 
     @Override
@@ -66,21 +64,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     public void onClick(View v) {
         int i = v.getId();
         if (i == R.id.btn_sign_up) {
-            startActivity(new Intent(this, SignupActivity.class));
-            finish();
-        } else if (i == R.id.btn_reset_password) {
-            startActivity(new Intent(this, ResetPasswordActivity.class));
-            finish();
-        } else if (i == R.id.btn_login_google) {
-            startActivity(new Intent(this, GoogleActivity.class));
-            finish();
-        } else if (i == R.id.btn_login_fb) {
-            startActivity(new Intent(this, FacebookActivity.class));
-            finish();
-        } else if (i == R.id.btn_login) {
-            String email = inputEmail.getText().toString();
-            final String password = inputPassword.getText().toString();
-
+            String email = inputEmail.getText().toString().trim();
+            String password = inputPassword.getText().toString().trim();
+            // TODO other inputs
             if (TextUtils.isEmpty(email)) {
                 Toast.makeText(getApplicationContext(), "Enter email address!", Toast.LENGTH_SHORT).show();
                 return;
@@ -91,31 +77,36 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 return;
             }
 
-            progressBar.setVisibility(View.VISIBLE);
+            if (password.length() < 6) {
+                Toast.makeText(getApplicationContext(), "Password too short, enter minimum 6 characters!", Toast.LENGTH_SHORT).show();
+                return;
+            }
 
-            //authenticate user
-            auth.signInWithEmailAndPassword(email, password).addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {
+            progressBar.setVisibility(View.VISIBLE);
+            //create user
+            auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(SignupActivity.this, new OnCompleteListener<AuthResult>() {
                 @Override
                 public void onComplete(@NonNull Task<AuthResult> task) {
+                    Toast.makeText(SignupActivity.this, "createUserWithEmail:onComplete:" + task.isSuccessful(), Toast.LENGTH_SHORT).show();
+                    progressBar.setVisibility(View.GONE);
                     // If sign in fails, display a message to the user. If sign in succeeds
                     // the auth state listener will be notified and logic to handle the
                     // signed in user can be handled in the listener.
-                    progressBar.setVisibility(View.GONE);
                     if (!task.isSuccessful()) {
-                        // there was an error
-                        if (password.length() < 6) {
-                            inputPassword.setError(getString(R.string.minimum_password));
-                        } else {
-                            Toast.makeText(LoginActivity.this, getString(R.string.auth_failed), Toast.LENGTH_LONG).show();
-                        }
+                        Toast.makeText(SignupActivity.this, "Authentication failed." + task.getException(),
+                                Toast.LENGTH_SHORT).show();
                     } else {
-                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                        startActivity(intent);
+                        startActivity(new Intent(SignupActivity.this, MainActivity.class));
                         finish();
                     }
                 }
             });
+        } else if (i == R.id.btn_sign_up_google) {
+            startActivity(new Intent(this, GoogleActivity.class));
+            finish();
+        } else if (i == R.id.btn_sign_up_fb) {
+            startActivity(new Intent(this, FacebookActivity.class));
+            finish();
         }
     }
 }
-
