@@ -3,28 +3,24 @@ package com.teamc.mira.iwashere.data.source.remote;
 import android.content.Context;
 import android.util.Log;
 
+import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.RequestFuture;
-import com.android.volley.toolbox.StringRequest;
+import com.teamc.mira.iwashere.data.source.remote.exceptions.BasicRemoteException;
+import com.teamc.mira.iwashere.data.source.remote.exceptions.RemoteDataException;
 import com.teamc.mira.iwashere.domain.model.UserModel;
 import com.teamc.mira.iwashere.domain.repository.UserRepository;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.concurrent.ExecutionException;
 
-import static android.provider.ContactsContract.CommonDataKinds.Website.URL;
-
-/**
- * Created by Duart on 02/04/2017.
- */
-
-public class UserRepositoryImpl implements UserRepository {
+public class UserRepositoryImpl extends AbstractUserRepository implements UserRepository {
 
     Context mContext;
 
@@ -39,19 +35,17 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public boolean register(String email, String username, String password, String confirmPassword) {
+    public boolean register(String email, String username, String password, String confirmPassword) throws RemoteDataException {
         // Instantiate the RequestQueue.
         RequestQueue queue = MySingleton.getInstance(mContext).getRequestQueue();
-        String url ="http://localhost:8080/api/request";
 
-        final HashMap<String, String> params = new HashMap<String, String>();
-        params.put("email",email);
-        params.put("username", username);
-        params.put("password", password);
-        params.put("confirmPassword", confirmPassword);
+        // TODO: 03/04/2017 Extract url
+        String url ="http://192.168.1.69:8080/api/register";
+
+        final HashMap<String, String> params = getRegisterParamsHashMap(email, username, password, confirmPassword);
 
         RequestFuture<JSONObject> future = RequestFuture.newFuture();
-        JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, URL, new JSONObject(params), future, future);
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, url, new JSONObject(params), future, future);
         queue.add(request);
 
         try {
@@ -59,9 +53,27 @@ public class UserRepositoryImpl implements UserRepository {
             Log.d(TAG, String.valueOf(response));
 
             return true;
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
+        } catch (InterruptedException | ExecutionException e) {
+            //check to see if the throwable in an instance of the volley error
+            if(e.getCause() instanceof VolleyError)
+            {
+                //grab the volley error from the throwable and cast it back
+                VolleyError volleyError = (VolleyError)e.getCause();
+                //now just grab the network response like normal
+                NetworkResponse networkResponse = volleyError.networkResponse;
+                try {
+                    Log.d(TAG, "raw data: "+ new String(networkResponse.data));
+                    JSONObject data = new JSONObject(new String(networkResponse.data));
+                    Log.d(TAG, data.toString());
+
+                    String code = data.getString("code");
+
+                    throw (RemoteDataException) new BasicRemoteException(code);
+                } catch (JSONException e1) {
+                    e1.printStackTrace();
+                    return false;
+                }
+            }
             e.printStackTrace();
         }
         return false;

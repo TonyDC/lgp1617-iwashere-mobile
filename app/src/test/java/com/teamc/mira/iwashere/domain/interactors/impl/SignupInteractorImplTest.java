@@ -1,16 +1,11 @@
 package com.teamc.mira.iwashere.domain.interactors.impl;
 
 import android.content.Context;
-import android.provider.Settings;
-import android.util.Log;
 
-import com.teamc.mira.iwashere.data.source.remote.UserRepositoryImpl;
 import com.teamc.mira.iwashere.domain.executor.Executor;
 import com.teamc.mira.iwashere.domain.executor.MainThread;
-import com.teamc.mira.iwashere.domain.executor.impl.ThreadExecutor;
 import com.teamc.mira.iwashere.domain.interactors.SignupInteractor;
 import com.teamc.mira.iwashere.domain.repository.UserRepository;
-import com.teamc.mira.iwashere.threading.MainThreadImpl;
 import com.teamc.mira.iwashere.threading.TestMainThread;
 
 import org.junit.Before;
@@ -26,11 +21,13 @@ import static org.mockito.Mockito.when;
  */
 public class SignupInteractorImplTest {
 
-    private MainThread mMainThread;
-    @Mock Executor mExecutor = ThreadExecutor.getInstance();
-    @Mock SignupInteractor.Callback mMockedCallback;
-    @Mock Context mContext;
-    @Mock UserRepository mUserRepository;
+    MainThread                                  mMainThread;
+    @Mock Executor                              mExecutor;
+    @Mock SignupInteractor.Callback             mMockedCallback;
+    @Mock Context                               mContext;
+    @Mock UserRepository                        mUserRepository;
+
+    @Mock String email, username, password, confirmPassword;
 
     @Before
     public void setUp() throws Exception {
@@ -39,14 +36,7 @@ public class SignupInteractorImplTest {
     }
 
     @Test
-    public void testWelcomeMessageFound() throws Exception {
-
-        String email = "test@gmail.com";
-        String username = "testuser";
-        String password = "123456";
-        String confirmPassword = "123456";
-
-
+    public void testOnSuccess() throws Exception {
 
         when(mUserRepository.register(email, username, password, confirmPassword))
                 .thenReturn(true);

@@ -1,5 +1,6 @@
 package com.teamc.mira.iwashere.domain.interactors.impl;
 
+import com.teamc.mira.iwashere.data.source.remote.exceptions.RemoteDataException;
 import com.teamc.mira.iwashere.domain.executor.Executor;
 import com.teamc.mira.iwashere.domain.executor.MainThread;
 import com.teamc.mira.iwashere.domain.interactors.base.AbstractInteractor;
@@ -38,7 +39,12 @@ public class SignupInteractorImpl extends AbstractInteractor implements SignupIn
     @Override
     public void run() {
         // retrieve the message
-        final boolean result = repository.register(email,username,pswd,confPswd);
+        boolean result = false;
+        try {
+            result = repository.register(email,username,pswd,confPswd);
+        } catch (RemoteDataException e) {
+            notifyError(e.getCode(),e.getErrorMessage());
+        }
 
         // check if we have failed to retrieve our message
         if (!result) {
@@ -52,12 +58,23 @@ public class SignupInteractorImpl extends AbstractInteractor implements SignupIn
     }
 
     @Override
-    public void notifyError(String code, String message) {
-        callback.onFail(code, message);
+    public void notifyError(final String code, final String message) {
+        mMainThread.post(new Runnable() {
+            @Override
+            public void run() {
+                callback.onFail(code, message);
+            }
+        });
     }
 
     @Override
     public void notifySuccess() {
-        callback.onSuccess();
+        mMainThread.post(new Runnable() {
+            @Override
+            public void run() {
+                callback.onSuccess();
+            }
+        });
+
     }
 }
