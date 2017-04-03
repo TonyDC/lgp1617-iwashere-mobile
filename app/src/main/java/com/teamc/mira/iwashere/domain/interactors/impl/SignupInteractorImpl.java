@@ -38,11 +38,10 @@ public class SignupInteractorImpl extends AbstractInteractor implements SignupIn
     @Override
     public void run() {
         // retrieve the message
-        final String message = repository.register(email,username,pswd,confPswd);
+        final boolean result = repository.register(email,username,pswd,confPswd);
 
         // check if we have failed to retrieve our message
-        if (message == null || message.length() == 0) {
-
+        if (!result) {
             // notify the failure on the main thread
             notifyError("network-failed", "Failed to establish a connection");
             return;
@@ -54,11 +53,11 @@ public class SignupInteractorImpl extends AbstractInteractor implements SignupIn
 
     @Override
     public void notifyError(String code, String message) {
-
+        callback.onFail(code, message);
     }
 
     @Override
     public void notifySuccess() {
-
+        callback.onSuccess();
     }
 }

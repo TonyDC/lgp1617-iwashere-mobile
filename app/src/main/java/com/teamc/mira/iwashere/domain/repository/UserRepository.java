@@ -10,9 +10,9 @@ public interface UserRepository {
 
     boolean isValidUsername(String username);
 
-    String register(String email, String username, String pswd, String confPswd);
+    boolean register(String email, String username, String pswd, String confPswd);
 
-    String login(String email, String pswd);
+    boolean login(String email, String pswd);
 
     UserModel getUserInfo();
 
