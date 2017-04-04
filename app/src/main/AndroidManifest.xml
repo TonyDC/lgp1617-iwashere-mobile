@@ -33,7 +33,7 @@
             android:label="@string/title_activity_profile"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".presentation.register.SignupActivity"
+            android:name=".presentation.signup.SignupActivity"
             android:label="@string/title_activity_login"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
@@ -41,7 +41,7 @@
             android:label="@string/title_activity_login"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".presentation.register.GoogleActivity"
+            android:name=".presentation.signup.GoogleActivity"
             android:label="@string/title_activity_google"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
@@ -61,7 +61,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".presentation.register.FacebookActivity"
+            android:name=".presentation.signup.FacebookActivity"
             android:label="@string/title_activity_facebook"
             android:theme="@style/AppTheme.NoActionBar" />
     </application>
