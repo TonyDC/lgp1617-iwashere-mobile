@@ -1,4 +1,4 @@
-package com.teamc.mira.iwashere.presentation.signup;
+package com.teamc.mira.iwashere.presentation.auth;
 
 import android.app.ProgressDialog;
 import android.content.Intent;

@@ -1,4 +1,4 @@
-package com.teamc.mira.iwashere.presentation.login;
+package com.teamc.mira.iwashere.presentation.auth;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,7 +13,6 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.teamc.mira.iwashere.IWasHereActivity;
 import com.teamc.mira.iwashere.R;
 
 public class ResetPasswordActivity extends AppCompatActivity implements View.OnClickListener {
@@ -28,7 +27,6 @@ public class ResetPasswordActivity extends AppCompatActivity implements View.OnC
 
         // Buttons
         findViewById(R.id.btn_reset_password).setOnClickListener(this);
-        findViewById(R.id.btn_back).setOnClickListener(this);
 
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
 
@@ -59,9 +57,6 @@ public class ResetPasswordActivity extends AppCompatActivity implements View.OnC
                     progressBar.setVisibility(View.GONE);
                 }
             });
-        } else if (i == R.id.btn_back) {
-            startActivity(new Intent(this, LoginActivity.class));
-            finish();
         }
     }
 
