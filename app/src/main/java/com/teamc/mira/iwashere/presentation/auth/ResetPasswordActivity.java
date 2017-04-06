@@ -27,7 +27,6 @@ public class ResetPasswordActivity extends AppCompatActivity implements View.OnC
 
         // Buttons
         findViewById(R.id.btn_reset_password).setOnClickListener(this);
-        findViewById(R.id.btn_back).setOnClickListener(this);
 
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
 
@@ -58,9 +57,6 @@ public class ResetPasswordActivity extends AppCompatActivity implements View.OnC
                     progressBar.setVisibility(View.GONE);
                 }
             });
-        } else if (i == R.id.btn_back) {
-            startActivity(new Intent(this, LoginActivity.class));
-            finish();
         }
     }
 
