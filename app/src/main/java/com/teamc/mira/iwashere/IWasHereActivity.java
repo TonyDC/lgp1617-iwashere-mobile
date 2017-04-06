@@ -6,14 +6,15 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
 import com.google.firebase.auth.FirebaseAuth;
-import com.teamc.mira.iwashere.presentation.login.LoginActivity;
+import com.teamc.mira.iwashere.presentation.auth.AuthenticateActivity;
+import com.teamc.mira.iwashere.presentation.auth.LoginActivity;
 import com.teamc.mira.iwashere.presentation.main.MainActivity;
-import com.teamc.mira.iwashere.presentation.signup.SignupActivity;
+import com.teamc.mira.iwashere.presentation.auth.SignupActivity;
 
 /*
  * This class is a Splash Screen
  */
-public class IWasHereActivity extends AppCompatActivity implements View.OnClickListener {
+public class IWasHereActivity extends AppCompatActivity {
 
     public final static String TAG = IWasHereActivity.class.getCanonicalName();
     private FirebaseAuth auth;
@@ -21,11 +22,6 @@ public class IWasHereActivity extends AppCompatActivity implements View.OnClickL
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_iwashere);
-
-        // Buttons
-        findViewById(R.id.main_sign_in_btn).setOnClickListener(this);
-        findViewById(R.id.main_sign_up_btn).setOnClickListener(this);
 
         //Get Firebase auth instance
         auth = FirebaseAuth.getInstance();
@@ -33,28 +29,11 @@ public class IWasHereActivity extends AppCompatActivity implements View.OnClickL
         if (auth.getCurrentUser() != null) {
             startActivity(new Intent(IWasHereActivity.this, MainActivity.class));
             finish();
+        }else {
+            startActivity(new Intent(IWasHereActivity.this, AuthenticateActivity.class));
+            finish();
         }
-
-        /**
-        Intent intent;
-
-        if(getSharedPreferences("userInfo",MODE_PRIVATE).getString("token", null) != null){
-            intent = new Intent(this, MainActivity.class);
-        }else{
-            intent = new Intent(this, LoginActivity.class);
-        }
-        startActivity(intent);
-        finish();**/
     }
 
-    @Override
-    public void onClick(View v) {
-        int i = v.getId();
-        if (i == R.id.main_sign_in_btn) {
-            startActivity(new Intent(this, LoginActivity.class));
-        } else if (i == R.id.main_sign_up_btn) {
-            startActivity(new Intent(this, SignupActivity.class));
-        }
-        finish();
-    }
+
 }

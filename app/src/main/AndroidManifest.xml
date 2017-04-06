@@ -17,7 +17,7 @@
 
         <activity
             android:name=".IWasHereActivity"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -25,7 +25,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".presentation.login.ResetPasswordActivity"
+            android:name=".presentation.auth.ResetPasswordActivity"
             android:label="@string/title_activity_reset_password"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
@@ -33,15 +33,19 @@
             android:label="@string/title_activity_profile"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".presentation.signup.SignupActivity"
+            android:name=".presentation.auth.AuthenticateActivity"
+            android:label="@string/title_activity_profile"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".presentation.auth.SignupActivity"
             android:label="@string/title_activity_login"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".presentation.login.LoginActivity"
+            android:name=".presentation.auth.LoginActivity"
             android:label="@string/title_activity_login"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".presentation.signup.GoogleActivity"
+            android:name=".presentation.auth.GoogleActivity"
             android:label="@string/title_activity_google"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
@@ -61,7 +65,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".presentation.signup.FacebookActivity"
+            android:name=".presentation.auth.FacebookActivity"
             android:label="@string/title_activity_facebook"
             android:theme="@style/AppTheme.NoActionBar" />
     </application>
