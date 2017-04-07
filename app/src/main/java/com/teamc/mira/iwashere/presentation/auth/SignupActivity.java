@@ -17,7 +17,7 @@ import com.teamc.mira.iwashere.data.source.remote.UserRepositoryImpl;
 import com.teamc.mira.iwashere.domain.executor.Executor;
 import com.teamc.mira.iwashere.domain.executor.MainThread;
 import com.teamc.mira.iwashere.domain.executor.impl.ThreadExecutor;
-import com.teamc.mira.iwashere.domain.interactors.SignupInteractor;
+import com.teamc.mira.iwashere.domain.interactors.AuthInteractor;
 import com.teamc.mira.iwashere.domain.interactors.impl.SignupInteractorImpl;
 import com.teamc.mira.iwashere.domain.repository.UserRepository;
 import com.teamc.mira.iwashere.threading.MainThreadImpl;
@@ -105,7 +105,7 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
             MainThread mainThread = MainThreadImpl.getInstance();
             Executor executor = ThreadExecutor.getInstance();
             UserRepository userRepository = new UserRepositoryImpl(this);
-            SignupInteractor.Callback callback = new SignupInteractor.Callback() {
+            AuthInteractor.Callback callback = new AuthInteractor.Callback() {
                 @Override
                 public void onSuccess() {
                     Toast.makeText(getApplicationContext(), "Success", Toast.LENGTH_SHORT).show();
@@ -116,11 +116,11 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
                 @Override
                 public void onFail(String code, String message) {
                     Toast.makeText(getApplicationContext(), "Fail", Toast.LENGTH_SHORT).show();
-                    Log.d(TAG, "Failed to register");
+                    Log.d(TAG, "Failed to signup");
                     progressBar.setVisibility(View.GONE);
                 }
             };
-            SignupInteractor signupInteractor = new SignupInteractorImpl(
+            AuthInteractor signupInteractor = new SignupInteractorImpl(
                     executor,
                     mainThread,
                     callback,

@@ -9,6 +9,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.RequestFuture;
+import com.google.firebase.auth.FirebaseAuth;
 import com.teamc.mira.iwashere.data.source.remote.exceptions.BasicRemoteException;
 import com.teamc.mira.iwashere.data.source.remote.exceptions.RemoteDataException;
 import com.teamc.mira.iwashere.domain.model.UserModel;
@@ -35,12 +36,12 @@ public class UserRepositoryImpl extends AbstractUserRepository implements UserRe
     }
 
     @Override
-    public boolean register(String email, String username, String password, String confirmPassword) throws RemoteDataException {
+    public boolean signup(String email, String username, String password, String confirmPassword) throws RemoteDataException {
         // Instantiate the RequestQueue.
         RequestQueue queue = MySingleton.getInstance(mContext).getRequestQueue();
 
         // TODO: 03/04/2017 Extract url
-        String url ="http://192.168.1.69:8080/api/register";
+        String url ="http://192.168.1.69:8080/api/signup";
 
         final HashMap<String, String> params = getRegisterParamsHashMap(email, username, password, confirmPassword);
 
@@ -80,7 +81,7 @@ public class UserRepositoryImpl extends AbstractUserRepository implements UserRe
     }
 
     @Override
-    public boolean login(String email, String pswd) {
+    public boolean signin(String email, String pswd) {
         throw new UnsupportedOperationException();
     }
 
@@ -92,6 +93,11 @@ public class UserRepositoryImpl extends AbstractUserRepository implements UserRe
     @Override
     public boolean update(UserModel userModel) {
         throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void signout() {
+        FirebaseAuth.getInstance().signOut();
     }
 
     @Override

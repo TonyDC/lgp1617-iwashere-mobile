@@ -4,7 +4,7 @@ import android.content.Context;
 
 import com.teamc.mira.iwashere.domain.executor.Executor;
 import com.teamc.mira.iwashere.domain.executor.MainThread;
-import com.teamc.mira.iwashere.domain.interactors.SignupInteractor;
+import com.teamc.mira.iwashere.domain.interactors.AuthInteractor;
 import com.teamc.mira.iwashere.domain.repository.UserRepository;
 import com.teamc.mira.iwashere.threading.TestMainThread;
 
@@ -23,7 +23,7 @@ public class SignupInteractorImplTest {
 
     MainThread                                  mMainThread;
     @Mock Executor                              mExecutor;
-    @Mock SignupInteractor.Callback             mMockedCallback;
+    @Mock AuthInteractor.Callback             mMockedCallback;
     @Mock Context                               mContext;
     @Mock UserRepository                        mUserRepository;
 
@@ -38,7 +38,7 @@ public class SignupInteractorImplTest {
     @Test
     public void testOnSuccess() throws Exception {
 
-        when(mUserRepository.register(email, username, password, confirmPassword))
+        when(mUserRepository.signup(email, username, password, confirmPassword))
                 .thenReturn(true);
 
 
@@ -51,7 +51,7 @@ public class SignupInteractorImplTest {
         );
         interactor.run();
 
-        Mockito.verify(mUserRepository).register(email,username,password,confirmPassword);
+        Mockito.verify(mUserRepository).signup(email,username,password,confirmPassword);
         Mockito.verifyNoMoreInteractions(mUserRepository);
         Mockito.verify(mMockedCallback).onSuccess();
     }

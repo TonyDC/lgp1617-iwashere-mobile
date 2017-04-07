@@ -3,7 +3,7 @@ package com.teamc.mira.iwashere.domain.interactors;
 
 import com.teamc.mira.iwashere.domain.interactors.base.Interactor;
 
-public interface SignupInteractor extends Interactor {
+public interface AuthInteractor extends Interactor {
 
     interface Callback {
         void onSuccess();
