@@ -1,0 +1,75 @@
+{
+  "project_info": {
+    "project_number": "870991185151",
+    "firebase_url": "https://iwashere-mobile.firebaseio.com",
+    "project_id": "iwashere-mobile",
+    "storage_bucket": "iwashere-mobile.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:870991185151:android:6d76c6ea32da80d9",
+        "android_client_info": {
+          "package_name": "com.teamc.mira.iwashere"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "870991185151-fr1atb12tsclbpl16top7inumhlqk9cb.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.teamc.mira.iwashere",
+            "certificate_hash": "e250b8272c5d41a935dd67625df24481c002c9fb"
+          }
+        },
+        {
+          "client_id": "870991185151-1g21b9tk34096d3jkfdi6j62igrdsfai.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "870991185151-m92hidkje2fbpn2vplc9q7h70k8c4jqn.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "870991185151-21fq3jnsumvksvlf1uu26bupuvla3tgj.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "870991185151-efip2e9ve81hlr4m3r09farhvak87tf4.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "870991185151-tt62vt07v25di9sgc1innnkvmqtggu3s.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.teamc.mira.iwashere",
+            "certificate_hash": "54723d26db6a3fcdde1299f069e25528bc39da49"
+          }
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB8BiMoFt3jh6vCC4b2VrD6NtHi4t9Hr9s"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "870991185151-1g21b9tk34096d3jkfdi6j62igrdsfai.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

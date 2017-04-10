@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    tools:context=".IWasHereActivity"
+    android:orientation="vertical"
+    android:gravity="center">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/logo_w_h"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="30dp"
+            android:contentDescription="@string/iwashere_icon"
+            android:src="@drawable/logo" />
+
+        <Button
+            android:id="@+id/main_sign_in_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dip"
+            android:background="@color/colorAccentPrimary"
+            android:text="@string/btn_login"
+            android:textColor="@color/textColorSecundary" />
+
+        <Button
+            android:id="@+id/main_sign_up_btn"
+            style="?android:textAppearanceSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:background="@color/colorAccentSecundary"
+            android:text="@string/action_sign_in_short"
+            android:textColor="@color/textColorSecundary"
+            android:textStyle="bold" />
+
+</LinearLayout>
