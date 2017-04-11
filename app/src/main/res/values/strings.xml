@@ -49,4 +49,9 @@
     <string name="user_id">User ID:</string>
     <string name="user_email">User email:</string>
     <string name="wait">Wait a moment</string>
+    <string name="menu_map">Map</string>
+    <string name="menu_person">Account</string>
+    <string name="menu_camera">Camera</string>
+    <string name="menu_feed">Feed</string>
+    <string name="menu_search">Search</string>
 </resources>
