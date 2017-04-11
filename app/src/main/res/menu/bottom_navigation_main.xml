@@ -26,7 +26,7 @@
         android:title="@string/menu_search"
         app:showAsAction="ifRoom" />
     <item
-        android:id="@+id/action_account_settings"
+        android:id="@+id/action_account"
         android:enabled="true"
         android:icon="@drawable/ic_person_black_24dp"
         android:title="@string/menu_person"

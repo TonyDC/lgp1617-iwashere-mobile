@@ -13,12 +13,15 @@ import com.teamc.mira.iwashere.R;
  * Created by Duart on 11/04/2017.
  */
 
-class SearchFragment extends Fragment {
 
+class AccountFragment extends Fragment {
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_search, container, false);
+        return inflater.inflate(R.layout.fragment_account, container, false);
     }
+
 }
+
+
