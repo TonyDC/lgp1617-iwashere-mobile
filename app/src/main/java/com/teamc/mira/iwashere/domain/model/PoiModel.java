@@ -19,7 +19,7 @@ public class PoiModel {
     private ArrayList<Bitmap> photos;
     private ArrayList<ContentModel> content;
 
-    private ArrayList<PoiModel> relatedContent;
+    private ArrayList<PoiModel> relatedPois;
 
     private boolean reminder;
 
@@ -40,7 +40,7 @@ public class PoiModel {
         this.latitude = latitude;
         this.photos = photos;
         this.content = content;
-        this.relatedContent = relatedContent;
+        this.relatedPois = relatedContent;
     }
 
     public String getId() {
@@ -107,11 +107,11 @@ public class PoiModel {
         this.content = content;
     }
 
-    public ArrayList<PoiModel> getRelatedContent() {
-        return relatedContent;
+    public ArrayList<PoiModel> getRelatedPois() {
+        return relatedPois;
     }
 
-    public void setRelatedContent(ArrayList<PoiModel> relatedContent) {
-        this.relatedContent = relatedContent;
+    public void setRelatedPois(ArrayList<PoiModel> relatedPois) {
+        this.relatedPois = relatedPois;
     }
 }
