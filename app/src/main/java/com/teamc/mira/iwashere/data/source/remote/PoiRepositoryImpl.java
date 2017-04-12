@@ -13,7 +13,7 @@ public class PoiRepositoryImpl implements PoiRepository {
 
     @Override
     public PoiModel fetchPoi(PoiModel poi) throws RemoteDataException {
-        throw new UnsupportedOperationException();
+        return fetchPoi(poi.getId());
     }
 
     @Override
