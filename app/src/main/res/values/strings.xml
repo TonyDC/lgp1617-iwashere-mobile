@@ -54,4 +54,5 @@
     <string name="menu_camera">Camera</string>
     <string name="menu_feed">Feed</string>
     <string name="menu_search">Search</string>
+    <string name="title_activity_poi_detail">POI</string>
 </resources>
