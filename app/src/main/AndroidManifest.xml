@@ -2,6 +2,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.teamc.mira.iwashere">
 
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -9,11 +15,14 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <uses-permission android:name="android.permission.INTERNET" />
 
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id" />
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyBZmrnuImjti0VsMecT8ytNoz7F0UTOZDQ"/>
 
         <activity
             android:name=".IWasHereActivity"
@@ -68,6 +77,7 @@
             android:name=".presentation.auth.FacebookActivity"
             android:label="@string/title_activity_facebook"
             android:theme="@style/AppTheme.NoActionBar" />
+        <service android:enabled="true" android:name=".domain.services.LocationService" />
     </application>
 
 </manifest>
