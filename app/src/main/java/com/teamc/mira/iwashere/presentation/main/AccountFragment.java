@@ -1,5 +1,6 @@
 package com.teamc.mira.iwashere.presentation.main;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -14,6 +15,7 @@ import android.view.ViewGroup;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.teamc.mira.iwashere.R;
+import com.teamc.mira.iwashere.presentation.misc.AboutActivity;
 
 /**
  * Created by Duart on 11/04/2017.
@@ -49,7 +51,7 @@ class AccountFragment extends Fragment {
 
         switch (id){
             case R.id.action_about:
-                // TODO: 15/04/2017 Launch about activity
+                startActivity(new Intent(this.getContext(), AboutActivity.class));
                 break;
             case R.id.action_logout:
                 // TODO: 15/04/2017 Logout and go to login
