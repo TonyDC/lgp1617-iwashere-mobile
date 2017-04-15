@@ -2,11 +2,8 @@ package com.teamc.mira.iwashere.domain.model;
 
 import android.graphics.Bitmap;
 
+import java.net.URL;
 import java.util.ArrayList;
-
-/**
- * Created by Duart on 12/04/2017.
- */
 
 public class PoiModel {
     private String id;
@@ -16,7 +13,7 @@ public class PoiModel {
     private String longitude;
     private String latitude;
 
-    private ArrayList<Bitmap> photos;
+    private ArrayList<URL> photos;
     private ArrayList<ContentModel> content;
 
     private ArrayList<PoiModel> relatedPois;
@@ -29,7 +26,7 @@ public class PoiModel {
                     String address,
                     String longitude,
                     String latitude,
-                    ArrayList<Bitmap> photos,
+                    ArrayList<URL> photos,
                     ArrayList<ContentModel> content,
                     ArrayList<PoiModel> relatedContent) {
         this.id = id;
@@ -91,11 +88,11 @@ public class PoiModel {
         this.latitude = latitude;
     }
 
-    public ArrayList<Bitmap> getPhotos() {
+    public ArrayList<URL> getPhotos() {
         return photos;
     }
 
-    public void setPhotos(ArrayList<Bitmap> photos) {
+    public void setPhotos(ArrayList<URL> photos) {
         this.photos = photos;
     }
 
