@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <include layout="@layout/toolbar"
@@ -22,9 +23,30 @@
                 android:layout_width="match_parent"
                 android:layout_height="250dp" /> <!--TODO change this in the future to accomodate more sizes-->
             <TextView
+                android:id="@+id/description"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:text="Hello Estrada!"/>
+                android:padding="25dp"/>
+
+            <ImageView
+                android:id="@+id/address"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="25dp"
+                android:src="@drawable/place"/>
+
+            <GridView xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/photogallery"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:columnWidth="180dp"
+                android:numColumns="2"
+                android:verticalSpacing="10dp"
+                android:horizontalSpacing="10dp"
+                android:stretchMode="columnWidth"
+                android:gravity="center"
+                />
+
         </LinearLayout>
 
 
