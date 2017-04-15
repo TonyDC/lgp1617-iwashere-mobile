@@ -49,7 +49,7 @@ public class SignupInteractorImpl extends AbstractInteractor implements AuthInte
         // check if we have failed to retrieve our message
         if (!result) {
             // notify the failure on the main thread
-            notifyError("network-failed", "Failed to establish a connection");
+            notifyError("network-fail", "Failed to establish a connection");
             return;
         }
 
