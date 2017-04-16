@@ -9,49 +9,68 @@ import com.android.volley.RequestQueue;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.RequestFuture;
-import com.google.firebase.auth.FirebaseAuth;
 import com.teamc.mira.iwashere.data.source.remote.exceptions.BasicRemoteException;
 import com.teamc.mira.iwashere.data.source.remote.exceptions.RemoteDataException;
-import com.teamc.mira.iwashere.domain.model.UserModel;
-import com.teamc.mira.iwashere.domain.repository.UserRepository;
+import com.teamc.mira.iwashere.domain.model.PoiModel;
+import com.teamc.mira.iwashere.domain.repository.PoiRepository;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.ExecutionException;
 
-public class UserRepositoryImpl extends AbstractUserRepository implements UserRepository {
+import static android.content.ContentValues.TAG;
 
-    public UserRepositoryImpl(Context mContext) {
+// TODO: 12/04/2017 Implement functions
+public class PoiRepositoryImpl extends AbstractRepository implements PoiRepository {
+    public PoiRepositoryImpl(Context mContext) {
         super(mContext);
     }
 
-    public static final String TAG = UserRepositoryImpl.class.getSimpleName();
     @Override
-    public boolean isValidUsername(String username) {
+    public PoiModel fetchPoi(String id) throws RemoteDataException {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public boolean signup(String email, String username, String password, String confirmPassword) throws RemoteDataException {
-        // Instantiate the RequestQueue.
-        RequestQueue queue = MySingleton.getInstance(mContext).getRequestQueue();
+    public PoiModel fetchPoi(PoiModel poi) throws RemoteDataException {
+        return fetchPoi(poi.getId());
+    }
+
+    @Override
+    public PoiModel setReminder(PoiModel poi) throws RemoteDataException {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public PoiModel removeReminder(PoiModel poi) throws RemoteDataException {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public ArrayList<PoiModel> fetchPoisInArea(double maxLat, double minLat, double maxLong, double minLong) throws RemoteDataException {
+// Instantiate the RequestQueue.
+        RequestQueue queue = MySingleton.getInstance(this.mContext).getRequestQueue();
 
         // TODO: 03/04/2017 Extract url
-        String url ="http://192.168.1.69:8080/api/signup";
+        String url ="http://192.168.1.69:8080/poi/range";
 
-        final HashMap<String, String> params = getRegisterParamsHashMap(email, username, password, confirmPassword);
+        final HashMap<String, String> params = getMapRangeParameters( maxLat, minLat, maxLong, minLong);
 
         RequestFuture<JSONObject> future = RequestFuture.newFuture();
-        JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, url, new JSONObject(params), future, future);
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, new JSONObject(params), future, future);
         queue.add(request);
 
         try {
             JSONObject response = future.get(); // this will block
             Log.d(TAG, String.valueOf(response));
 
-            return true;
+            ArrayList<PoiModel> poiModels;
+            // TODO: 16/04/2017 Extract poi models from json
+            throw new UnsupportedOperationException();
+//            return poiModels;
         } catch (InterruptedException | ExecutionException e) {
             //check to see if the throwable in an instance of the volley error
             if(e.getCause() instanceof VolleyError)
@@ -70,36 +89,16 @@ public class UserRepositoryImpl extends AbstractUserRepository implements UserRe
                     throw (RemoteDataException) new BasicRemoteException(code);
                 } catch (JSONException e1) {
                     e1.printStackTrace();
-                    return false;
+                    return null;
                 }
             }
             e.printStackTrace();
         }
-        return false;
+        return null;
     }
 
-    @Override
-    public boolean signin(String email, String pswd) {
+    private HashMap<String, String> getMapRangeParameters(double maxLat, double minLat, double maxLong, double minLong) {
         throw new UnsupportedOperationException();
     }
 
-    @Override
-    public UserModel getUserInfo() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public boolean update(UserModel userModel) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void signout() {
-        FirebaseAuth.getInstance().signOut();
-    }
-
-    @Override
-    public boolean updatePassword(String newPswd, String confPswd, String oldPswd) {
-        throw new UnsupportedOperationException();
-    }
 }
