@@ -23,10 +23,8 @@ import java.util.concurrent.ExecutionException;
 
 public class UserRepositoryImpl extends AbstractUserRepository implements UserRepository {
 
-    Context mContext;
-
     public UserRepositoryImpl(Context mContext) {
-        this.mContext = mContext;
+        super(mContext);
     }
 
     public static final String TAG = UserRepositoryImpl.class.getSimpleName();
