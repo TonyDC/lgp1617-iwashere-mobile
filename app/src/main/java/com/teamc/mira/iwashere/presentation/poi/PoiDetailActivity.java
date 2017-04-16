@@ -1,7 +1,6 @@
 package com.teamc.mira.iwashere.presentation.poi;
 
 import android.graphics.Color;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -12,12 +11,12 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.RatingBar;
+import android.widget.RatingBar.OnRatingBarChangeListener;
 
 import com.daimajia.slider.library.SliderLayout;
 import com.daimajia.slider.library.SliderTypes.TextSliderView;
 import com.teamc.mira.iwashere.R;
-
-import java.util.function.ToLongBiFunction;
 
 /**
  * Created by Duart on 12/04/2017.
@@ -29,6 +28,8 @@ public class PoiDetailActivity extends AppCompatActivity {
     TextView textDescription;
     ImageView textAddress;
     GridView photoGallery;
+    RatingBar poiRatingBar;
+    RatingBar userRatingBar;
 
 
     @Override
@@ -68,7 +69,23 @@ public class PoiDetailActivity extends AppCompatActivity {
             }
         });
 
+        initRatingBars();
+    }
 
+    public void initRatingBars() {
+
+        poiRatingBar = (RatingBar) findViewById(R.id.poiRatingBar);
+        userRatingBar = (RatingBar) findViewById(R.id.userRatingBar);
+
+        poiRatingBar.setIsIndicator(true);
+
+        userRatingBar.setOnRatingBarChangeListener(new OnRatingBarChangeListener() {
+            public void onRatingChanged(RatingBar ratingBar, float rating,
+                                        boolean fromUser) {
+
+                // TODO call API for rating update and update bars appropriately
+            }
+        });
     }
 
     @Override

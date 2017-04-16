@@ -28,6 +28,21 @@
                 android:layout_height="match_parent"
                 android:padding="25dp"/>
 
+            <RatingBar
+                android:id="@+id/poiRatingBar"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:numStars="5"
+                android:stepSize="1.0"/>
+
+            <RatingBar
+                android:id="@+id/userRatingBar"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:numStars="5"
+                android:stepSize="1.0"/>
+
+
             <ImageView
                 android:id="@+id/address"
                 android:layout_width="match_parent"

@@ -15,6 +15,7 @@ public class PoiModel {
     private String address;
     private String longitude;
     private String latitude;
+    private float rating;
 
     private ArrayList<Bitmap> photos;
     private ArrayList<ContentModel> content;
@@ -113,5 +114,13 @@ public class PoiModel {
 
     public void setRelatedContent(ArrayList<PoiModel> relatedContent) {
         this.relatedContent = relatedContent;
+    }
+
+    public float getRating() {
+        return rating;
+    }
+
+    public void setRating(float rating) {
+        this.rating = rating;
     }
 }
