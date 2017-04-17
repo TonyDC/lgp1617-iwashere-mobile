@@ -2,11 +2,8 @@ package com.teamc.mira.iwashere.domain.model;
 
 import android.graphics.Bitmap;
 
+import java.net.URL;
 import java.util.ArrayList;
-
-/**
- * Created by Duart on 12/04/2017.
- */
 
 public class PoiModel {
     private String id;
@@ -15,11 +12,12 @@ public class PoiModel {
     private String address;
     private String longitude;
     private String latitude;
+    private float rating;
 
-    private ArrayList<Bitmap> photos;
+    private ArrayList<URL> photos;
     private ArrayList<ContentModel> content;
 
-    private ArrayList<PoiModel> relatedContent;
+    private ArrayList<PoiModel> relatedPois;
 
     private boolean reminder;
 
@@ -29,7 +27,7 @@ public class PoiModel {
                     String address,
                     String longitude,
                     String latitude,
-                    ArrayList<Bitmap> photos,
+                    ArrayList<URL> photos,
                     ArrayList<ContentModel> content,
                     ArrayList<PoiModel> relatedContent) {
         this.id = id;
@@ -40,7 +38,7 @@ public class PoiModel {
         this.latitude = latitude;
         this.photos = photos;
         this.content = content;
-        this.relatedContent = relatedContent;
+        this.relatedPois = relatedContent;
     }
 
     public String getId() {
@@ -91,11 +89,11 @@ public class PoiModel {
         this.latitude = latitude;
     }
 
-    public ArrayList<Bitmap> getPhotos() {
+    public ArrayList<URL> getPhotos() {
         return photos;
     }
 
-    public void setPhotos(ArrayList<Bitmap> photos) {
+    public void setPhotos(ArrayList<URL> photos) {
         this.photos = photos;
     }
 
@@ -107,11 +105,19 @@ public class PoiModel {
         this.content = content;
     }
 
-    public ArrayList<PoiModel> getRelatedContent() {
-        return relatedContent;
+    public ArrayList<PoiModel> getRelatedPois() {
+        return relatedPois;
     }
 
-    public void setRelatedContent(ArrayList<PoiModel> relatedContent) {
-        this.relatedContent = relatedContent;
+    public void setRelatedPois(ArrayList<PoiModel> relatedPois) {
+        this.relatedPois = relatedPois;
+    }
+
+    public float getRating() {
+        return rating;
+    }
+
+    public void setRating(float rating) {
+        this.rating = rating;
     }
 }

@@ -17,6 +17,16 @@ public class PoiRepositoryImpl implements PoiRepository {
     }
 
     @Override
+    public PoiModel fetchPoiRating(String id) throws RemoteDataException {
+        return null;
+    }
+
+    @Override
+    public PoiModel fetchPoiRating(PoiModel poi) throws RemoteDataException {
+        return null;
+    }
+
+    @Override
     public PoiModel setReminder(PoiModel poi) throws RemoteDataException {
         throw new UnsupportedOperationException();
     }

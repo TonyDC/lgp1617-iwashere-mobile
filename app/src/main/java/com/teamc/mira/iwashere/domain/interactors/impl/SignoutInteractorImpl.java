@@ -44,5 +44,6 @@ public class SignoutInteractorImpl extends AbstractInteractor implements AuthInt
     @Override
     public void run() {
         userRepository.signout();
+        notifySuccess();
     }
 }

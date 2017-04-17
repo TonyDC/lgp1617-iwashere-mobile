@@ -10,3 +10,4 @@ gradle/
 .externalNativeBuild
 /gradlew
 /gradlew.bat
+app/build/
