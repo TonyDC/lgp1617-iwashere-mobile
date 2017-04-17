@@ -1,5 +1,6 @@
 package com.teamc.mira.iwashere.presentation.main;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -8,9 +9,11 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
 import android.view.MenuItem;
 
 import com.teamc.mira.iwashere.R;
+import com.teamc.mira.iwashere.domain.services.LocationService;
 
 public class MainActivity extends AppCompatActivity {
     @Override
@@ -18,6 +21,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
+
+        // starting Location Service Manager for receiving location data
+        Intent intent = new Intent(MainActivity.this, LocationService.class);
+        startService(intent);
 
         final FragmentManager fragmentManager = getSupportFragmentManager();
 
@@ -57,6 +64,7 @@ public class MainActivity extends AppCompatActivity {
                         case R.id.action_account:
                             fragmentTransaction = fragmentManager.beginTransaction();
                             fragmentTransaction.replace(R.id.flContainer, account).commit();
+
                             return true;
                     }
                     return true;

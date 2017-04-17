@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.RatingBar;
@@ -29,6 +30,7 @@ public class PoiDetailActivity extends AppCompatActivity {
     ImageView textAddress;
     GridView photoGallery;
     RatingBar poiRatingBar;
+    TextView poiRatingText;
     RatingBar userRatingBar;
 
 
@@ -76,6 +78,14 @@ public class PoiDetailActivity extends AppCompatActivity {
 
         poiRatingBar = (RatingBar) findViewById(R.id.poiRatingBar);
         userRatingBar = (RatingBar) findViewById(R.id.userRatingBar);
+
+        poiRatingText = (TextView) findViewById(R.id.poiRatingText);
+        poiRatingText.setText(" x.x /5");
+        poiRatingText.setTextColor(Color.BLACK);
+
+        findViewById(R.id.ratings).setBackgroundColor(Color.parseColor("#35A8DF"));
+        poiRatingBar.setBackgroundColor(Color.parseColor("#35A8DF"));
+        userRatingBar.setBackgroundColor(Color.parseColor("#35A8DF"));
 
         poiRatingBar.setIsIndicator(true);
 

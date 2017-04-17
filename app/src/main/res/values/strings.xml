@@ -1,5 +1,9 @@
 <resources>
     <string name="app_name">#iwashere</string>
+    <string name="versionCode">0.2</string>
+    <string name="versionName">0.2</string>
+
+
     <string name="action_sign_in_short">Register</string>
     <string name="email">Email</string>
     <string name="name">Name</string>
@@ -55,4 +59,8 @@
     <string name="menu_feed">Feed</string>
     <string name="menu_search">Search</string>
     <string name="title_activity_poi_detail">POI</string>
+    <string name="action_about">About</string>
+    <string name="action_logout">Logout</string>
+    <string name="version">Version:</string>
+    <string name="title_activity_about">About</string>
 </resources>
