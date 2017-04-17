@@ -8,6 +8,10 @@ public interface PoiRepository {
 
     PoiModel fetchPoi(PoiModel poi)throws RemoteDataException;
 
+    PoiModel fetchPoiRating(String id) throws RemoteDataException;
+
+    PoiModel fetchPoiRating(PoiModel poi) throws RemoteDataException;
+
     PoiModel setReminder(PoiModel poi)throws RemoteDataException;
 
     PoiModel removeReminder(PoiModel poi)throws RemoteDataException;
