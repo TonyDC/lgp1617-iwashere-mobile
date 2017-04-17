@@ -1,7 +1,6 @@
 package com.teamc.mira.iwashere.presentation.poi;
 
 import android.graphics.Color;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -17,8 +16,6 @@ import com.daimajia.slider.library.SliderLayout;
 import com.daimajia.slider.library.SliderTypes.TextSliderView;
 import com.teamc.mira.iwashere.R;
 
-import java.util.function.ToLongBiFunction;
-
 /**
  * Created by Duart on 12/04/2017.
  */
@@ -28,8 +25,21 @@ public class PoiDetailActivity extends AppCompatActivity {
     SliderLayout sliderShow;
     TextView textDescription;
     ImageView textAddress;
-    GridView photoGallery;
+    GridView gridView;
 
+    String[] gridViewString = {
+            "Alram", "Android", "Mobile", "Website", "Profile", "WordPress",
+            "Alram", "Android", "Mobile", "Website", "Profile", "WordPress",
+            "Alram", "Android", "Mobile", "Website", "Profile", "WordPress",
+
+    } ;
+
+    int[] gridViewImageId = {
+            R.drawable.logo, R.drawable.place, R.drawable.logo, R.drawable.place, R.drawable.logo, R.drawable.place,
+            R.drawable.logo, R.drawable.place, R.drawable.logo, R.drawable.place, R.drawable.logo, R.drawable.place,
+            R.drawable.logo, R.drawable.place, R.drawable.logo, R.drawable.place, R.drawable.logo, R.drawable.place,
+
+    };
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -57,17 +67,18 @@ public class PoiDetailActivity extends AppCompatActivity {
 
         textAddress.setBackgroundColor(Color.parseColor("#35A8DF"));
 
-        photoGallery = (GridView) findViewById(R.id.photogallery);
-        photoGallery.setAdapter(new ImageAdapter(this));
+        GridViewAdapter adapterView = new GridViewAdapter(PoiDetailActivity.this, gridViewString, gridViewImageId);
+        gridView=(GridView)findViewById(R.id.grid_view_image_text);
+        gridView.setAdapter(adapterView);
 
-        photoGallery.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            public void onItemClick(AdapterView<?> parent, View v,
-                                    int position, long id) {
-                Toast.makeText(PoiDetailActivity.this, "" + position,
-                        Toast.LENGTH_SHORT).show();
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view,
+                                    int i, long id) {
+                Toast.makeText(PoiDetailActivity.this, "GridView Item: " + gridViewString[+i], Toast.LENGTH_LONG).show();
             }
         });
-
 
     }
 
