@@ -1,15 +1,16 @@
 package com.teamc.mira.iwashere.presentation.poi;
 
+import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.RatingBar;
@@ -17,18 +18,33 @@ import android.widget.RatingBar.OnRatingBarChangeListener;
 
 import com.daimajia.slider.library.SliderLayout;
 import com.daimajia.slider.library.SliderTypes.TextSliderView;
+import com.google.firebase.auth.FirebaseAuth;
 import com.teamc.mira.iwashere.R;
+import com.teamc.mira.iwashere.data.source.remote.PoiRepositoryImpl;
+import com.teamc.mira.iwashere.data.source.remote.UserRepositoryImpl;
+import com.teamc.mira.iwashere.domain.executor.Executor;
+import com.teamc.mira.iwashere.domain.executor.MainThread;
+import com.teamc.mira.iwashere.domain.executor.impl.ThreadExecutor;
+import com.teamc.mira.iwashere.domain.interactors.AuthInteractor;
+import com.teamc.mira.iwashere.domain.interactors.PoiDetailInteractor;
+import com.teamc.mira.iwashere.domain.interactors.impl.PoiDetailInteractorImpl;
+import com.teamc.mira.iwashere.domain.interactors.impl.PoiRatingInteractorImpl;
+import com.teamc.mira.iwashere.domain.interactors.impl.SignupInteractorImpl;
+import com.teamc.mira.iwashere.domain.model.PoiModel;
+import com.teamc.mira.iwashere.domain.repository.PoiRepository;
+import com.teamc.mira.iwashere.domain.repository.UserRepository;
+import com.teamc.mira.iwashere.threading.MainThreadImpl;
 
-/**
- * Created by Duart on 12/04/2017.
- */
+import java.text.DecimalFormat;
 
 public class PoiDetailActivity extends AppCompatActivity {
 
+    PoiModel poi;
     SliderLayout sliderShow;
     TextView textDescription;
     ImageView textAddress;
     GridView gridView;
+    FirebaseAuth auth;
 
     String[] gridViewString = {
             "Alram", "Android", "Mobile", "Website", "Profile", "WordPress",
@@ -45,7 +61,6 @@ public class PoiDetailActivity extends AppCompatActivity {
             R.drawable.logo, R.drawable.place, R.drawable.logo, R.drawable.place, R.drawable.logo, R.drawable.place,
             R.drawable.logo, R.drawable.place, R.drawable.logo, R.drawable.place, R.drawable.logo, R.drawable.place,
             R.drawable.logo, R.drawable.place, R.drawable.logo, R.drawable.place, R.drawable.logo, R.drawable.place,
-
     };
 
     @Override
@@ -62,7 +77,6 @@ public class PoiDetailActivity extends AppCompatActivity {
 
         TextSliderView textSliderView = new TextSliderView(this);
         textSliderView
-                .description("Game of Thrones")
                 .image("http://images.boomsbeat.com/data/images/full/19640/game-of-thrones-season-4-jpg.jpg");
 
         sliderShow.addSlider(textSliderView);
@@ -87,6 +101,7 @@ public class PoiDetailActivity extends AppCompatActivity {
             }
         });
 
+        auth = FirebaseAuth.getInstance();
 
         initRatingBars();
     }
@@ -94,25 +109,79 @@ public class PoiDetailActivity extends AppCompatActivity {
     public void initRatingBars() {
 
         poiRatingBar = (RatingBar) findViewById(R.id.poiRatingBar);
+
         userRatingBar = (RatingBar) findViewById(R.id.userRatingBar);
-
         poiRatingText = (TextView) findViewById(R.id.poiRatingText);
-        poiRatingText.setText(" x.x /5");
-        poiRatingText.setTextColor(Color.BLACK);
-
-        findViewById(R.id.ratings).setBackgroundColor(Color.parseColor("#35A8DF"));
-        poiRatingBar.setBackgroundColor(Color.parseColor("#35A8DF"));
-        userRatingBar.setBackgroundColor(Color.parseColor("#35A8DF"));
 
         poiRatingBar.setIsIndicator(true);
+        setPoiRatingText();
+        setRatingBarsStyle();
 
+        if (auth.getCurrentUser() == null) {
+            ((ViewGroup) userRatingBar.getParent()).removeView(userRatingBar);
+
+            return;
+        }
+
+        final Context thisContext = this;
+
+        userRatingBar.setRating(poi.getUserRating());
         userRatingBar.setOnRatingBarChangeListener(new OnRatingBarChangeListener() {
-            public void onRatingChanged(RatingBar ratingBar, float rating,
+            public void onRatingChanged(RatingBar ratingBar, final float rating,
                                         boolean fromUser) {
 
-                // TODO call API for rating update and update bars appropriately
+                if (!fromUser) {
+                    return;
+                }
+
+                MainThread mainThread = MainThreadImpl.getInstance();
+                Executor executor = ThreadExecutor.getInstance();
+                PoiRepository poiRepository = new PoiRepositoryImpl(thisContext);
+                PoiDetailInteractor.CallBack callback = new PoiDetailInteractor.CallBack() {
+
+                    @Override
+                    public void onNetworkFail() {
+                        onError(null, null);
+                    }
+
+                    @Override
+                    public void onError(String code, String message) {
+                        userRatingBar.setRating(poi.getUserRating());
+                    }
+
+                    @Override
+                    public void onSuccess(PoiModel updatedPoi) {
+                        poi.setUserRating(rating);
+                        poi.setRating(updatedPoi.getRating());
+                        setPoiRatingText();
+                    }
+                };
+
+                PoiDetailInteractor poiRatingInteractor = new PoiRatingInteractorImpl(
+                        executor,
+                        mainThread,
+                        callback,
+                        poiRepository,
+                        poi,
+                        auth.getCurrentUser().getUid(),
+                        (int) rating);
+
+                poiRatingInteractor.execute();
             }
         });
+    }
+
+    private void setPoiRatingText() {
+        DecimalFormat decimalFormat = new DecimalFormat("#.##");
+        decimalFormat.format(poi.getRating());
+        poiRatingText.setText(decimalFormat + "/5");
+    }
+
+    private void setRatingBarsStyle() {
+        findViewById(R.id.ratings).setBackgroundColor(Color.parseColor("#35A8DF"));
+        poiRatingText.setTextColor(Color.BLACK);
+        poiRatingBar.setBackgroundColor(Color.parseColor("#35A8DF"));
+        userRatingBar.setBackgroundColor(Color.parseColor("#35A8DF"));
     }
 
     @Override

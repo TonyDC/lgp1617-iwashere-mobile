@@ -29,36 +29,34 @@
                 android:layout_height="match_parent"
                 android:padding="25dp"/>
 
-        <RelativeLayout
-            android:id="@+id/ratings"
-            android:orientation="vertical"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:padding="25dp"
-            >
-
-            <RatingBar
-                android:id="@+id/poiRatingBar"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:numStars="5"
-                android:stepSize="1.0"
-                />
-
-            <TextView
-                android:id="@+id/poiRatingText"
+            <RelativeLayout
+                android:id="@+id/ratings"
+                android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:textSize="20dp"
-                android:layout_toRightOf="@+id/poiRatingBar"/>
+                android:padding="25dp">
 
-            <RatingBar
-                android:id="@+id/userRatingBar"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:numStars="5"
-                android:layout_below="@+id/poiRatingBar"
-                android:stepSize="1.0"/>
+                <RatingBar
+                    android:id="@+id/poiRatingBar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:numStars="5"
+                    android:stepSize="1.0"/>
+
+                <TextView
+                    android:id="@+id/poiRatingText"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:textSize="20dp"
+                    android:layout_toRightOf="@+id/poiRatingBar"/>
+
+                <RatingBar
+                    android:id="@+id/userRatingBar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:numStars="5"
+                    android:layout_below="@+id/poiRatingBar"
+                    android:stepSize="1.0"/>
 
             </RelativeLayout>
 
