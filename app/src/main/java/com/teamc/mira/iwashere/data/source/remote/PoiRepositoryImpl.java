@@ -7,6 +7,7 @@ import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.RequestFuture;
 import com.teamc.mira.iwashere.data.source.remote.exceptions.BasicRemoteException;
@@ -14,6 +15,7 @@ import com.teamc.mira.iwashere.data.source.remote.exceptions.RemoteDataException
 import com.teamc.mira.iwashere.domain.model.PoiModel;
 import com.teamc.mira.iwashere.domain.repository.PoiRepository;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -55,22 +57,29 @@ public class PoiRepositoryImpl extends AbstractRepository implements PoiReposito
         RequestQueue queue = MySingleton.getInstance(this.mContext).getRequestQueue();
 
         // TODO: 03/04/2017 Extract url
-        String url ="http://192.168.1.69:8080/poi/range";
+        String url ="http://172.30.5.114:8080/poi/range";
 
-        final HashMap<String, String> params = getMapRangeParameters( maxLat, minLat, maxLong, minLong);
+        url += minLat+"/"+maxLat+"/"+minLong+"/"+maxLong;
 
-        RequestFuture<JSONObject> future = RequestFuture.newFuture();
-        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, new JSONObject(params), future, future);
+        RequestFuture<JSONArray> future = RequestFuture.newFuture();
+        JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, url, null, future, future);
         queue.add(request);
 
         try {
-            JSONObject response = future.get(); // this will block
+            JSONArray response = future.get(); // this will block
             Log.d(TAG, String.valueOf(response));
 
-            ArrayList<PoiModel> poiModels;
-            // TODO: 16/04/2017 Extract poi models from json
-            throw new UnsupportedOperationException();
-//            return poiModels;
+            ArrayList<PoiModel> poiModels = new ArrayList<PoiModel>();
+            PoiModel poiModel;
+            JSONObject object;
+
+            for (int i = 0; i < response.length(); i++) {
+                object = response.getJSONObject(i);
+                poiModel = new PoiModel(object);
+                poiModels.add(poiModel);
+            }
+
+            return poiModels;
         } catch (InterruptedException | ExecutionException e) {
             //check to see if the throwable in an instance of the volley error
             if(e.getCause() instanceof VolleyError)
@@ -89,16 +98,15 @@ public class PoiRepositoryImpl extends AbstractRepository implements PoiReposito
                     throw (RemoteDataException) new BasicRemoteException(code);
                 } catch (JSONException e1) {
                     e1.printStackTrace();
-                    return null;
+                    throw (RemoteDataException) new BasicRemoteException("unknown-error");
                 }
             }
             e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw (RemoteDataException) new BasicRemoteException("unknown-error");
         }
         return null;
-    }
-
-    private HashMap<String, String> getMapRangeParameters(double maxLat, double minLat, double maxLong, double minLong) {
-        throw new UnsupportedOperationException();
     }
 
 }
