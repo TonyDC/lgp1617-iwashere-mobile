@@ -15,8 +15,8 @@ public abstract class AbstractPOIRepository implements PoiRepository {
     @NonNull
     protected HashMap<String, String> getPostRatingParams(String poiId, String userId, int newPoiRating) {
         HashMap<String, String> params = new HashMap<String, String>();
-        params.put("poiId",poiId);
-        params.put("userId", userId);
+        params.put("poiID",poiId);
+        params.put("userID", userId);
         params.put("rating", newPoiRating + "");
         return params;
     }
