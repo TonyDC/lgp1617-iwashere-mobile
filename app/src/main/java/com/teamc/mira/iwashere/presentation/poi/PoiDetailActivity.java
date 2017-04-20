@@ -42,8 +42,8 @@ public class PoiDetailActivity extends AppCompatActivity {
 
     /* View components */
     SliderLayout sliderShow;
-    TextView textDescription;
-    ImageView textAddress;
+    TextView textDescription, addressT, addressF, hoursT, hoursF;
+    ImageView pinPoint;
     RatingBar poiRatingBar;
     TextView poiRatingText;
     RatingBar userRatingBar;
@@ -95,7 +95,7 @@ public class PoiDetailActivity extends AppCompatActivity {
 
         setPoiRatingBars();
 
-        setPoiAdressPanel();
+        setPoiAddressPanel();
 
         setPoiContentGrid();
     }
@@ -117,9 +117,25 @@ public class PoiDetailActivity extends AppCompatActivity {
     }
 
     // TODO: improve this
-    private void setPoiAdressPanel() {
-        textAddress = (ImageView) findViewById(R.id.address);
-        textAddress.setBackgroundColor(Color.parseColor("#35A8DF"));
+    private void setPoiAddressPanel() {
+        findViewById(R.id.address).setBackgroundColor(Color.parseColor("#35A8DF"));
+        findViewById(R.id.hours).setBackgroundColor(Color.parseColor("#35A8DF"));
+        addressF = (TextView) findViewById(R.id.addressF);
+        addressT = (TextView) findViewById(R.id.addressT);
+        hoursF = (TextView) findViewById(R.id.hoursF);
+        hoursT = (TextView) findViewById(R.id.hoursT);
+        pinPoint = (ImageView) findViewById(R.id.pinpoint);
+
+        pinPoint.setBackgroundColor(Color.parseColor("#35A8DF"));
+
+        addressT.setText("Address");
+        addressT.setTextColor(Color.WHITE);
+        addressF.setText(poi.getAddress());
+
+        hoursT.setText("Hours");
+        hoursT.setTextColor(Color.WHITE);
+        hoursF.setText("8-10pm");
+
     }
 
     /**
