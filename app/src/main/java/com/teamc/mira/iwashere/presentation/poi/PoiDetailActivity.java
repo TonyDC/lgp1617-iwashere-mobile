@@ -100,6 +100,8 @@ public class PoiDetailActivity extends AppCompatActivity {
         setPoiRatingBars();
         setPoiAddressPanel();
         setPoiContentGrid();
+        getSupportActionBar().setTitle(poi.getName());
+
     }
 
     private void fetchPoiInfo(String poiId) {
@@ -137,7 +139,7 @@ public class PoiDetailActivity extends AppCompatActivity {
 
         setPoiContentGrid();
 
-        getSupportActionBar().setTitle(poi.getName());
+
         PoiDetailInteractor poiDetailInteractor = new PoiDetailInteractorImpl(
                 executor,
                 mainThread,
