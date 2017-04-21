@@ -170,7 +170,7 @@ public class PoiDetailActivity extends AppCompatActivity {
     // TODO: improve this
     private void setPoiAddressPanel() {
         findViewById(R.id.addressPinPoint).setBackgroundColor(Color.parseColor("#35A8DF"));
-
+        findViewById(R.id.hours).setVisibility(View.GONE);
         addressF = (TextView) findViewById(R.id.addressF);
         addressT = (TextView) findViewById(R.id.addressT);
         hoursF = (TextView) findViewById(R.id.hoursF);
