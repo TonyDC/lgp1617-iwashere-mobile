@@ -19,21 +19,12 @@ import static org.mockito.Mockito.when;
 /**
  * Created by Duart on 03/04/2017.
  */
-public class SignupInteractorImplTest {
+public class SignupInteractorImplTest extends InteractorTest {
 
-    MainThread                                  mMainThread;
-    @Mock Executor                              mExecutor;
     @Mock AuthInteractor.Callback             mMockedCallback;
-    @Mock Context                               mContext;
     @Mock UserRepository                        mUserRepository;
 
     @Mock String email, username, password, confirmPassword;
-
-    @Before
-    public void setUp() throws Exception {
-        MockitoAnnotations.initMocks(this);
-        mMainThread = new TestMainThread();
-    }
 
     @Test
     public void testOnSuccess() throws Exception {

@@ -21,6 +21,9 @@ android {
         abortOnError false
         lintConfig file('lint.xml')
     }
+    testOptions{
+//        unitTests.returnDefaultValues = true;
+    }
 }
 
 dependencies {

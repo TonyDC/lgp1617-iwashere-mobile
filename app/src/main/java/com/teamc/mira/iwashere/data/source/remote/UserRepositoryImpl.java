@@ -27,6 +27,10 @@ public class UserRepositoryImpl extends AbstractUserRepository implements UserRe
         super(mContext);
     }
 
+    public UserRepositoryImpl(RequestQueue requestQueue){
+        super(requestQueue);
+    }
+
     public static final String TAG = UserRepositoryImpl.class.getSimpleName();
     @Override
     public boolean isValidUsername(String username) {
@@ -36,7 +40,7 @@ public class UserRepositoryImpl extends AbstractUserRepository implements UserRe
     @Override
     public boolean signup(String email, String username, String password, String confirmPassword) throws RemoteDataException {
         // Instantiate the RequestQueue.
-        RequestQueue queue = MySingleton.getInstance(mContext).getRequestQueue();
+        RequestQueue queue = mRequestQueue;
 
         // TODO: 03/04/2017 Extract url
         String url ="http://192.168.1.69:8080/api/signup";

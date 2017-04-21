@@ -1,5 +1,7 @@
 package com.teamc.mira.iwashere.domain.interactors.impl;
 
+import android.util.Log;
+
 import com.teamc.mira.iwashere.data.source.remote.exceptions.RemoteDataException;
 import com.teamc.mira.iwashere.domain.executor.Executor;
 import com.teamc.mira.iwashere.domain.executor.MainThread;
@@ -12,6 +14,8 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class PoiMapInteractorImpl extends AbstractInteractor implements PoiMapInteractor {
+    public final static String TAG= PoiMapInteractorImpl.class.getSimpleName();
+
     CallBack mCallBack;
     PoiRepository mRepository;
     double mMinLatitude;
@@ -57,7 +61,9 @@ public class PoiMapInteractorImpl extends AbstractInteractor implements PoiMapIn
     public void run() {
         try {
             ArrayList<PoiModel> poiModels;
+            Log.d(TAG, "Start fetch");
             poiModels = mRepository.fetchPoisInArea(mMaxLatitude, mMinLatitude, mMaxLongitude, mMinLongitude);
+            Log.d(TAG, "finished fetch");
             notifySuccess(poiModels);
         } catch (RemoteDataException e) {
             notifyError(e.getCode(),e.getErrorMessage());

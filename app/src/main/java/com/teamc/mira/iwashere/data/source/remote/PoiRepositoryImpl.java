@@ -1,25 +1,27 @@
 package com.teamc.mira.iwashere.data.source.remote;
 
 import android.content.Context;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.RequestFuture;
 import com.teamc.mira.iwashere.data.source.remote.exceptions.BasicRemoteException;
 import com.teamc.mira.iwashere.data.source.remote.exceptions.RemoteDataException;
 import com.teamc.mira.iwashere.domain.model.PoiModel;
 import com.teamc.mira.iwashere.domain.repository.PoiRepository;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 import static android.content.ContentValues.TAG;
 
@@ -27,6 +29,10 @@ import static android.content.ContentValues.TAG;
 public class PoiRepositoryImpl extends AbstractRepository implements PoiRepository {
     public PoiRepositoryImpl(Context mContext) {
         super(mContext);
+    }
+
+    public PoiRepositoryImpl(RequestQueue requestQueue){
+        super(requestQueue);
     }
 
     @Override
@@ -51,26 +57,38 @@ public class PoiRepositoryImpl extends AbstractRepository implements PoiReposito
 
     @Override
     public ArrayList<PoiModel> fetchPoisInArea(double maxLat, double minLat, double maxLong, double minLong) throws RemoteDataException {
-// Instantiate the RequestQueue.
-        RequestQueue queue = MySingleton.getInstance(this.mContext).getRequestQueue();
+        // Instantiate the RequestQueue.
+        RequestQueue queue = mRequestQueue;
 
         // TODO: 03/04/2017 Extract url
-        String url ="http://192.168.1.69:8080/poi/range";
+        String url ="http://192.168.1.69:8080/api/poi/range/";
 
-        final HashMap<String, String> params = getMapRangeParameters( maxLat, minLat, maxLong, minLong);
-
-        RequestFuture<JSONObject> future = RequestFuture.newFuture();
-        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, new JSONObject(params), future, future);
+        url = url.concat(minLat+"/"+maxLat+"/"+minLong+"/"+maxLong);
+        Log.d(TAG, url);
+        RequestFuture<JSONArray> future = RequestFuture.newFuture();
+        JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, url, null, future, future);
         queue.add(request);
 
-        try {
-            JSONObject response = future.get(); // this will block
-            Log.d(TAG, String.valueOf(response));
+        return getPoiModelsFromRequest(future);
+    }
 
-            ArrayList<PoiModel> poiModels;
-            // TODO: 16/04/2017 Extract poi models from json
-            throw new UnsupportedOperationException();
-//            return poiModels;
+    @Nullable
+    ArrayList<PoiModel> getPoiModelsFromRequest(RequestFuture<JSONArray> future) throws RemoteDataException {
+        try {
+            JSONArray response = future.get(3000, TimeUnit.MILLISECONDS); // this will block
+            System.out.println(TAG+": " + String.valueOf(response));
+
+            ArrayList<PoiModel> poiModels = new ArrayList<PoiModel>();
+            PoiModel poiModel;
+            JSONObject object;
+
+            for (int i = 0; i < response.length(); i++) {
+                object = response.getJSONObject(i);
+                poiModel = new PoiModel(object);
+                poiModels.add(poiModel);
+            }
+
+            return poiModels;
         } catch (InterruptedException | ExecutionException e) {
             //check to see if the throwable in an instance of the volley error
             if(e.getCause() instanceof VolleyError)
@@ -89,16 +107,15 @@ public class PoiRepositoryImpl extends AbstractRepository implements PoiReposito
                     throw (RemoteDataException) new BasicRemoteException(code);
                 } catch (JSONException e1) {
                     e1.printStackTrace();
-                    return null;
+                    throw (RemoteDataException) new BasicRemoteException("unknown-error");
                 }
             }
             e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw (RemoteDataException) new BasicRemoteException("unknown-error");
         }
         return null;
-    }
-
-    private HashMap<String, String> getMapRangeParameters(double maxLat, double minLat, double maxLong, double minLong) {
-        throw new UnsupportedOperationException();
     }
 
 }
