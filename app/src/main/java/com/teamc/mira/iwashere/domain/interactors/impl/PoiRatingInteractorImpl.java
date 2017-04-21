@@ -11,7 +11,7 @@ import com.teamc.mira.iwashere.domain.repository.PoiRepository;
 public class PoiRatingInteractorImpl extends AbstractInteractor implements PoiDetailInteractor {
     CallBack callBack;
     PoiRepository repository;
-    PoiModel poi = new PoiModel();
+    PoiModel poi;
     String userId;
     int newPoiRating;
 
@@ -63,19 +63,14 @@ public class PoiRatingInteractorImpl extends AbstractInteractor implements PoiDe
 
     @Override
     public void run() {
-        PoiModel updatedPoi = null;
 
         try {
-            updatedPoi = repository.setPoiUserRating(poi.getId(), userId, newPoiRating);
+            repository.setPoiUserRating(poi, userId, newPoiRating);
         } catch (RemoteDataException e) {
             notifyError(e.getCode(),e.getErrorMessage());
             return;
         }
-
-        poi.setRating(updatedPoi.getRating());
-        poi.setRatingCount(updatedPoi.getRatingCount());
-        poi.setUserRating(updatedPoi.getUserRating());
-
+        
         // POI rating updated
         notifySuccess(poi);
     }
