@@ -27,6 +27,7 @@ import com.teamc.mira.iwashere.domain.interactors.PoiMapInteractor;
 import com.teamc.mira.iwashere.domain.interactors.impl.PoiMapInteractorImpl;
 import com.teamc.mira.iwashere.domain.interactors.impl.SignoutInteractorImpl;
 import com.teamc.mira.iwashere.domain.model.PoiModel;
+import com.teamc.mira.iwashere.domain.repository.PoiRepository;
 import com.teamc.mira.iwashere.domain.repository.Repository;
 import com.teamc.mira.iwashere.domain.repository.UserRepository;
 import com.teamc.mira.iwashere.presentation.auth.AuthenticateActivity;
@@ -54,12 +55,12 @@ public class AccountFragment extends Fragment {
         ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
 
 
-        PoiMapInteractor.CallBack callBack = new PoiMapInteractor.CallBack() {
+        /*PoiMapInteractor.CallBack callBack = new PoiMapInteractor.CallBack() {
             @Override
             public void onSuccess(ArrayList<PoiModel> poiModels) {
                 TextView textView = (TextView) v.findViewById(R.id.hello_world_account);
                 textView.setText(" POI1: "+ poiModels.get(0).getName()+"\n POI2: "+poiModels.get(1).getName());
-                Toast.makeText(getActivity(), poiModels.size(), Toast.LENGTH_LONG).show();
+                Toast.makeText(getActivity(), ""+poiModels.size(), Toast.LENGTH_LONG).show();
             }
 
             @Override
@@ -72,16 +73,16 @@ public class AccountFragment extends Fragment {
                 Toast.makeText(getActivity(), "Falha na conecção", Toast.LENGTH_LONG).show();
             }
         };
-
+        PoiRepository poiRepository = new PoiRepositoryImpl(getActivity());
         PoiMapInteractorImpl poiMapInteractor = new PoiMapInteractorImpl(
                 ThreadExecutor.getInstance(),
                 MainThreadImpl.getInstance(),
                 callBack,
-                new PoiRepositoryImpl(getActivity()),
-                4.3,4.4,4.3,4.4
+                poiRepository,
+                43,44,43,44
         );
 
-        poiMapInteractor.execute();
+        poiMapInteractor.execute();*/
 
         return v;
     }

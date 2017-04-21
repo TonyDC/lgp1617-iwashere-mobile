@@ -61,10 +61,10 @@ public class PoiRepositoryImpl extends AbstractRepository implements PoiReposito
         RequestQueue queue = mRequestQueue;
 
         // TODO: 03/04/2017 Extract url
-        String url ="http://172.30.5.114:8080/poi/range";
+        String url ="http://192.168.1.69:8080/api/poi/range/";
 
-        url += minLat+"/"+maxLat+"/"+minLong+"/"+maxLong;
-
+        url = url.concat(minLat+"/"+maxLat+"/"+minLong+"/"+maxLong);
+        Log.d(TAG, url);
         RequestFuture<JSONArray> future = RequestFuture.newFuture();
         JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, url, null, future, future);
         queue.add(request);
@@ -75,7 +75,7 @@ public class PoiRepositoryImpl extends AbstractRepository implements PoiReposito
     @Nullable
     ArrayList<PoiModel> getPoiModelsFromRequest(RequestFuture<JSONArray> future) throws RemoteDataException {
         try {
-            JSONArray response = future.get(1000, TimeUnit.MILLISECONDS); // this will block
+            JSONArray response = future.get(3000, TimeUnit.MILLISECONDS); // this will block
             System.out.println(TAG+": " + String.valueOf(response));
 
             ArrayList<PoiModel> poiModels = new ArrayList<PoiModel>();

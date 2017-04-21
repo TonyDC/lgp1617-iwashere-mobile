@@ -46,7 +46,7 @@ public class PoiModel {
     public PoiModel(JSONObject poi) throws JSONException {
         this.id = poi.getString("id");
         this.name = poi.getString("name");
-        this.description = poi.getString("descritpion");
+        this.description = poi.getString("description");
         this.address = poi.getString("address");
         this.longitude = poi.getString("longitude");
         this.latitude = poi.getString("latitude");
