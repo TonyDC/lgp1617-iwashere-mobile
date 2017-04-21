@@ -21,8 +21,4 @@ public abstract class AbstractPOIRepository implements PoiRepository {
         return params;
     }
 
-    @NonNull
-    protected PoiModel getPoiDetails(JSONObject response) {
-        throw new UnsupportedOperationException();
-    }
 }

@@ -76,7 +76,7 @@ public class PoiRatingInteractorImpl extends AbstractInteractor implements PoiDe
         PoiModel poi;
 
         try {
-            poi = repository.setPOIRating(poiId, userId, newPoiRating);
+            poi = repository.setPoiUserRating(poiId, userId, newPoiRating);
         } catch (RemoteDataException e) {
             notifyError(e.getCode(),e.getErrorMessage());
             return;

@@ -25,68 +25,97 @@ public class PoiRepositoryImpl extends AbstractPOIRepository implements PoiRepos
     Context mContext;
 
     public static final String TAG = UserRepositoryImpl.class.getSimpleName();
+    public static final String API_POI_URL = "http://192.168.1.69:8080/api/poi/"; // TODO change this
+    public static final String API_POI_RATING_URL = API_POI_URL + "/rating";
+
 
     public PoiRepositoryImpl(Context mContext) {
         this.mContext = mContext;
     }
 
     @Override
-    public PoiModel fetchPoi(String id) throws RemoteDataException {
-        throw new UnsupportedOperationException();
+    public PoiModel fetchPoi(String poiId) throws RemoteDataException {
+        // Instantiate the RequestQueue.
+        RequestQueue queue = MySingleton.getInstance(mContext).getRequestQueue();
+
+        String url = API_POI_URL + poiId;
+
+        RequestFuture<JSONObject> future = RequestFuture.newFuture();
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null, future, future);
+        queue.add(request);
+
+        try {
+            JSONObject response = future.get(); // this will block
+
+            return new PoiModel(response);
+        } catch (InterruptedException | ExecutionException | JSONException e) {
+            handleError(e);
+            return null;
+        }
     }
 
     @Override
-    public PoiModel fetchPoi(PoiModel poi) throws RemoteDataException {
-        return fetchPoi(poi.getId());
+    public PoiModel fetchPoiRating(String poiId) throws RemoteDataException {
+        RequestQueue queue = MySingleton.getInstance(mContext).getRequestQueue();
+
+        RequestFuture<JSONObject> future = RequestFuture.newFuture();
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, API_POI_RATING_URL, null, future, future);
+        queue.add(request);
+
+        try {
+            JSONObject response = future.get(); // this will block
+
+            PoiModel poiRating = new PoiModel();
+            poiRating.setRating((float) response.getDouble("rating"));
+            poiRating.setRatingCount((int) response.getInt("ratings"));
+            return poiRating;
+        } catch (InterruptedException | ExecutionException | JSONException e) {
+            handleError(e);
+            return null;
+        }
     }
 
     @Override
-    public PoiModel getPoiRating(String poiId, String userId) throws RemoteDataException {
-        throw new UnsupportedOperationException();
+    public PoiModel fetchPoiUserRating(String poiId, String userId) throws RemoteDataException {
+        RequestQueue queue = MySingleton.getInstance(mContext).getRequestQueue();
+
+        String url = API_POI_RATING_URL + "/" + poiId + "/" + userId;
+
+        RequestFuture<JSONObject> future = RequestFuture.newFuture();
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null, future, future);
+        queue.add(request);
+
+        try {
+            JSONObject response = future.get(); // this will block
+
+            PoiModel poiRating = new PoiModel();
+            poiRating.setUserRating((float) response.getDouble("rating"));
+            return poiRating;
+        } catch (InterruptedException | ExecutionException | JSONException e) {
+            handleError(e);
+            return null;
+        }
     }
 
     @Override
-    public PoiModel setPOIRating(String poiId, String userId, int newPoiRating) throws RemoteDataException {
+    public PoiModel setPoiUserRating(String poiId, String userId, int newPoiRating) throws RemoteDataException {
             // Instantiate the RequestQueue.
             RequestQueue queue = MySingleton.getInstance(mContext).getRequestQueue();
-
-            // TODO change this
-            String url ="http://192.168.1.69:8080/api/poi/rating/";
 
             final HashMap<String, String> params = getPostRatingParams(poiId, userId, newPoiRating);
 
             RequestFuture<JSONObject> future = RequestFuture.newFuture();
-            JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, url, new JSONObject(params), future, future);
+            JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, API_POI_RATING_URL, new JSONObject(params), future, future);
             queue.add(request);
 
             try {
                 JSONObject response = future.get(); // this will block
 
-                return getPoiDetails(response);
+                return fetchPoiRating(poiId);
             } catch (InterruptedException | ExecutionException e) {
-                //check to see if the throwable in an instance of the volley error
-                if(e.getCause() instanceof VolleyError)
-                {
-                    //grab the volley error from the throwable and cast it back
-                    VolleyError volleyError = (VolleyError)e.getCause();
-                    //now just grab the network response like normal
-                    NetworkResponse networkResponse = volleyError.networkResponse;
-                    try {
-                        Log.d(TAG, "raw data: "+ new String(networkResponse.data));
-                        JSONObject data = new JSONObject(new String(networkResponse.data));
-                        Log.d(TAG, data.toString());
-
-                        String code = data.getString("code");
-
-                        throw (RemoteDataException) new BasicRemoteException(code);
-                    } catch (JSONException e1) {
-                        e1.printStackTrace();
-                        return null;
-                    }
-                }
-                e.printStackTrace();
+                handleError(e);
+                return null;
             }
-            return null;
     }
 
     @Override
@@ -97,5 +126,30 @@ public class PoiRepositoryImpl extends AbstractPOIRepository implements PoiRepos
     @Override
     public PoiModel removeReminder(PoiModel poi) throws RemoteDataException {
         throw new UnsupportedOperationException();
+    }
+
+    private void handleError(Exception e) throws RemoteDataException {
+        // check to see if the throwable is an instance of the volley error
+        if(e.getCause() instanceof VolleyError)
+        {
+            // grab the volley error from the throwable and cast it back
+            VolleyError volleyError = (VolleyError)e.getCause();
+            // now just grab the network response like normal
+            NetworkResponse networkResponse = volleyError.networkResponse;
+            try {
+                Log.d(TAG, "raw data: "+ new String(networkResponse.data));
+                JSONObject data = new JSONObject(new String(networkResponse.data));
+                Log.d(TAG, data.toString());
+
+                String code = data.getString("code");
+
+                throw (RemoteDataException) new BasicRemoteException(code);
+            } catch (JSONException e1) {
+                e1.printStackTrace();
+                return;
+            }
+        }
+        e.printStackTrace();
+        return;
     }
 }
