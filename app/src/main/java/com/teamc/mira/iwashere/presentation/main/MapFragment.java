@@ -35,12 +35,20 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.teamc.mira.iwashere.R;
+import com.teamc.mira.iwashere.data.source.remote.PoiRepositoryImpl;
+import com.teamc.mira.iwashere.domain.executor.impl.ThreadExecutor;
+import com.teamc.mira.iwashere.domain.interactors.PoiMapInteractor;
+import com.teamc.mira.iwashere.domain.interactors.impl.PoiMapInteractorImpl;
+import com.teamc.mira.iwashere.domain.model.PoiModel;
+import com.teamc.mira.iwashere.threading.MainThreadImpl;
+
+import java.util.ArrayList;
 
 public class MapFragment extends Fragment implements
-        GoogleMap.OnCameraMoveStartedListener,
+//        GoogleMap.OnCameraMoveStartedListener,
         GoogleMap.OnCameraMoveListener,
-        GoogleMap.OnCameraMoveCanceledListener,
-        GoogleMap.OnCameraIdleListener,
+//        GoogleMap.OnCameraMoveCanceledListener,
+//        GoogleMap.OnCameraIdleListener,
         OnMapReadyCallback,
         GoogleApiClient.OnConnectionFailedListener {
 
@@ -248,10 +256,40 @@ public class MapFragment extends Fragment implements
         double minLat, maxLat, minLng, maxLng;
         minLat = southwest.latitude; maxLat = northeast.latitude; minLng = southwest.longitude; maxLng = northeast.longitude;
 
+        PoiMapInteractor.CallBack callBack = new PoiMapInteractor.CallBack() {
+            @Override
+            public void onSuccess(ArrayList<PoiModel> poiModels) {
+
+            }
+
+            @Override
+            public void onFail(String message) {
+                if(message == null || message.length() == 0) message = "Error fetching data";
+
+                Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onNetworkError() {
+                Toast.makeText(getActivity(), "Failed connection!", Toast.LENGTH_SHORT).show();
+            }
+        };
+
+        PoiMapInteractorImpl poiMapInteractor = new PoiMapInteractorImpl(
+                ThreadExecutor.getInstance(),
+                MainThreadImpl.getInstance(),
+                callBack,
+                new PoiRepositoryImpl(getActivity()),
+                minLat,maxLat,minLng,maxLng
+        );
+
+        poiMapInteractor.execute();
+
+
         Toast.makeText(getActivity(), "Lat: "+minLat+" - "+maxLat +" ; Lng: "+minLng+" - "+maxLng, Toast.LENGTH_SHORT).show();
     }
 
-    @Override
+    /*@Override
     public void onCameraMoveStarted(int i) {
 
     }
@@ -264,5 +302,5 @@ public class MapFragment extends Fragment implements
     @Override
     public void onCameraMoveCanceled() {
 
-    }
+    }*/
 }

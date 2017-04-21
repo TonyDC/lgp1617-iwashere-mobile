@@ -60,10 +60,9 @@ public class PoiRepositoryImpl extends AbstractRepository implements PoiReposito
         // Instantiate the RequestQueue.
         RequestQueue queue = mRequestQueue;
 
-        // TODO: 03/04/2017 Extract url
-        String url ="http://192.168.1.69:8080/api/poi/range/";
+        String url = ServerUrl.getUrl()+ServerUrl.API+ServerUrl.POI+ServerUrl.RANGE;
 
-        url = url.concat(minLat+"/"+maxLat+"/"+minLong+"/"+maxLong);
+        url = url.concat("/"+minLat+"/"+maxLat+"/"+minLong+"/"+maxLong);
         Log.d(TAG, url);
         RequestFuture<JSONArray> future = RequestFuture.newFuture();
         JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, url, null, future, future);
