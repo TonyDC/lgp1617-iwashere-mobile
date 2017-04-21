@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
-import android.graphics.Rect;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -52,7 +51,7 @@ public class MapFragment extends Fragment implements
         OnMapReadyCallback,
         GoogleApiClient.OnConnectionFailedListener {
 
-    private static final String LOG_TAG = MapFragment.class.getSimpleName();
+    private static final String TAG = MapFragment.class.getSimpleName();
     private static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
     private static final String INTENT_NEW_LOCATION = "New Location";
 
@@ -193,7 +192,7 @@ public class MapFragment extends Fragment implements
                     }
                 } else {
                     Toast.makeText(getActivity(), "Location Permission Denied", Toast.LENGTH_LONG).show();
-                    Log.i(LOG_TAG, "Location Permission Denied.");
+                    Log.i(TAG, "Location Permission Denied.");
                 }
             }
         }
@@ -210,7 +209,7 @@ public class MapFragment extends Fragment implements
                 case "New Location":
                     Bundle bundle = intent.getExtras();
                     if (bundle != null) {
-                        Log.i(LOG_TAG, "Location Received.");
+                        Log.i(TAG, "Location Received.");
                         String latitude = bundle.getString("latitude");
                         String longitude = bundle.getString("longitude");
                         mLatitude = Double.parseDouble(latitude);
@@ -259,16 +258,29 @@ public class MapFragment extends Fragment implements
         PoiMapInteractor.CallBack callBack = new PoiMapInteractor.CallBack() {
             @Override
             public void onSuccess(ArrayList<PoiModel> poiModels) {
+                Log.d(TAG, "PoiMapInteractor.CallBack onSuccess");
 
+                PoiModel model;
+                for (int i = 0; i < poiModels.size(); i++) {
+                    model = poiModels.get(i);
+                    MarkerOptions markerOptions = new MarkerOptions();
+                    markerOptions.position(new LatLng(new Double(model.getLatitude()),new Double(model.getLongitude())));
+                    markerOptions.title(model.getName());
+
+                    //noinspection ResourceType
+                    String colorStr=getResources().getString(R.color.colorAccentPrimary);
+                    markerOptions.icon(getMarkerIcon(colorStr));
+
+                    mCurrentLocationMarker = mGoogleMap.addMarker(markerOptions);
+                    Log.d(TAG, "POI MARKER: "+model.getName());
+                }
             }
-
             @Override
             public void onFail(String message) {
                 if(message == null || message.length() == 0) message = "Error fetching data";
 
                 Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
             }
-
             @Override
             public void onNetworkError() {
                 Toast.makeText(getActivity(), "Failed connection!", Toast.LENGTH_SHORT).show();
@@ -279,28 +291,12 @@ public class MapFragment extends Fragment implements
                 ThreadExecutor.getInstance(),
                 MainThreadImpl.getInstance(),
                 callBack,
-                new PoiRepositoryImpl(getActivity()),
+                new PoiRepositoryImpl(getContext()),
                 minLat,maxLat,minLng,maxLng
         );
-
         poiMapInteractor.execute();
-
 
         Toast.makeText(getActivity(), "Lat: "+minLat+" - "+maxLat +" ; Lng: "+minLng+" - "+maxLng, Toast.LENGTH_SHORT).show();
     }
 
-    /*@Override
-    public void onCameraMoveStarted(int i) {
-
-    }
-
-    @Override
-    public void onCameraIdle() {
-
-    }
-
-    @Override
-    public void onCameraMoveCanceled() {
-
-    }*/
 }

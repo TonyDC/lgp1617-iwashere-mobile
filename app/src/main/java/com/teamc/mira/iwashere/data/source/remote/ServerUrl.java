@@ -6,7 +6,7 @@ package com.teamc.mira.iwashere.data.source.remote;
 
 public class ServerUrl {
 
-    static final String DOMAIN = "duarte-asus";
+    static final String DOMAIN = "172.30.5.114";
     static final String PORT = "8080";
 
     public static String getUrl(){
