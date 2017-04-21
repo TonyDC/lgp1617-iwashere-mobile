@@ -1,13 +1,13 @@
 package com.teamc.mira.iwashere.presentation.main;
 
-import android.Manifest;
-import android.app.AlertDialog;
+import android.Manifest; import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.graphics.Rect;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -29,11 +29,18 @@ import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.teamc.mira.iwashere.R;
 
-public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleApiClient.OnConnectionFailedListener {
+public class MapFragment extends Fragment implements
+        GoogleMap.OnCameraMoveStartedListener,
+        GoogleMap.OnCameraMoveListener,
+        GoogleMap.OnCameraMoveCanceledListener,
+        GoogleMap.OnCameraIdleListener,
+        OnMapReadyCallback,
+        GoogleApiClient.OnConnectionFailedListener {
 
     private static final String LOG_TAG = MapFragment.class.getSimpleName();
     private static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
@@ -90,6 +97,14 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
         } else {
             mGoogleMap.setMyLocationEnabled(true);
         }
+
+//        mGoogleMap.setOnCameraIdleListener(this);
+//        mGoogleMap.setOnCameraMoveStartedListener(this);
+        mGoogleMap.setOnCameraMoveListener(this);
+//        mGoogleMap.setOnCameraMoveCanceledListener(this);
+
+        // Initialized for onCameraMoveListener to use
+        mCurrentCameraBounds = mGoogleMap.getProjection().getVisibleRegion().latLngBounds;
     }
 
     @Override
@@ -112,6 +127,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
             mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 14.0f));
             mFirstZoomFlag = true;
         }
+
+
+
     }
 
     private void checkLocationPermission() {
@@ -185,4 +203,64 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
             }
         }
     };
+
+
+    //Variables needed to keep status of the last call in order to avoid overcalling the onCameraMove function
+    private static int CAMERA_MOVE_REACT_THRESHOLD_MS = 500;
+    private long mLastCallMs = Long.MIN_VALUE;
+    private LatLngBounds mCurrentCameraBounds;
+
+    @Override
+    public void onCameraMove() {
+        LatLngBounds bounds = mGoogleMap.getProjection().getVisibleRegion().latLngBounds;
+
+        // Check whether the camera changes report the same boundaries (?!), yes, it happens
+        if (mCurrentCameraBounds.northeast.latitude == bounds.northeast.latitude
+                && mCurrentCameraBounds.northeast.longitude == bounds.northeast.longitude
+                && mCurrentCameraBounds.southwest.latitude == bounds.southwest.latitude
+                && mCurrentCameraBounds.southwest.longitude == bounds.southwest.longitude) {
+            return;
+        }
+
+        final long snap = System.currentTimeMillis();
+        if (mLastCallMs + CAMERA_MOVE_REACT_THRESHOLD_MS > snap) {
+            mLastCallMs = snap;
+            return;
+        }
+
+        //Store cache fields
+        mLastCallMs = snap;
+        mCurrentCameraBounds = bounds;
+
+
+
+        //Fetch data
+        LatLng northeast = bounds.northeast;
+        LatLng southwest = bounds.southwest;
+
+        double minLat, maxLat, minLng, maxLng;
+
+        minLat = southwest.latitude;
+        maxLat = northeast.latitude;
+
+        minLng = southwest.longitude;
+        maxLng = northeast.longitude;
+
+        Toast.makeText(getActivity(), "Lat: "+minLat+" - "+maxLat +" ; Lng: "+minLng+" - "+maxLng, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onCameraMoveStarted(int i) {
+
+    }
+
+    @Override
+    public void onCameraIdle() {
+
+    }
+
+    @Override
+    public void onCameraMoveCanceled() {
+
+    }
 }
