@@ -16,33 +16,42 @@ public interface PoiRepository {
     PoiModel fetchPoi(String poiId) throws RemoteDataException;
 
     /**
-     * Fetch a POI's rating through API.
-     * @param poiId the POI's id
-     * @return PoiModel with the POI's rating and rating count
+     * Fetch a POI's media list through API.
+     * @param poi the PoiModel with information about the POI
+     * @return true upon success, false otherwise
      * @throws RemoteDataException
+     * @see PoiModel( JSONObject )
      */
-    PoiModel fetchPoiRating(String poiId) throws RemoteDataException;
+    boolean fetchPoiMedia(PoiModel poi) throws RemoteDataException;
 
     /**
-     * Fetch the rating attributed by a user to a POI through API.
-     * @param poiId the POI's id
-     * @param userId the user's id
-     * @return PoiModel with the user's rating
+     * Fetch a POI's rating through API.
+     * @param poi the PoiModel with information about the POI
+     * @return true upon success, false otherwise
      * @throws RemoteDataException
      */
-    PoiModel fetchPoiUserRating(String poiId, String userId) throws RemoteDataException;
+    boolean fetchPoiRating(PoiModel poi) throws RemoteDataException;
+
+    /**
+     * Fetch the rating attributed by a user to a POI through API, updating the PoiModel.
+     * @param poi the PoiModel with information about the POI
+     * @param userId the user's id
+     * @return true upon success, false otherwise
+     * @throws RemoteDataException
+     */
+    boolean fetchPoiUserRating(PoiModel poi, String userId) throws RemoteDataException;
 
     /**
      * Save the rating attributed by a user to a POI through API.
-     * Return the POI's updated rating through API.
-     * @param poiId the POI's id
+     * Update the POI's rating through API in the PoiModel.
+     * @param poi the PoiModel with information about the POI
      * @param userId the user's id
      * @param newPoiRating the rating the user attributed to the POI
-     * @return PoiModel with the user's rating
+     * @return true upon success, false otherwise
      * @throws RemoteDataException
-     * @see #fetchPoiRating( String )
+     * @see #fetchPoiRating( PoiModel )
      */
-    PoiModel setPoiUserRating(String poiId, String userId, int newPoiRating) throws RemoteDataException;
+    boolean setPoiUserRating(PoiModel poi, String userId, int newPoiRating) throws RemoteDataException;
 
     PoiModel setReminder(PoiModel poi)throws RemoteDataException;
 

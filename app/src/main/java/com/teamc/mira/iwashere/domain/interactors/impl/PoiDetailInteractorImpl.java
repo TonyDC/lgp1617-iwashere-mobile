@@ -9,28 +9,37 @@ import com.teamc.mira.iwashere.domain.model.PoiModel;
 import com.teamc.mira.iwashere.domain.repository.PoiRepository;
 
 public class PoiDetailInteractorImpl extends AbstractInteractor implements PoiDetailInteractor {
-    String mId;
+    String poiId;
+    String userId;
+
     PoiDetailInteractor.CallBack mCallBack;
     PoiRepository mRepository;
 
+    /**
+     * Handle the retrieval of information about the POI with the specified id.
+     * This information includes name, description, address, longitude, latitude,
+     * rating, ratingCount, and userRating if userId is set.
+     * The media associated with the POI is also set.
+     * @param threadExecutor
+     * @param mainThread
+     * @param callBack
+     * @param poiRepository
+     * @param poiId
+     * @param userId
+     */
     public PoiDetailInteractorImpl(Executor threadExecutor,
                                    MainThread mainThread,
                                    PoiDetailInteractor.CallBack callBack,
                                    PoiRepository poiRepository,
-                                   String id) {
+                                   String poiId,
+                                   String userId) {
         super(threadExecutor, mainThread);
 
         mCallBack = callBack;
         mRepository = poiRepository;
-        mId = id;
-    }
+        this.poiId = poiId;
+        this.userId = userId;
 
-    public PoiDetailInteractorImpl(Executor threadExecutor,
-                                   MainThread mainThread,
-                                   PoiDetailInteractor.CallBack callBack,
-                                   PoiRepository poiRepository,
-                                   PoiModel poi) {
-        this(threadExecutor, mainThread, callBack, poiRepository, poi.getId());
     }
 
     @Override
@@ -56,7 +65,6 @@ public class PoiDetailInteractorImpl extends AbstractInteractor implements PoiDe
                 mCallBack.onSuccess(poi);
             }
         });
-
     }
 
     @Override
@@ -68,7 +76,23 @@ public class PoiDetailInteractorImpl extends AbstractInteractor implements PoiDe
     public void run() {
         PoiModel poi;
         try {
-            poi = mRepository.fetchPoi(mId);
+            poi = mRepository.fetchPoi(poiId);
+
+            if (!mRepository.fetchPoiRating(poi)) {
+                notifyError("520", "Error fetching POI rating.");
+                return;
+            }
+
+            if(!mRepository.fetchPoiMedia(poi)) {
+                notifyError("520", "Error fetching POI's media.");
+                return;
+            }
+
+            if (userId != null && !mRepository.fetchPoiUserRating(poi, userId)) {
+                notifyError("520", "Error fetching POI user's rating.");
+                return;
+            }
+
             notifySuccess(poi);
         }catch (RemoteDataException ex){
             notifyError(ex.getCode(), ex.getErrorMessage());

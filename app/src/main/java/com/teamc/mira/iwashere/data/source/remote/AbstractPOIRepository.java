@@ -6,8 +6,13 @@ import com.teamc.mira.iwashere.domain.model.PoiModel;
 import com.teamc.mira.iwashere.domain.repository.PoiRepository;
 import com.teamc.mira.iwashere.domain.repository.UserRepository;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public abstract class AbstractPOIRepository implements PoiRepository {
@@ -19,6 +24,26 @@ public abstract class AbstractPOIRepository implements PoiRepository {
         params.put("userID", userId);
         params.put("rating", newPoiRating + "");
         return params;
+    }
+
+    @NonNull
+    protected ArrayList<URL> getMedia(JSONArray response) {
+        ArrayList<URL> mediaList = new ArrayList<>();
+
+        for (int i = 0; i < response.length(); i++) {
+            JSONObject object = null;
+            try {
+                object = response.getJSONObject(i);
+                // TODO hadle videos as well ?
+                if (object.getString("type") == "IMG") {
+                    mediaList.add(new URL(object.getString("url")));
+                }
+            } catch (JSONException | MalformedURLException  e) {
+                e.printStackTrace();
+            }
+        }
+
+        return mediaList;
     }
 
 }

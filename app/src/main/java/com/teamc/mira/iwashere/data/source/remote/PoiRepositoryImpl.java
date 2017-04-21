@@ -7,6 +7,7 @@ import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.RequestFuture;
 import com.teamc.mira.iwashere.data.source.remote.exceptions.BasicRemoteException;
@@ -14,6 +15,7 @@ import com.teamc.mira.iwashere.data.source.remote.exceptions.RemoteDataException
 import com.teamc.mira.iwashere.domain.model.PoiModel;
 import com.teamc.mira.iwashere.domain.repository.PoiRepository;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -26,8 +28,8 @@ public class PoiRepositoryImpl extends AbstractPOIRepository implements PoiRepos
 
     public static final String TAG = UserRepositoryImpl.class.getSimpleName();
     public static final String API_POI_URL = "http://192.168.1.69:8080/api/poi/"; // TODO change this
-    public static final String API_POI_RATING_URL = API_POI_URL + "/rating";
-
+    public static final String API_POI_MEDIA_URL = API_POI_URL + "/media/";
+    public static final String API_POI_RATING_URL = API_POI_URL + "/rating/";
 
     public PoiRepositoryImpl(Context mContext) {
         this.mContext = mContext;
@@ -55,31 +57,32 @@ public class PoiRepositoryImpl extends AbstractPOIRepository implements PoiRepos
     }
 
     @Override
-    public PoiModel fetchPoiRating(String poiId) throws RemoteDataException {
+    public boolean fetchPoiMedia(PoiModel poi) throws RemoteDataException {
         RequestQueue queue = MySingleton.getInstance(mContext).getRequestQueue();
 
-        RequestFuture<JSONObject> future = RequestFuture.newFuture();
-        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, API_POI_RATING_URL, null, future, future);
+        String url = API_POI_MEDIA_URL + poi.getId();
+
+        RequestFuture<JSONArray> future = RequestFuture.newFuture();
+        JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, url, null, future, future);
         queue.add(request);
 
         try {
-            JSONObject response = future.get(); // this will block
+            JSONArray response = future.get(); // this will block
 
-            PoiModel poiRating = new PoiModel();
-            poiRating.setRating((float) response.getDouble("rating"));
-            poiRating.setRatingCount((int) response.getInt("ratings"));
-            return poiRating;
-        } catch (InterruptedException | ExecutionException | JSONException e) {
+            poi.setPhotos(getMedia(response));
+
+            return true;
+        } catch (InterruptedException | ExecutionException e) {
             handleError(e);
-            return null;
+            return false;
         }
     }
 
     @Override
-    public PoiModel fetchPoiUserRating(String poiId, String userId) throws RemoteDataException {
+    public boolean fetchPoiRating(PoiModel poi) throws RemoteDataException {
         RequestQueue queue = MySingleton.getInstance(mContext).getRequestQueue();
 
-        String url = API_POI_RATING_URL + "/" + poiId + "/" + userId;
+        String url = API_POI_RATING_URL + poi.getId();
 
         RequestFuture<JSONObject> future = RequestFuture.newFuture();
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null, future, future);
@@ -88,33 +91,59 @@ public class PoiRepositoryImpl extends AbstractPOIRepository implements PoiRepos
         try {
             JSONObject response = future.get(); // this will block
 
-            PoiModel poiRating = new PoiModel();
-            poiRating.setUserRating((float) response.getDouble("rating"));
-            return poiRating;
+            float currentRating = (float) response.getDouble("rating");
+            int currentRatingCount = response.getInt("ratings");
+            poi.setRating(currentRating);
+            poi.setRatingCount(currentRatingCount);
+
+            return true;
         } catch (InterruptedException | ExecutionException | JSONException e) {
             handleError(e);
-            return null;
+            return false;
         }
     }
 
     @Override
-    public PoiModel setPoiUserRating(String poiId, String userId, int newPoiRating) throws RemoteDataException {
+    public boolean fetchPoiUserRating(PoiModel poi, String userId) throws RemoteDataException {
+        RequestQueue queue = MySingleton.getInstance(mContext).getRequestQueue();
+
+        String url = API_POI_RATING_URL + poi.getId() + "/" + userId;
+
+        RequestFuture<JSONObject> future = RequestFuture.newFuture();
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null, future, future);
+        queue.add(request);
+
+        try {
+            JSONObject response = future.get(); // this will block
+
+            poi.setUserRating((float) response.getDouble("rating"));
+            return true;
+        } catch (InterruptedException | ExecutionException | JSONException e) {
+            handleError(e);
+            return false;
+        }
+    }
+
+    @Override
+    public boolean setPoiUserRating(PoiModel poi, String userId, int newPoiRating) throws RemoteDataException {
             // Instantiate the RequestQueue.
             RequestQueue queue = MySingleton.getInstance(mContext).getRequestQueue();
 
-            final HashMap<String, String> params = getPostRatingParams(poiId, userId, newPoiRating);
+            final HashMap<String, String> params = getPostRatingParams(poi.getId(), userId, newPoiRating);
 
             RequestFuture<JSONObject> future = RequestFuture.newFuture();
             JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, API_POI_RATING_URL, new JSONObject(params), future, future);
             queue.add(request);
 
             try {
-                JSONObject response = future.get(); // this will block
+                future.get(); // this will block
 
-                return fetchPoiRating(poiId);
+                poi.setUserRating(newPoiRating);
+
+                return fetchPoiRating(poi);
             } catch (InterruptedException | ExecutionException e) {
                 handleError(e);
-                return null;
+                return false;
             }
     }
 
@@ -143,13 +172,12 @@ public class PoiRepositoryImpl extends AbstractPOIRepository implements PoiRepos
 
                 String code = data.getString("code");
 
-                throw (RemoteDataException) new BasicRemoteException(code);
+                throw new BasicRemoteException(code);
             } catch (JSONException e1) {
                 e1.printStackTrace();
                 return;
             }
         }
         e.printStackTrace();
-        return;
     }
 }

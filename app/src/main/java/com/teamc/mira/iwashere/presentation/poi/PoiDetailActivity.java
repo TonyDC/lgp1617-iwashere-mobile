@@ -25,6 +25,7 @@ import com.teamc.mira.iwashere.domain.executor.Executor;
 import com.teamc.mira.iwashere.domain.executor.MainThread;
 import com.teamc.mira.iwashere.domain.executor.impl.ThreadExecutor;
 import com.teamc.mira.iwashere.domain.interactors.PoiDetailInteractor;
+import com.teamc.mira.iwashere.domain.interactors.impl.PoiDetailInteractorImpl;
 import com.teamc.mira.iwashere.domain.interactors.impl.PoiRatingInteractorImpl;
 import com.teamc.mira.iwashere.domain.model.PoiModel;
 import com.teamc.mira.iwashere.domain.repository.PoiRepository;
@@ -68,6 +69,13 @@ public class PoiDetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_poi_detail);
 
+        auth = FirebaseAuth.getInstance();
+
+        setToolBar();
+        setPoiInfoTemp();
+    }
+
+    private void setPoiInfoTemp() {
         // for test purposes; TODO replace by API interactor
         URL url1 = null, url2=null;
         ArrayList<URL> urls = new ArrayList<URL>();
@@ -85,19 +93,55 @@ public class PoiDetailActivity extends AppCompatActivity {
         poi.setRating(3);
         poi.setUserRating(1);
 
-        auth = FirebaseAuth.getInstance();
-
-        setToolBar();
-
         setPoiSlider();
-
         setPoiDescriptionText();
-
         setPoiRatingBars();
-
         setPoiAddressPanel();
-
         setPoiContentGrid();
+    }
+
+    private void fetchPoiInfo(String poiId) {
+        MainThread mainThread = MainThreadImpl.getInstance();
+        Executor executor = ThreadExecutor.getInstance();
+        PoiRepository poiRepository = new PoiRepositoryImpl(this);
+        PoiDetailInteractor.CallBack callback = new PoiDetailInteractor.CallBack() {
+
+            @Override
+            public void onNetworkFail() {
+                onError(null, null);
+            }
+
+            @Override
+            public void onError(String code, String message) {
+                // TODO: redirect to previous display?
+            }
+
+            @Override
+            public void onSuccess(PoiModel poiInformation) {
+                poi = poiInformation;
+
+                setPoiSlider();
+                setPoiDescriptionText();
+                setPoiRatingBars();
+                setPoiAddressPanel();
+                //setPoiContentGrid();
+            }
+        };
+
+        String userId = null;
+        if (auth.getCurrentUser() != null) {
+            userId = auth.getCurrentUser().getUid();
+        }
+
+        PoiDetailInteractor poiDetailInteractor = new PoiDetailInteractorImpl(
+                executor,
+                mainThread,
+                callback,
+                poiRepository,
+                poiId,
+                userId);
+
+        poiDetailInteractor.execute();
     }
 
     // TODO: improve this
