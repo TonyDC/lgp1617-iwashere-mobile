@@ -42,6 +42,7 @@ import com.teamc.mira.iwashere.domain.model.PoiModel;
 import com.teamc.mira.iwashere.threading.MainThreadImpl;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class MapFragment extends Fragment implements
 //        GoogleMap.OnCameraMoveStartedListener,
@@ -57,11 +58,12 @@ public class MapFragment extends Fragment implements
 
     private MapView mMapView;
     private GoogleMap mGoogleMap;
-    private Marker mCurrentLocationMarker;
 
     private static double mLatitude;
     private static double mLongitude;
     private boolean mFirstZoomFlag;
+
+    HashMap<Marker, PoiModel> modelHashMap = new HashMap<>();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -107,13 +109,19 @@ public class MapFragment extends Fragment implements
             mGoogleMap.setMyLocationEnabled(true);
         }
 
-//        mGoogleMap.setOnCameraIdleListener(this);
-//        mGoogleMap.setOnCameraMoveStartedListener(this);
         mGoogleMap.setOnCameraMoveListener(this);
-//        mGoogleMap.setOnCameraMoveCanceledListener(this);
-
         // Initialized for onCameraMoveListener to use
         mCurrentCameraBounds = mGoogleMap.getProjection().getVisibleRegion().latLngBounds;
+
+        mGoogleMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
+            @Override
+            public void onInfoWindowClick(Marker marker) {
+                // TODO: 21/04/2017 Start PoiDetailActivity
+                /*new Bundle()
+                startActivity(new Intent(getActivity(), ));*/
+
+            }
+        });
     }
 
     @Override
@@ -121,19 +129,6 @@ public class MapFragment extends Fragment implements
     }
 
     private void updateCurrentLocation(LatLng latLng) {
-        if (mCurrentLocationMarker != null) {
-            mCurrentLocationMarker.remove();
-        }
-
-        MarkerOptions markerOptions = new MarkerOptions();
-        markerOptions.position(latLng);
-        markerOptions.title("#iamhere");
-
-        //noinspection ResourceType
-        String colorStr=getResources().getString(R.color.colorAccentPrimary);
-        markerOptions.icon(getMarkerIcon(colorStr));
-
-        mCurrentLocationMarker = mGoogleMap.addMarker(markerOptions);
 
         //move map camera
         if (!mFirstZoomFlag) {
@@ -260,20 +255,7 @@ public class MapFragment extends Fragment implements
             public void onSuccess(ArrayList<PoiModel> poiModels) {
                 Log.d(TAG, "PoiMapInteractor.CallBack onSuccess");
 
-                PoiModel model;
-                for (int i = 0; i < poiModels.size(); i++) {
-                    model = poiModels.get(i);
-                    MarkerOptions markerOptions = new MarkerOptions();
-                    markerOptions.position(new LatLng(new Double(model.getLatitude()),new Double(model.getLongitude())));
-                    markerOptions.title(model.getName());
-
-                    //noinspection ResourceType
-                    String colorStr=getResources().getString(R.color.colorAccentPrimary);
-                    markerOptions.icon(getMarkerIcon(colorStr));
-
-                    mCurrentLocationMarker = mGoogleMap.addMarker(markerOptions);
-                    Log.d(TAG, "POI MARKER: "+model.getName());
-                }
+                onPoiFetch(poiModels);
             }
             @Override
             public void onFail(String message) {
@@ -296,7 +278,29 @@ public class MapFragment extends Fragment implements
         );
         poiMapInteractor.execute();
 
-        Toast.makeText(getActivity(), "Lat: "+minLat+" - "+maxLat +" ; Lng: "+minLng+" - "+maxLng, Toast.LENGTH_SHORT).show();
+        Log.d(TAG, "Lat: "+minLat+" - "+maxLat +" ; Lng: "+minLng+" - "+maxLng);
     }
+
+    private void onPoiFetch(ArrayList<PoiModel> poiModels) {
+        PoiModel model;
+        for (int i = 0; i < poiModels.size(); i++) {
+            model = poiModels.get(i);
+
+            // TODO: 21/04/2017 Added markers in other way to avoid adding existing markers
+            MarkerOptions markerOptions = new MarkerOptions();
+            markerOptions.position(new LatLng(new Double(model.getLatitude()),new Double(model.getLongitude())));
+            markerOptions.title(model.getName());
+
+            //noinspection ResourceType
+            String colorStr=getResources().getString(R.color.colorAccentPrimary);
+            markerOptions.icon(getMarkerIcon(colorStr));
+
+
+            Marker marker = mGoogleMap.addMarker(markerOptions);
+
+            Log.d(TAG, "POI MARKER: "+model.getName());
+        }
+    }
+
 
 }
