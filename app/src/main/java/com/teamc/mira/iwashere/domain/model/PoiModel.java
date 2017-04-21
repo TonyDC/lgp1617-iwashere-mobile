@@ -1,6 +1,7 @@
 package com.teamc.mira.iwashere.domain.model;
 
-import android.graphics.Bitmap;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -13,14 +14,17 @@ public class PoiModel {
     private String longitude;
     private String latitude;
     private float rating;
+    private int ratingCount;
     private float userRating;
 
-    private ArrayList<URL> photos;
-    private ArrayList<ContentModel> content;
+    private ArrayList<URL> photos = new ArrayList<>();
+    private ArrayList<ContentModel> content = new ArrayList<>();
 
-    private ArrayList<PoiModel> relatedPois;
+    private ArrayList<PoiModel> relatedPois = new ArrayList<>();
 
     private boolean reminder;
+
+    public PoiModel() {}
 
     public PoiModel(String id,
                     String name,
@@ -40,6 +44,15 @@ public class PoiModel {
         this.photos = photos;
         this.content = content;
         this.relatedPois = relatedContent;
+    }
+
+    public PoiModel(JSONObject poi) throws JSONException {
+        this.id = poi.getString("id");
+        this.name = poi.getString("name");
+        this.description = poi.getString("description");
+        this.address = poi.getString("address");
+        this.longitude = poi.getString("longitude");
+        this.latitude = poi.getString("latitude");
     }
 
     public String getId() {
@@ -128,5 +141,13 @@ public class PoiModel {
 
     public void setUserRating(float userRating) {
         this.userRating = userRating;
+    }
+
+    public int getRatingCount() {
+        return ratingCount;
+    }
+
+    public void setRatingCount(int ratingCount) {
+        this.ratingCount = ratingCount;
     }
 }

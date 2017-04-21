@@ -11,25 +11,9 @@ import com.teamc.mira.iwashere.domain.repository.PoiRepository;
 public class PoiRatingInteractorImpl extends AbstractInteractor implements PoiDetailInteractor {
     CallBack callBack;
     PoiRepository repository;
-    String poiId;
+    PoiModel poi;
     String userId;
     int newPoiRating;
-
-    public PoiRatingInteractorImpl(Executor threadExecutor,
-                                   MainThread mainThread,
-                                   CallBack callBack,
-                                   PoiRepository poiRepository,
-                                   String poiId,
-                                   String userId,
-                                   int newPoiRating) {
-        super(threadExecutor, mainThread);
-
-        this.callBack = callBack;
-        this.repository = poiRepository;
-        this.poiId = poiId;
-        this.userId = userId;
-        this.newPoiRating = newPoiRating;
-    }
 
     public PoiRatingInteractorImpl(Executor threadExecutor,
                                    MainThread mainThread,
@@ -38,7 +22,13 @@ public class PoiRatingInteractorImpl extends AbstractInteractor implements PoiDe
                                    PoiModel poi,
                                    String userId,
                                    int newPoiRating) {
-        this(threadExecutor, mainThread, callBack, poiRepository, poi.getId(), userId, newPoiRating);
+        super(threadExecutor, mainThread);
+
+        this.callBack = callBack;
+        this.repository = poiRepository;
+        this.poi = poi;
+        this.userId = userId;
+        this.newPoiRating = newPoiRating;
     }
 
     @Override
@@ -73,15 +63,14 @@ public class PoiRatingInteractorImpl extends AbstractInteractor implements PoiDe
 
     @Override
     public void run() {
-        PoiModel poi;
 
         try {
-            poi = repository.setPOIRating(poiId, userId, newPoiRating);
+            repository.setPoiUserRating(poi, userId, newPoiRating);
         } catch (RemoteDataException e) {
             notifyError(e.getCode(),e.getErrorMessage());
             return;
         }
-
+        
         // POI rating updated
         notifySuccess(poi);
     }
