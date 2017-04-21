@@ -2,6 +2,8 @@ package com.teamc.mira.iwashere.data.source.remote;
 
 import android.content.Context;
 
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.Volley;
 import com.teamc.mira.iwashere.domain.repository.Repository;
 
 /**
@@ -10,9 +12,13 @@ import com.teamc.mira.iwashere.domain.repository.Repository;
 
 public class AbstractRepository {
 
-    Context mContext;
+    RequestQueue mRequestQueue;
 
-    public AbstractRepository(Context mContext) {
-        this.mContext = mContext;
+    public AbstractRepository(RequestQueue requestQueue) {
+        this.mRequestQueue = requestQueue;
+    }
+
+    public AbstractRepository(Context context){
+        this.mRequestQueue = Volley.newRequestQueue(context);
     }
 }

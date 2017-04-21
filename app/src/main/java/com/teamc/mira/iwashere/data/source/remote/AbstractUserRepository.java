@@ -3,6 +3,7 @@ package com.teamc.mira.iwashere.data.source.remote;
 import android.content.Context;
 import android.support.annotation.NonNull;
 
+import com.android.volley.RequestQueue;
 import com.teamc.mira.iwashere.domain.repository.UserRepository;
 
 import java.util.HashMap;
@@ -11,6 +12,10 @@ public abstract class AbstractUserRepository extends AbstractRepository implemen
 
     public AbstractUserRepository(Context mContext) {
         super(mContext);
+    }
+
+    public AbstractUserRepository(RequestQueue requestQueue){
+        super(requestQueue);
     }
 
     @NonNull

@@ -9,11 +9,7 @@ import android.view.ViewGroup;
 
 import com.teamc.mira.iwashere.R;
 
-/**
- * Created by Duart on 11/04/2017.
- */
-
-class SearchFragment extends Fragment {
+public class SearchFragment extends Fragment {
 
 
     @Nullable

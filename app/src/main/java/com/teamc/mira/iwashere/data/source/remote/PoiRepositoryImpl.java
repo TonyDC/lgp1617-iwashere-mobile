@@ -1,6 +1,7 @@
 package com.teamc.mira.iwashere.data.source.remote;
 
 import android.content.Context;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.android.volley.NetworkResponse;
@@ -8,7 +9,6 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.RequestFuture;
 import com.teamc.mira.iwashere.data.source.remote.exceptions.BasicRemoteException;
 import com.teamc.mira.iwashere.data.source.remote.exceptions.RemoteDataException;
@@ -20,8 +20,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 import static android.content.ContentValues.TAG;
 
@@ -29,6 +29,10 @@ import static android.content.ContentValues.TAG;
 public class PoiRepositoryImpl extends AbstractRepository implements PoiRepository {
     public PoiRepositoryImpl(Context mContext) {
         super(mContext);
+    }
+
+    public PoiRepositoryImpl(RequestQueue requestQueue){
+        super(requestQueue);
     }
 
     @Override
@@ -53,8 +57,8 @@ public class PoiRepositoryImpl extends AbstractRepository implements PoiReposito
 
     @Override
     public ArrayList<PoiModel> fetchPoisInArea(double maxLat, double minLat, double maxLong, double minLong) throws RemoteDataException {
-// Instantiate the RequestQueue.
-        RequestQueue queue = MySingleton.getInstance(this.mContext).getRequestQueue();
+        // Instantiate the RequestQueue.
+        RequestQueue queue = mRequestQueue;
 
         // TODO: 03/04/2017 Extract url
         String url ="http://172.30.5.114:8080/poi/range";
@@ -65,9 +69,14 @@ public class PoiRepositoryImpl extends AbstractRepository implements PoiReposito
         JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, url, null, future, future);
         queue.add(request);
 
+        return getPoiModelsFromRequest(future);
+    }
+
+    @Nullable
+    ArrayList<PoiModel> getPoiModelsFromRequest(RequestFuture<JSONArray> future) throws RemoteDataException {
         try {
-            JSONArray response = future.get(); // this will block
-            Log.d(TAG, String.valueOf(response));
+            JSONArray response = future.get(1000, TimeUnit.MILLISECONDS); // this will block
+            System.out.println(TAG+": " + String.valueOf(response));
 
             ArrayList<PoiModel> poiModels = new ArrayList<PoiModel>();
             PoiModel poiModel;
