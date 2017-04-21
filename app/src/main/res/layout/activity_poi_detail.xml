@@ -61,61 +61,85 @@
 
             </RelativeLayout>
 
-            <ImageView
-                android:id="@+id/pinpoint"
+            <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/addressPinPoint"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:padding="25dp"
-                android:src="@drawable/place" />
+                android:layout_height="200dp"
+                android:orientation="horizontal">
 
-            <LinearLayout
-                android:id="@+id/address"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:padding="25dp">
-
-
-                <TextView
-                    android:id="@+id/addressT"
-                    android:layout_weight="0"
+                <LinearLayout
+                    android:id="@+id/pinPoint"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:padding="25dp" />
-
-                <TextView
-                    android:id="@+id/addressF"
+                    android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_toRightOf="@+id/addressT"
-                    android:padding="25dp" />
+                    android:orientation="vertical"
+                    android:padding="50dp">
 
+                    <ImageView
+                        android:id="@+id/pinpointImg"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:padding="0dp"
+                        android:src="@drawable/place" />
                 </LinearLayout>
 
-            <LinearLayout
-                android:id="@+id/hours"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:padding="25dp">
-
-                <TextView
-                    android:id="@+id/hoursT"
-                    android:layout_weight="0"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:padding="25dp" />
-
-                <TextView
-                    android:id="@+id/hoursF"
-                    android:layout_weight="0"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_toRightOf="@+id/hoursT"
-                    android:padding="25dp" />
+                <LinearLayout
+                    android:id="@+id/addressBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:paddingTop="55dp">
 
 
+                <LinearLayout
+                        android:id="@+id/address"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:padding="10dp">
+
+
+                        <TextView
+                            android:id="@+id/addressT"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_weight="0"
+                            android:paddingRight="10dp" />
+
+                        <TextView
+                            android:id="@+id/addressF"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_toRightOf="@+id/addressT"
+                            android:layout_weight="1"/>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/hours"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:padding="10dp">
+
+                        <TextView
+                            android:id="@+id/hoursT"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="0"
+                            android:paddingRight="20dp" />
+
+                        <TextView
+                            android:id="@+id/hoursF"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_toRightOf="@+id/hoursT"
+                            android:layout_weight="0"/>
+
+
+                    </LinearLayout>
+                </LinearLayout>
             </LinearLayout>
 
             <GridView

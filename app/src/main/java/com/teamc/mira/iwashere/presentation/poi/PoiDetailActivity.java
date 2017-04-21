@@ -55,7 +55,7 @@ public class PoiDetailActivity extends AppCompatActivity {
             "Alram", "Android", "Mobile", "Website", "Profile", "WordPress",
             "Alram", "Android", "Mobile", "Website", "Profile", "WordPress",
 
-    } ;
+    };
 
     int[] gridViewImageId = {
             R.drawable.logo, R.drawable.place, R.drawable.logo, R.drawable.place, R.drawable.logo, R.drawable.place,
@@ -69,7 +69,7 @@ public class PoiDetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_poi_detail);
 
         // for test purposes; TODO replace by API interactor
-        URL url1 = null, url2=null;
+        URL url1 = null, url2 = null;
         ArrayList<URL> urls = new ArrayList<URL>();
         try {
             url1 = new URL("http://images.boomsbeat.com/data/images/full/19640/game-of-thrones-season-4-jpg.jpg");
@@ -80,7 +80,7 @@ public class PoiDetailActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        poi = new PoiModel("1","poi name", "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam sodales suscipit venenatis. Sed ut rhoncus mi. Curabitur nec scelerisque ipsum. Fusce et diam eros. Pellentesque vel dolor ante. Suspendisse convallis diam nec eleifend tincidunt. Etiam vestibulum mi elit. Sed egestas tellus mattis, fermentum turpis eu, gravida neque. Sed at turpis ultricies, laoreet purus sed, sollicitudin urna. Donec diam ex, porta quis sollicitudin id, sollicitudin id urna. Nunc commodo rutrum odio sit amet viverra. Vestibulum blandit euismod efficitur. Nunc sit amet hendrerit enim. Pellentesque id diam lacus. Etiam vitae tellus sed turpis suscipit laoreet. Integer commodo in nulla nec vehicula.", "address", "longitude", "latitude",
+        poi = new PoiModel("1", "poi name", "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam sodales suscipit venenatis. Sed ut rhoncus mi. Curabitur nec scelerisque ipsum. Fusce et diam eros. Pellentesque vel dolor ante. Suspendisse convallis diam nec eleifend tincidunt. Etiam vestibulum mi elit. Sed egestas tellus mattis, fermentum turpis eu, gravida neque. Sed at turpis ultricies, laoreet purus sed, sollicitudin urna. Donec diam ex, porta quis sollicitudin id, sollicitudin id urna. Nunc commodo rutrum odio sit amet viverra. Vestibulum blandit euismod efficitur. Nunc sit amet hendrerit enim. Pellentesque id diam lacus. Etiam vitae tellus sed turpis suscipit laoreet. Integer commodo in nulla nec vehicula.", "address", "longitude", "latitude",
                 urls, null, null);
         poi.setRating(3);
         poi.setUserRating(1);
@@ -103,7 +103,7 @@ public class PoiDetailActivity extends AppCompatActivity {
     // TODO: improve this
     private void setPoiContentGrid() {
         GridViewAdapter adapterView = new GridViewAdapter(PoiDetailActivity.this, gridViewString, gridViewImageId);
-        gridView=(GridView)findViewById(R.id.grid_view_image_text);
+        gridView = (GridView) findViewById(R.id.grid_view_image_text);
         gridView.setAdapter(adapterView);
 
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -118,22 +118,23 @@ public class PoiDetailActivity extends AppCompatActivity {
 
     // TODO: improve this
     private void setPoiAddressPanel() {
-        findViewById(R.id.address).setBackgroundColor(Color.parseColor("#35A8DF"));
-        findViewById(R.id.hours).setBackgroundColor(Color.parseColor("#35A8DF"));
+        findViewById(R.id.addressPinPoint).setBackgroundColor(Color.parseColor("#35A8DF"));
+       
         addressF = (TextView) findViewById(R.id.addressF);
         addressT = (TextView) findViewById(R.id.addressT);
         hoursF = (TextView) findViewById(R.id.hoursF);
         hoursT = (TextView) findViewById(R.id.hoursT);
-        pinPoint = (ImageView) findViewById(R.id.pinpoint);
+        pinPoint = (ImageView) findViewById(R.id.pinpointImg);
 
-        pinPoint.setBackgroundColor(Color.parseColor("#35A8DF"));
 
         addressT.setText("Address");
         addressT.setTextColor(Color.WHITE);
         addressF.setText(poi.getAddress());
+        addressF.setTextColor(Color.BLACK);
 
         hoursT.setText("Hours");
         hoursT.setTextColor(Color.WHITE);
+        hoursF.setTextColor(Color.BLACK);
         hoursF.setText("8-10pm");
 
     }
@@ -152,7 +153,7 @@ public class PoiDetailActivity extends AppCompatActivity {
     private void setPoiSlider() {
         sliderShow = (SliderLayout) findViewById(R.id.slider);
 
-        for(URL imageURL : poi.getPhotos()) {
+        for (URL imageURL : poi.getPhotos()) {
             TextSliderView textSliderView = new TextSliderView(this);
             textSliderView.image(imageURL.toString());
 
