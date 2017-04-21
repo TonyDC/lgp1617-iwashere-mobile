@@ -69,6 +69,8 @@ public class PoiDetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_poi_detail);
 
         // for test purposes; TODO replace by API interactor
+
+
         URL url1 = null, url2 = null;
         ArrayList<URL> urls = new ArrayList<URL>();
         try {
@@ -80,9 +82,9 @@ public class PoiDetailActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        poi = new PoiModel("1", "poi name", "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam sodales suscipit venenatis. Sed ut rhoncus mi. Curabitur nec scelerisque ipsum. Fusce et diam eros. Pellentesque vel dolor ante. Suspendisse convallis diam nec eleifend tincidunt. Etiam vestibulum mi elit. Sed egestas tellus mattis, fermentum turpis eu, gravida neque. Sed at turpis ultricies, laoreet purus sed, sollicitudin urna. Donec diam ex, porta quis sollicitudin id, sollicitudin id urna. Nunc commodo rutrum odio sit amet viverra. Vestibulum blandit euismod efficitur. Nunc sit amet hendrerit enim. Pellentesque id diam lacus. Etiam vitae tellus sed turpis suscipit laoreet. Integer commodo in nulla nec vehicula.", "address", "longitude", "latitude",
+        poi = new PoiModel("1", "poi name", "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam sodales suscipit venenatis. Sed ut rhoncus mi. Curabitur nec scelerisque ipsum. Fusce et diam eros. Pellentesque vel dolor ante. Suspendisse convallis diam nec eleifend tincidunt. Etiam vestibulum mi elit. Sed egestas tellus mattis, fermentum turpis eu, gravida neque. Sed at turpis ultricies, laoreet purus sed, sollicitudin urna. Donec diam ex, porta quis sollicitudin id, sollicitudin id urna. Nunc commodo rutrum odio sit amet viverra. Vestibulum blandit euismod efficitur. Nunc sit amet hendrerit enim. Pellentesque id diam lacus. Etiam vitae tellus sed turpis suscipit laoreet. Integer commodo in nulla nec vehicula.", "Street noname, 4200-008 Porto", "longitude", "latitude",
                 urls, null, null);
-        poi.setRating(3);
+        poi.setRating(4);
         poi.setUserRating(1);
 
         auth = FirebaseAuth.getInstance();
@@ -98,6 +100,8 @@ public class PoiDetailActivity extends AppCompatActivity {
         setPoiAddressPanel();
 
         setPoiContentGrid();
+
+        getSupportActionBar().setTitle(poi.getName());
     }
 
     // TODO: improve this
@@ -119,7 +123,7 @@ public class PoiDetailActivity extends AppCompatActivity {
     // TODO: improve this
     private void setPoiAddressPanel() {
         findViewById(R.id.addressPinPoint).setBackgroundColor(Color.parseColor("#35A8DF"));
-       
+
         addressF = (TextView) findViewById(R.id.addressF);
         addressT = (TextView) findViewById(R.id.addressT);
         hoursF = (TextView) findViewById(R.id.hoursF);
