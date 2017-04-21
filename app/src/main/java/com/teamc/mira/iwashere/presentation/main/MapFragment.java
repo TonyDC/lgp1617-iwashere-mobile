@@ -232,19 +232,11 @@ public class MapFragment extends Fragment implements
         mLastCallMs = snap;
         mCurrentCameraBounds = bounds;
 
-
-
         //Fetch data
-        LatLng northeast = bounds.northeast;
-        LatLng southwest = bounds.southwest;
+        LatLng northeast = bounds.northeast; LatLng southwest = bounds.southwest;
 
         double minLat, maxLat, minLng, maxLng;
-
-        minLat = southwest.latitude;
-        maxLat = northeast.latitude;
-
-        minLng = southwest.longitude;
-        maxLng = northeast.longitude;
+        minLat = southwest.latitude; maxLat = northeast.latitude; minLng = southwest.longitude; maxLng = northeast.longitude;
 
         Toast.makeText(getActivity(), "Lat: "+minLat+" - "+maxLat +" ; Lng: "+minLng+" - "+maxLng, Toast.LENGTH_SHORT).show();
     }
