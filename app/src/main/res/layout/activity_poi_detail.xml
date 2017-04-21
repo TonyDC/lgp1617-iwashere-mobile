@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
-    <include layout="@layout/toolbar"
-        android:id="@+id/include"></include>
+    <include
+        android:id="@+id/include"
+        layout="@layout/toolbar"></include>
 
     <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
@@ -14,10 +15,10 @@
         android:layout_below="@+id/include">
 
         <LinearLayout
-            android:orientation="vertical"
             android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:gravity="center_horizontal"
-            android:layout_height="match_parent">
+            android:orientation="vertical">
 
             <com.daimajia.slider.library.SliderLayout
                 android:id="@+id/slider"
@@ -27,13 +28,13 @@
                 android:id="@+id/description"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:padding="25dp"/>
+                android:padding="25dp" />
 
             <RelativeLayout
                 android:id="@+id/ratings"
-                android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:orientation="vertical"
                 android:padding="25dp">
 
                 <RatingBar
@@ -41,32 +42,81 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:numStars="5"
-                    android:stepSize="1.0"/>
+                    android:stepSize="1.0" />
 
                 <TextView
                     android:id="@+id/poiRatingText"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:textSize="20dp"
-                    android:layout_toRightOf="@+id/poiRatingBar"/>
+                    android:layout_toRightOf="@+id/poiRatingBar"
+                    android:textSize="20dp" />
 
                 <RatingBar
                     android:id="@+id/userRatingBar"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:numStars="5"
                     android:layout_below="@+id/poiRatingBar"
-                    android:stepSize="1.0"/>
+                    android:numStars="5"
+                    android:stepSize="1.0" />
 
             </RelativeLayout>
 
             <ImageView
-                android:id="@+id/address"
+                android:id="@+id/pinpoint"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:padding="25dp"
-                android:src="@drawable/place"/>
+                android:src="@drawable/place" />
 
+            <LinearLayout
+                android:id="@+id/address"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="25dp">
+
+
+                <TextView
+                    android:id="@+id/addressT"
+                    android:layout_weight="0"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="25dp" />
+
+                <TextView
+                    android:id="@+id/addressF"
+                    android:layout_weight="1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@+id/addressT"
+                    android:padding="25dp" />
+
+                </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/hours"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="25dp">
+
+                <TextView
+                    android:id="@+id/hoursT"
+                    android:layout_weight="0"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="25dp" />
+
+                <TextView
+                    android:id="@+id/hoursF"
+                    android:layout_weight="0"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@+id/hoursT"
+                    android:padding="25dp" />
+
+
+            </LinearLayout>
 
             <GridView
                 android:id="@+id/grid_view_image_text"
