@@ -39,6 +39,7 @@ import com.teamc.mira.iwashere.domain.executor.impl.ThreadExecutor;
 import com.teamc.mira.iwashere.domain.interactors.PoiMapInteractor;
 import com.teamc.mira.iwashere.domain.interactors.impl.PoiMapInteractorImpl;
 import com.teamc.mira.iwashere.domain.model.PoiModel;
+import com.teamc.mira.iwashere.presentation.poi.PoiDetailActivity;
 import com.teamc.mira.iwashere.threading.MainThreadImpl;
 
 import java.util.ArrayList;
@@ -63,7 +64,12 @@ public class MapFragment extends Fragment implements
     private static double mLongitude;
     private boolean mFirstZoomFlag;
 
-    HashMap<Marker, PoiModel> modelHashMap = new HashMap<>();
+    HashMap<Marker, PoiModel> poiHashMap = new HashMap<>();
+
+    //Variables needed to keep status of the last call in order to avoid overcalling the onCameraMove function
+    private static int CAMERA_MOVE_REACT_THRESHOLD_MS = 500;
+    private long mLastCallMs = Long.MIN_VALUE;
+    private LatLngBounds mCurrentCameraBounds;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -116,10 +122,9 @@ public class MapFragment extends Fragment implements
         mGoogleMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
             @Override
             public void onInfoWindowClick(Marker marker) {
-                // TODO: 21/04/2017 Start PoiDetailActivity
-                /*new Bundle()
-                startActivity(new Intent(getActivity(), ));*/
-
+                Intent intent = new Intent(getActivity(), PoiDetailActivity.class);
+                intent.putExtra("poi", poiHashMap.get(marker));
+                startActivity(intent);
             }
         });
     }
@@ -129,7 +134,6 @@ public class MapFragment extends Fragment implements
     }
 
     private void updateCurrentLocation(LatLng latLng) {
-
         //move map camera
         if (!mFirstZoomFlag) {
             mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 14.0f));
@@ -137,13 +141,6 @@ public class MapFragment extends Fragment implements
         }
     }
 
-
-    // method definition
-    public BitmapDescriptor getMarkerIcon(String color) {
-        float[] hsv = new float[3];
-        Color.colorToHSV(Color.parseColor(color), hsv);
-        return BitmapDescriptorFactory.defaultMarker(hsv[0]);
-    }
     private void checkLocationPermission() {
         if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -216,12 +213,6 @@ public class MapFragment extends Fragment implements
         }
     };
 
-
-    //Variables needed to keep status of the last call in order to avoid overcalling the onCameraMove function
-    private static int CAMERA_MOVE_REACT_THRESHOLD_MS = 500;
-    private long mLastCallMs = Long.MIN_VALUE;
-    private LatLngBounds mCurrentCameraBounds;
-
     @Override
     public void onCameraMove() {
         LatLngBounds bounds = mGoogleMap.getProjection().getVisibleRegion().latLngBounds;
@@ -245,10 +236,18 @@ public class MapFragment extends Fragment implements
         mCurrentCameraBounds = bounds;
 
         //Fetch data
-        LatLng northeast = bounds.northeast; LatLng southwest = bounds.southwest;
+        fetchPoisOnCameraMove(bounds);
+    }
+
+    private void fetchPoisOnCameraMove(LatLngBounds bounds) {
+        LatLng northeast = bounds.northeast;
+        LatLng southwest = bounds.southwest;
 
         double minLat, maxLat, minLng, maxLng;
-        minLat = southwest.latitude; maxLat = northeast.latitude; minLng = southwest.longitude; maxLng = northeast.longitude;
+        minLat = southwest.latitude;
+        maxLat = northeast.latitude;
+        minLng = southwest.longitude;
+        maxLng = northeast.longitude;
 
         PoiMapInteractor.CallBack callBack = new PoiMapInteractor.CallBack() {
             @Override
@@ -259,13 +258,13 @@ public class MapFragment extends Fragment implements
             }
             @Override
             public void onFail(String message) {
-                if(message == null || message.length() == 0) message = "Error fetching data";
+                if(message == null || message.length() == 0) message = getString(R.string.error_fetch);
 
                 Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
             }
             @Override
             public void onNetworkError() {
-                Toast.makeText(getActivity(), "Failed connection!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), R.string.error_connection, Toast.LENGTH_SHORT).show();
             }
         };
 
@@ -291,12 +290,11 @@ public class MapFragment extends Fragment implements
             markerOptions.position(new LatLng(new Double(model.getLatitude()),new Double(model.getLongitude())));
             markerOptions.title(model.getName());
 
-            //noinspection ResourceType
-            String colorStr=getResources().getString(R.color.colorAccentPrimary);
-            markerOptions.icon(getMarkerIcon(colorStr));
-
+            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.mipmap.marker_primary));
 
             Marker marker = mGoogleMap.addMarker(markerOptions);
+
+            poiHashMap.put(marker,model);
 
             Log.d(TAG, "POI MARKER: "+model.getName());
         }
