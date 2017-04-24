@@ -65,4 +65,5 @@
     <string name="title_activity_about">About</string>
     <string name="error_fetch">Error fetching data</string>
     <string name="error_connection">Failed connection!</string>
+    <string name="address">Address</string>
 </resources>

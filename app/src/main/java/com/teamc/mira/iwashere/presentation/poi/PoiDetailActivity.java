@@ -59,9 +59,9 @@ public class PoiDetailActivity extends AppCompatActivity {
     };
 
     int[] gridViewImageId = {
-            R.drawable.logo, R.drawable.place, R.drawable.logo, R.drawable.place, R.drawable.logo, R.drawable.place,
-            R.drawable.logo, R.drawable.place, R.drawable.logo, R.drawable.place, R.drawable.logo, R.drawable.place,
-            R.drawable.logo, R.drawable.place, R.drawable.logo, R.drawable.place, R.drawable.logo, R.drawable.place,
+            R.drawable.logo, R.drawable.ic_location_on_black_32dp, R.drawable.logo, R.drawable.ic_location_on_black_32dp, R.drawable.logo, R.drawable.ic_location_on_black_32dp,
+            R.drawable.logo, R.drawable.ic_location_on_black_32dp, R.drawable.logo, R.drawable.ic_location_on_black_32dp, R.drawable.logo, R.drawable.ic_location_on_black_32dp,
+            R.drawable.logo, R.drawable.ic_location_on_black_32dp, R.drawable.logo, R.drawable.ic_location_on_black_32dp, R.drawable.logo, R.drawable.ic_location_on_black_32dp,
     };
 
     @Override
@@ -170,24 +170,6 @@ public class PoiDetailActivity extends AppCompatActivity {
     // TODO: improve this
     private void setPoiAddressPanel() {
         findViewById(R.id.addressPinPoint).setBackgroundColor(Color.parseColor("#35A8DF"));
-        findViewById(R.id.hours).setVisibility(View.GONE);
-        addressF = (TextView) findViewById(R.id.addressF);
-        addressT = (TextView) findViewById(R.id.addressT);
-        hoursF = (TextView) findViewById(R.id.hoursF);
-        hoursT = (TextView) findViewById(R.id.hoursT);
-        pinPoint = (ImageView) findViewById(R.id.pinpointImg);
-
-
-        addressT.setText("Address");
-        addressT.setTextColor(Color.WHITE);
-        addressF.setText(poi.getAddress());
-        addressF.setTextColor(Color.BLACK);
-
-        hoursT.setText("Hours");
-        hoursT.setTextColor(Color.WHITE);
-        hoursF.setTextColor(Color.BLACK);
-        hoursF.setText("8-10pm");
-
     }
 
     /**
