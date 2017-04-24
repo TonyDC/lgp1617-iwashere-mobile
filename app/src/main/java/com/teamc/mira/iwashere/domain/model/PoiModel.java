@@ -3,10 +3,14 @@ package com.teamc.mira.iwashere.domain.model;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.Serializable;
 import java.net.URL;
 import java.util.ArrayList;
 
-public class PoiModel {
+public class PoiModel implements Serializable{
     private String id;
     private String name;
     private String description;

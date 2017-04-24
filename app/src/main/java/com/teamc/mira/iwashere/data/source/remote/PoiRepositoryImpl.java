@@ -1,6 +1,7 @@
 package com.teamc.mira.iwashere.data.source.remote;
 
 import android.content.Context;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.android.volley.NetworkResponse;
@@ -32,7 +33,11 @@ public class PoiRepositoryImpl extends AbstractPOIRepository implements PoiRepos
     public static final String API_POI_RATING_URL = API_POI_URL + "/rating/";
 
     public PoiRepositoryImpl(Context mContext) {
-        this.mContext = mContext;
+        super(mContext);
+    }
+
+    public PoiRepositoryImpl(RequestQueue requestQueue){
+        super(requestQueue);
     }
 
     @Override
@@ -155,6 +160,68 @@ public class PoiRepositoryImpl extends AbstractPOIRepository implements PoiRepos
     @Override
     public PoiModel removeReminder(PoiModel poi) throws RemoteDataException {
         throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public ArrayList<PoiModel> fetchPoisInArea(double maxLat, double minLat, double maxLong, double minLong) throws RemoteDataException {
+        // Instantiate the RequestQueue.
+        RequestQueue queue = mRequestQueue;
+
+        String url = ServerUrl.getUrl()+ServerUrl.API+ServerUrl.POI+ServerUrl.RANGE;
+
+        url = url.concat("/"+minLat+"/"+maxLat+"/"+minLong+"/"+maxLong);
+        Log.d(TAG, url);
+        RequestFuture<JSONArray> future = RequestFuture.newFuture();
+        JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, url, null, future, future);
+        queue.add(request);
+
+        return getPoiModelsFromRequest(future);
+    }
+
+    @Nullable
+    ArrayList<PoiModel> getPoiModelsFromRequest(RequestFuture<JSONArray> future) throws RemoteDataException {
+        try {
+            JSONArray response = future.get(3000, TimeUnit.MILLISECONDS); // this will block
+            System.out.println(TAG+": " + String.valueOf(response));
+
+            ArrayList<PoiModel> poiModels = new ArrayList<PoiModel>();
+            PoiModel poiModel;
+            JSONObject object;
+
+            for (int i = 0; i < response.length(); i++) {
+                object = response.getJSONObject(i);
+                poiModel = new PoiModel(object);
+                poiModels.add(poiModel);
+            }
+
+            return poiModels;
+        } catch (InterruptedException | ExecutionException e) {
+            //check to see if the throwable in an instance of the volley error
+            if(e.getCause() instanceof VolleyError)
+            {
+                //grab the volley error from the throwable and cast it back
+                VolleyError volleyError = (VolleyError)e.getCause();
+                //now just grab the network response like normal
+                NetworkResponse networkResponse = volleyError.networkResponse;
+                try {
+                    Log.d(TAG, "raw data: "+ new String(networkResponse.data));
+                    JSONObject data = new JSONObject(new String(networkResponse.data));
+                    Log.d(TAG, data.toString());
+
+                    String code = data.getString("code");
+
+                    throw (RemoteDataException) new BasicRemoteException(code);
+                } catch (JSONException e1) {
+                    e1.printStackTrace();
+                    throw (RemoteDataException) new BasicRemoteException("unknown-error");
+                }
+            }
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw (RemoteDataException) new BasicRemoteException("unknown-error");
+        }
+        return null;
     }
 
     private void handleError(Exception e) throws RemoteDataException {

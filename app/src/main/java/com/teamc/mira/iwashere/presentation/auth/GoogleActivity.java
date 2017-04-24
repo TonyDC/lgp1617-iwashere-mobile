@@ -141,6 +141,8 @@ public class GoogleActivity extends AppCompatActivity implements
                             Log.w(TAG, "signInWithCredential", task.getException());
                             Toast.makeText(GoogleActivity.this, "Authentication failed.",
                                     Toast.LENGTH_SHORT).show();
+                            startActivity(new Intent(GoogleActivity.this, AuthenticateActivity.class));
+                            finish();
                         }
                         // [START_EXCLUDE]
                         hideProgressDialog();
