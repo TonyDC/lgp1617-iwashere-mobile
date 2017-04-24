@@ -97,7 +97,6 @@ public class LocationService extends Service implements LocationListener {
     @Override
     public void onLocationChanged(Location location) {
         aLocation = location;
-        Toast.makeText(getApplicationContext(), "new location", Toast.LENGTH_LONG).show();
         // creating new intent
         Intent intent = new Intent("New Location");
         intent.putExtra("latitude", String.valueOf(aLocation.getLatitude()));

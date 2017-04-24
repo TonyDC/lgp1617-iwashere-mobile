@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -22,6 +23,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -56,13 +58,14 @@ public class MapFragment extends Fragment implements
     private static final String TAG = MapFragment.class.getSimpleName();
     private static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
     private static final String INTENT_NEW_LOCATION = "New Location";
+    public static final float ZOOM = 14.0f;
 
     private MapView mMapView;
     private GoogleMap mGoogleMap;
 
     private static double mLatitude;
     private static double mLongitude;
-    private boolean mFirstZoomFlag;
+    private boolean mFirstZoomFlag = false;
 
     HashMap<Marker, PoiModel> poiHashMap = new HashMap<>();
 
@@ -127,6 +130,9 @@ public class MapFragment extends Fragment implements
                 startActivity(intent);
             }
         });
+
+        // Set flag so that it that the map starts on the current location
+        mFirstZoomFlag = false;
     }
 
     @Override
@@ -136,11 +142,10 @@ public class MapFragment extends Fragment implements
     private void updateCurrentLocation(LatLng latLng) {
         //move map camera
         if (!mFirstZoomFlag) {
-            mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 14.0f));
+            mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, ZOOM));
             mFirstZoomFlag = true;
         }
     }
-
     private void checkLocationPermission() {
         if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
