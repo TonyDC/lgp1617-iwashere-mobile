@@ -177,6 +177,11 @@ public class PoiRepositoryImpl extends AbstractPoiRepository implements PoiRepos
         return getPoiModelsFromRequest(future);
     }
 
+    @Override
+    public ArrayList<PoiModel> searchPois(String searchQuery) {
+        throw new UnsupportedOperationException();
+    }
+
     @Nullable
     ArrayList<PoiModel> getPoiModelsFromRequest(RequestFuture<JSONArray> future) throws RemoteDataException {
         try {

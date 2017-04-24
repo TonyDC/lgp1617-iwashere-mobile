@@ -4,6 +4,7 @@ import com.teamc.mira.iwashere.data.source.remote.exceptions.RemoteDataException
 import com.teamc.mira.iwashere.domain.model.PoiModel;
 
 import java.util.ArrayList;
+import org.json.JSONObject;
 
 public interface PoiRepository {
     /**
@@ -58,4 +59,6 @@ public interface PoiRepository {
     PoiModel removeReminder(PoiModel poi)throws RemoteDataException;
 
     ArrayList<PoiModel> fetchPoisInArea(double maxLat, double minLat, double maxLong, double minLong) throws RemoteDataException;
+
+    ArrayList<PoiModel> searchPois(String searchQuery);
 }
