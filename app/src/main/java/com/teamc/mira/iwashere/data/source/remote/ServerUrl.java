@@ -20,4 +20,5 @@ public class ServerUrl {
     static final String RANGE = "/range";
     static final String MEDIA = "/media";
     static final String RATING = "/rating";
+    static final String SEARCH = "/search";
 }

@@ -3,12 +3,14 @@ package com.teamc.mira.iwashere.domain.repository;
 import com.teamc.mira.iwashere.data.source.remote.exceptions.RemoteDataException;
 import com.teamc.mira.iwashere.domain.model.PoiModel;
 
-import java.util.ArrayList;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
 
 public interface PoiRepository {
     /**
      * Fetch a POI's information through API.
+     *
      * @param poiId the POI's id
      * @return PoiModel with information about the POI
      * @throws RemoteDataException
@@ -18,6 +20,7 @@ public interface PoiRepository {
 
     /**
      * Fetch a POI's media list through API.
+     *
      * @param poi the PoiModel with information about the POI
      * @return true upon success, false otherwise
      * @throws RemoteDataException
@@ -27,6 +30,7 @@ public interface PoiRepository {
 
     /**
      * Fetch a POI's rating through API.
+     *
      * @param poi the PoiModel with information about the POI
      * @return true upon success, false otherwise
      * @throws RemoteDataException
@@ -35,7 +39,8 @@ public interface PoiRepository {
 
     /**
      * Fetch the rating attributed by a user to a POI through API, updating the PoiModel.
-     * @param poi the PoiModel with information about the POI
+     *
+     * @param poi    the PoiModel with information about the POI
      * @param userId the user's id
      * @return true upon success, false otherwise
      * @throws RemoteDataException
@@ -45,20 +50,21 @@ public interface PoiRepository {
     /**
      * Save the rating attributed by a user to a POI through API.
      * Update the POI's rating through API in the PoiModel.
-     * @param poi the PoiModel with information about the POI
-     * @param userId the user's id
+     *
+     * @param poi          the PoiModel with information about the POI
+     * @param userId       the user's id
      * @param newPoiRating the rating the user attributed to the POI
      * @return true upon success, false otherwise
      * @throws RemoteDataException
-     * @see #fetchPoiRating( PoiModel )
+     * @see #fetchPoiRating(PoiModel)
      */
     boolean setPoiUserRating(PoiModel poi, String userId, int newPoiRating) throws RemoteDataException;
 
-    PoiModel setReminder(PoiModel poi)throws RemoteDataException;
+    PoiModel setReminder(PoiModel poi) throws RemoteDataException;
 
-    PoiModel removeReminder(PoiModel poi)throws RemoteDataException;
+    PoiModel removeReminder(PoiModel poi) throws RemoteDataException;
 
     ArrayList<PoiModel> fetchPoisInArea(double maxLat, double minLat, double maxLong, double minLong) throws RemoteDataException;
 
-    ArrayList<PoiModel> searchPois(String searchQuery);
+    ArrayList<PoiModel> searchPois(String searchQuery, double lat, double lng) throws RemoteDataException;
 }
