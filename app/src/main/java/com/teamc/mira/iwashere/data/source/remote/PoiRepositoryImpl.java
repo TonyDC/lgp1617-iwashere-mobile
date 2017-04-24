@@ -20,17 +20,18 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 // TODO: 19/04/2017 Implement functions, test those already implemented
-public class PoiRepositoryImpl extends AbstractPOIRepository implements PoiRepository {
-    Context mContext;
+public class PoiRepositoryImpl extends AbstractPoiRepository implements PoiRepository {
 
     public static final String TAG = UserRepositoryImpl.class.getSimpleName();
-    public static final String API_POI_URL = "http://192.168.1.69:8080/api/poi/"; // TODO change this
-    public static final String API_POI_MEDIA_URL = API_POI_URL + "/media/";
-    public static final String API_POI_RATING_URL = API_POI_URL + "/rating/";
+    private static final String API_POI_URL = ServerUrl.getUrl() + ServerUrl.API + ServerUrl.POI;
+    private static final String API_POI_RATING_URL = ServerUrl.getUrl() + ServerUrl.API + ServerUrl.POI + ServerUrl.RATING;
+    private static final String API_POI_MEDIA_URL = ServerUrl.getUrl() + ServerUrl.API + ServerUrl.POI + ServerUrl.MEDIA;
 
     public PoiRepositoryImpl(Context mContext) {
         super(mContext);
@@ -43,9 +44,9 @@ public class PoiRepositoryImpl extends AbstractPOIRepository implements PoiRepos
     @Override
     public PoiModel fetchPoi(String poiId) throws RemoteDataException {
         // Instantiate the RequestQueue.
-        RequestQueue queue = MySingleton.getInstance(mContext).getRequestQueue();
+        RequestQueue queue = mRequestQueue;
 
-        String url = API_POI_URL + poiId;
+        String url = API_POI_URL + "/" + poiId;
 
         RequestFuture<JSONObject> future = RequestFuture.newFuture();
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null, future, future);
@@ -63,10 +64,9 @@ public class PoiRepositoryImpl extends AbstractPOIRepository implements PoiRepos
 
     @Override
     public boolean fetchPoiMedia(PoiModel poi) throws RemoteDataException {
-        RequestQueue queue = MySingleton.getInstance(mContext).getRequestQueue();
+        RequestQueue queue = mRequestQueue;
 
-        String url = API_POI_MEDIA_URL + poi.getId();
-
+        String url = API_POI_MEDIA_URL + "/" + poi.getId();
         RequestFuture<JSONArray> future = RequestFuture.newFuture();
         JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, url, null, future, future);
         queue.add(request);
@@ -85,10 +85,9 @@ public class PoiRepositoryImpl extends AbstractPOIRepository implements PoiRepos
 
     @Override
     public boolean fetchPoiRating(PoiModel poi) throws RemoteDataException {
-        RequestQueue queue = MySingleton.getInstance(mContext).getRequestQueue();
+        RequestQueue queue = mRequestQueue;
 
-        String url = API_POI_RATING_URL + poi.getId();
-
+        String url =  API_POI_RATING_URL + "/" + poi.getId();
         RequestFuture<JSONObject> future = RequestFuture.newFuture();
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null, future, future);
         queue.add(request);
@@ -110,9 +109,9 @@ public class PoiRepositoryImpl extends AbstractPOIRepository implements PoiRepos
 
     @Override
     public boolean fetchPoiUserRating(PoiModel poi, String userId) throws RemoteDataException {
-        RequestQueue queue = MySingleton.getInstance(mContext).getRequestQueue();
+        RequestQueue queue = mRequestQueue;
 
-        String url = API_POI_RATING_URL + poi.getId() + "/" + userId;
+        String url = API_POI_RATING_URL + "/" + poi.getId() + "/" + userId;
 
         RequestFuture<JSONObject> future = RequestFuture.newFuture();
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null, future, future);
@@ -132,7 +131,7 @@ public class PoiRepositoryImpl extends AbstractPOIRepository implements PoiRepos
     @Override
     public boolean setPoiUserRating(PoiModel poi, String userId, int newPoiRating) throws RemoteDataException {
             // Instantiate the RequestQueue.
-            RequestQueue queue = MySingleton.getInstance(mContext).getRequestQueue();
+            RequestQueue queue = mRequestQueue;
 
             final HashMap<String, String> params = getPostRatingParams(poi.getId(), userId, newPoiRating);
 

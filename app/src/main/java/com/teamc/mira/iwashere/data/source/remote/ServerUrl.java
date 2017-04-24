@@ -18,4 +18,6 @@ public class ServerUrl {
 
     static final String POI = "/poi";
     static final String RANGE = "/range";
+    static final String MEDIA = "/media";
+    static final String RATING = "/rating";
 }

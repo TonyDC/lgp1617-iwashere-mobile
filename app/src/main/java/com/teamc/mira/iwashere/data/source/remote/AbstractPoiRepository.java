@@ -1,7 +1,9 @@
 package com.teamc.mira.iwashere.data.source.remote;
 
+import android.content.Context;
 import android.support.annotation.NonNull;
 
+import com.android.volley.RequestQueue;
 import com.teamc.mira.iwashere.domain.model.PoiModel;
 import com.teamc.mira.iwashere.domain.repository.PoiRepository;
 import com.teamc.mira.iwashere.domain.repository.UserRepository;
@@ -15,7 +17,15 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public abstract class AbstractPOIRepository implements PoiRepository {
+public abstract class AbstractPoiRepository extends AbstractRepository implements PoiRepository {
+
+    public AbstractPoiRepository(RequestQueue requestQueue) {
+        super(requestQueue);
+    }
+
+    public AbstractPoiRepository(Context context) {
+        super(context);
+    }
 
     @NonNull
     protected HashMap<String, String> getPostRatingParams(String poiId, String userId, int newPoiRating) {
