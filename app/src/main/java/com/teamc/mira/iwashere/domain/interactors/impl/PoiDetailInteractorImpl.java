@@ -38,7 +38,7 @@ public class PoiDetailInteractorImpl extends AbstractInteractor implements PoiDe
         mMainThread.post(new Runnable() {
             @Override
             public void run() {
-                //// TODO: 12/04/2017 extract hardcoded fails
+                // TODO: 12/04/2017 extract hardcoded fails
                 if (code.equals("network-fail")) {
                     mCallBack.onNetworkFail();
                 }else {
