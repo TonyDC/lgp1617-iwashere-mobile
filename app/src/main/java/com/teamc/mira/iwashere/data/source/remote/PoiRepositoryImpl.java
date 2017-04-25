@@ -23,7 +23,10 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+
+import static com.teamc.mira.iwashere.data.source.remote.ServerUrl.TIMEOUT;
+import static com.teamc.mira.iwashere.data.source.remote.ServerUrl.TIMEOUT_TIME_UNIT;
 
 // TODO: 19/04/2017 Implement functions, test those already implemented
 public class PoiRepositoryImpl extends AbstractPoiRepository implements PoiRepository {
@@ -53,10 +56,10 @@ public class PoiRepositoryImpl extends AbstractPoiRepository implements PoiRepos
         queue.add(request);
 
         try {
-            JSONObject response = future.get(); // this will block
+            JSONObject response = future.get(TIMEOUT, TIMEOUT_TIME_UNIT); // this will block
 
             return new PoiModel(response);
-        } catch (InterruptedException | ExecutionException | JSONException e) {
+        } catch (InterruptedException | ExecutionException | JSONException | TimeoutException e) {
             handleError(e);
             return null;
         }
@@ -72,12 +75,12 @@ public class PoiRepositoryImpl extends AbstractPoiRepository implements PoiRepos
         queue.add(request);
 
         try {
-            JSONArray response = future.get(); // this will block
+            JSONArray response = future.get(TIMEOUT, TIMEOUT_TIME_UNIT); // this will block
 
             poi.setPhotos(getMedia(response));
 
             return true;
-        } catch (InterruptedException | ExecutionException e) {
+        } catch (InterruptedException | ExecutionException | TimeoutException e) {
             handleError(e);
             return false;
         }
@@ -93,7 +96,7 @@ public class PoiRepositoryImpl extends AbstractPoiRepository implements PoiRepos
         queue.add(request);
 
         try {
-            JSONObject response = future.get(); // this will block
+            JSONObject response = future.get(TIMEOUT, TIMEOUT_TIME_UNIT); // this will block
 
             float currentRating = (float) response.getDouble("rating");
             int currentRatingCount = response.getInt("ratings");
@@ -101,7 +104,7 @@ public class PoiRepositoryImpl extends AbstractPoiRepository implements PoiRepos
             poi.setRatingCount(currentRatingCount);
 
             return true;
-        } catch (InterruptedException | ExecutionException | JSONException e) {
+        } catch (InterruptedException | ExecutionException | JSONException | TimeoutException e) {
             handleError(e);
             return false;
         }
@@ -118,11 +121,11 @@ public class PoiRepositoryImpl extends AbstractPoiRepository implements PoiRepos
         queue.add(request);
 
         try {
-            JSONObject response = future.get(); // this will block
+            JSONObject response = future.get(TIMEOUT, TIMEOUT_TIME_UNIT); // this will block
 
             poi.setUserRating((float) response.getDouble("rating"));
             return true;
-        } catch (InterruptedException | ExecutionException | JSONException e) {
+        } catch (InterruptedException | ExecutionException | JSONException | TimeoutException e) {
             handleError(e);
             return false;
         }
@@ -140,12 +143,12 @@ public class PoiRepositoryImpl extends AbstractPoiRepository implements PoiRepos
             queue.add(request);
 
             try {
-                future.get(); // this will block
+                future.get(TIMEOUT, TIMEOUT_TIME_UNIT); // this will block
 
                 poi.setUserRating(newPoiRating);
 
                 return fetchPoiRating(poi);
-            } catch (InterruptedException | ExecutionException e) {
+            } catch (InterruptedException | ExecutionException | TimeoutException e) {
                 handleError(e);
                 return false;
             }
@@ -185,7 +188,7 @@ public class PoiRepositoryImpl extends AbstractPoiRepository implements PoiRepos
     @Nullable
     ArrayList<PoiModel> getPoiModelsFromRequest(RequestFuture<JSONArray> future) throws RemoteDataException {
         try {
-            JSONArray response = future.get(3000, TimeUnit.MILLISECONDS); // this will block
+            JSONArray response = future.get(TIMEOUT, TIMEOUT_TIME_UNIT); // this will block
             System.out.println(TAG+": " + String.valueOf(response));
 
             ArrayList<PoiModel> poiModels = new ArrayList<PoiModel>();
