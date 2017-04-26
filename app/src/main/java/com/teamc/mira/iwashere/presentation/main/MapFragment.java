@@ -43,6 +43,7 @@ import com.teamc.mira.iwashere.data.source.remote.PoiRepositoryImpl;
 import com.teamc.mira.iwashere.domain.executor.impl.ThreadExecutor;
 import com.teamc.mira.iwashere.domain.interactors.PoiMapInteractor;
 import com.teamc.mira.iwashere.domain.interactors.impl.PoiMapInteractorImpl;
+import com.teamc.mira.iwashere.domain.interactors.impl.SearchInteractorImpl;
 import com.teamc.mira.iwashere.domain.model.PoiModel;
 import com.teamc.mira.iwashere.presentation.poi.PoiDetailActivity;
 import com.teamc.mira.iwashere.threading.MainThreadImpl;
@@ -92,12 +93,14 @@ public class MapFragment extends Fragment implements
             @Override
             public boolean onQueryTextSubmit(String query) {
                 //Do some magic
+                searchForResults(query);
                 return false;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
                 //Do some magic
+
                 return false;
             }
         });
@@ -348,5 +351,46 @@ public class MapFragment extends Fragment implements
         searchView.setMenuItem(item);
 
         searchView.setSuggestions(getResources().getStringArray(R.array.query_suggestions));
+    }
+
+    private void searchForResults(String query) {
+
+        SearchInteractorImpl.CallBack callBack = new SearchInteractorImpl.CallBack() {
+            @Override
+            public void onSuccess(ArrayList<PoiModel> poiModels) {
+                Log.d(TAG, "PoiMapInteractor.CallBack onSuccess");
+
+                onSearchPoiFetch(poiModels);
+            }
+            @Override
+            public void onFail(String message) {
+                if(message == null || message.length() == 0) message = getString(R.string.error_fetch);
+
+                Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
+            }
+            @Override
+            public void onNetworkError() {
+                Toast.makeText(getActivity(), R.string.error_connection, Toast.LENGTH_SHORT).show();
+            }
+        };
+
+        SearchInteractorImpl searchInteractor = new SearchInteractorImpl(
+                ThreadExecutor.getInstance(),
+                MainThreadImpl.getInstance(),
+                callBack,
+                new PoiRepositoryImpl(getContext()),
+                query, mLatitude, mLongitude
+        );
+        searchInteractor.execute();
+
+        Log.d(TAG, "Searched Query: "+query+" Lat: "+mLatitude+" Lng: "+mLongitude);
+    }
+
+    private void onSearchPoiFetch(ArrayList<PoiModel> poiModels) {
+        PoiModel model;
+        for (int i = 0; i < poiModels.size(); i++) {
+            model = poiModels.get(i);
+            Log.d(TAG, "POI MARKER: "+model.getName());
+        }
     }
 }

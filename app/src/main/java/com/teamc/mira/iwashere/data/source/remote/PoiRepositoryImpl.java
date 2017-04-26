@@ -184,7 +184,7 @@ public class PoiRepositoryImpl extends AbstractPoiRepository implements PoiRepos
 
         String url = ServerUrl.getUrl() + ServerUrl.API + ServerUrl.POI + ServerUrl.SEARCH;
 
-        url = url.concat("/" + searchQuery + "&" + lat + "&" + lng);
+        url = url.concat(searchQuery + "&" + lat + "&" + lng);
         Log.d(TAG, url);
         RequestFuture<JSONArray> future = RequestFuture.newFuture();
         JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, url, null, future, future);
