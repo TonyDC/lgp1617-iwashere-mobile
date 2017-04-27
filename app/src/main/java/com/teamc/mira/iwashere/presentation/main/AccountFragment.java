@@ -2,6 +2,7 @@ package com.teamc.mira.iwashere.presentation.main;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Camera;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -33,6 +34,7 @@ import com.teamc.mira.iwashere.domain.repository.Repository;
 import com.teamc.mira.iwashere.domain.repository.UserRepository;
 import com.teamc.mira.iwashere.presentation.auth.AuthenticateActivity;
 import com.teamc.mira.iwashere.presentation.camera.CameraApi;
+import com.teamc.mira.iwashere.presentation.camera.CameraInit;
 import com.teamc.mira.iwashere.presentation.misc.AboutActivity;
 import com.teamc.mira.iwashere.presentation.poi.PoiDetailActivity;
 import com.teamc.mira.iwashere.threading.MainThreadImpl;
@@ -139,7 +141,7 @@ class AccountFragment extends Fragment implements View.OnClickListener{
 
         int i = v.getId();
         if (i == R.id.poi_test) {
-            startActivity(new Intent(this.getContext(), CameraApi.class));
+            startActivity(new Intent(this.getContext(), CameraInit.class));
         }
     }
 }

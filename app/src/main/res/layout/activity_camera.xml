@@ -11,13 +11,30 @@
         android:layout_height="wrap_content"
         android:layout_above="@+id/btn_takepicture"
         android:layout_alignParentTop="true"/>
+
     <Button
         android:id="@+id/btn_takepicture"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="pic"
+        android:layout_alignBaseline="@+id/btn_acceptpicture"
+        android:layout_alignBottom="@+id/btn_acceptpicture"
+        android:layout_alignEnd="@+id/btn_acceptpicture"
+        android:layout_marginEnd="54dp" />
+
+    <Button
+        android:id="@+id/btn_acceptpicture"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="16dp"
         android:layout_marginTop="16dp"
-        android:text="pic" />
+        android:text="accept" />
+
+    <ImageView
+        android:id="@+id/img_taken"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="invisible"/>
 </RelativeLayout>
