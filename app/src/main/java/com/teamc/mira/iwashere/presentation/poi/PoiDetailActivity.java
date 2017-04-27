@@ -31,6 +31,7 @@ import com.teamc.mira.iwashere.domain.interactors.impl.PoiRatingInteractorImpl;
 import com.teamc.mira.iwashere.domain.model.PoiModel;
 import com.teamc.mira.iwashere.domain.repository.PoiRepository;
 import com.teamc.mira.iwashere.threading.MainThreadImpl;
+import com.teamc.mira.iwashere.util.ExpandableHeightGridView;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -88,14 +89,17 @@ public class PoiDetailActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (descriptionText.getMaxLines() != Integer.MAX_VALUE) {
                     descriptionText.setMaxLines(Integer.MAX_VALUE);
-                    readMore.setText(Html.fromHtml(getString(R.string.more_info)));
+                    readMore.setText(Html.fromHtml(getString(R.string.less_info)));
 
                 } else {
                     descriptionText.setMaxLines(MAX_LINES);
-                    readMore.setText(Html.fromHtml(getString(R.string.less_info)));
+                    readMore.setText(Html.fromHtml(getString(R.string.more_info)));
                 }
             }
         });
+
+        ExpandableHeightGridView mAppsGrid = (ExpandableHeightGridView) findViewById(R.id.grid_view_image_text);
+        mAppsGrid.setExpanded(true);
 
     }
 
