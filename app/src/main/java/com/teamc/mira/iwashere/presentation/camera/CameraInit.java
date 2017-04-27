@@ -37,24 +37,27 @@ public class CameraInit extends Activity {
         setContentView(R.layout.camera);
         imageView = (ImageView) this.findViewById(R.id.picturedisplay);
         photoButton = (Button) this.findViewById(R.id.newPhoto);
+        callCamera();
 
         photoButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
-                Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-                File f = new File(Environment.getExternalStorageDirectory(), "POST_IMAGE.jpg");
-                cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(f));
-                imageToUploadUri = Uri.fromFile(f);
-                startActivityForResult(cameraIntent, CAMERA_REQUEST);
+                callCamera();
             }
         });
     }
 
+    public void callCamera(){
+        Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+        File f = new File(Environment.getExternalStorageDirectory(), "POST_IMAGE.jpg");
+        cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(f));
+        imageToUploadUri = Uri.fromFile(f);
+        startActivityForResult(cameraIntent, CAMERA_REQUEST);
+    }
+
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == CAMERA_REQUEST && resultCode == Activity.RESULT_OK) {
-            // Bitmap photo = (Bitmap) data.getExtras().get("data");
-            //imageView.setImageBitmap(photo);
             Bitmap photo = getBitmap(imageToUploadUri);
             imageView.setImageBitmap(photo);
 
