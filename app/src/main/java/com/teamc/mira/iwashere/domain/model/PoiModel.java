@@ -51,7 +51,7 @@ public class PoiModel implements Serializable{
     }
 
     public PoiModel(JSONObject poi) throws JSONException {
-        this.id = poi.getString("poi_id");
+        this.id = poi.getString("poiId");
         this.name = poi.getString("name");
         this.description = poi.getString("description");
         this.address = poi.getString("address");

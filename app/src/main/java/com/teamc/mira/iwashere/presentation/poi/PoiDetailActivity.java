@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Html;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -38,6 +39,9 @@ import java.util.ArrayList;
 
 public class PoiDetailActivity extends AppCompatActivity {
 
+    public static final String TAG = PoiDetailActivity.class.getSimpleName();
+    public static final int MAX_LINES = 8;
+
     PoiModel poi;
     FirebaseAuth auth;
 
@@ -45,10 +49,9 @@ public class PoiDetailActivity extends AppCompatActivity {
     SliderLayout sliderShow;
     TextView textDescription, addressT, addressF, hoursT, hoursF;
     ImageView pinPoint;
-    RatingBar poiRatingBar;
-    TextView poiRatingText;
     RatingBar userRatingBar;
     GridView photoGallery;
+
 
     GridView gridView;
     String[] gridViewString = {
@@ -73,6 +76,27 @@ public class PoiDetailActivity extends AppCompatActivity {
 
         setToolBar();
         setPoiInfoTemp();
+
+
+        final TextView descriptionText = (TextView) findViewById(R.id.description);
+        descriptionText.setMaxLines(MAX_LINES);
+
+        final TextView readMore = (TextView) findViewById(R.id.moreInformation);
+
+        readMore.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (descriptionText.getMaxLines() != Integer.MAX_VALUE) {
+                    descriptionText.setMaxLines(Integer.MAX_VALUE);
+                    readMore.setText(Html.fromHtml(getString(R.string.more_info)));
+
+                } else {
+                    descriptionText.setMaxLines(MAX_LINES);
+                    readMore.setText(Html.fromHtml(getString(R.string.less_info)));
+                }
+            }
+        });
+
     }
 
     private void setPoiInfoTemp() {
@@ -98,7 +122,6 @@ public class PoiDetailActivity extends AppCompatActivity {
         setPoiSlider();
         setPoiDescriptionText();
         setPoiRatingBars();
-        setPoiAddressPanel();
         setPoiContentGrid();
         getSupportActionBar().setTitle(poi.getName());
 
@@ -127,7 +150,6 @@ public class PoiDetailActivity extends AppCompatActivity {
                 setPoiSlider();
                 setPoiDescriptionText();
                 setPoiRatingBars();
-                setPoiAddressPanel();
                 //setPoiContentGrid();
             }
         };
@@ -167,11 +189,6 @@ public class PoiDetailActivity extends AppCompatActivity {
         });
     }
 
-    // TODO: improve this
-    private void setPoiAddressPanel() {
-        findViewById(R.id.addressPinPoint).setBackgroundColor(Color.parseColor("#35A8DF"));
-    }
-
     /**
      * Create POI description field with the description associated to the POI model.
      */
@@ -201,14 +218,9 @@ public class PoiDetailActivity extends AppCompatActivity {
      */
     private void setPoiRatingBars() {
 
-        poiRatingBar = (RatingBar) findViewById(R.id.poiRatingBar);
-        poiRatingText = (TextView) findViewById(R.id.poiRatingText);
-
         userRatingBar = (RatingBar) findViewById(R.id.userRatingBar);
 
-        poiRatingBar.setIsIndicator(true);
         setPoiRating();
-        setRatingBarsStyle();
 
         if (auth.getCurrentUser() == null) {
             ((ViewGroup) userRatingBar.getParent()).removeView(userRatingBar);
@@ -264,17 +276,8 @@ public class PoiDetailActivity extends AppCompatActivity {
         });
     }
 
-    private void setRatingBarsStyle() {
-        findViewById(R.id.ratings).setBackgroundColor(Color.parseColor("#35A8DF"));
-        poiRatingText.setTextColor(Color.BLACK);
-        poiRatingBar.setBackgroundColor(Color.parseColor("#35A8DF"));
-        userRatingBar.setBackgroundColor(Color.parseColor("#35A8DF"));
-    }
-
     private void setPoiRating() {
-        poiRatingBar.setRating(poi.getRating());
-        DecimalFormat decimalFormat = new DecimalFormat("#.##");
-        poiRatingText.setText(decimalFormat.format(poi.getRating()) + "/5");
+
     }
 
     private void setToolBar() {
