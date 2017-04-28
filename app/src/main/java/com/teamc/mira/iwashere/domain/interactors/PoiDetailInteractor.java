@@ -14,6 +14,8 @@ public interface PoiDetailInteractor extends Interactor {
         void onError(String code, String message);
 
         void onSuccess(PoiModel poi);
+
+        void onSuccess(PoiModel poi, boolean moreResults);
     }
 
     void notifyError(String code, String message);

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 
 import com.android.volley.RequestQueue;
+import com.teamc.mira.iwashere.domain.model.ContentModel;
 import com.teamc.mira.iwashere.domain.model.PoiModel;
 import com.teamc.mira.iwashere.domain.repository.PoiRepository;
 import com.teamc.mira.iwashere.domain.repository.UserRepository;
@@ -54,6 +55,23 @@ public abstract class AbstractPoiRepository extends AbstractRepository implement
         }
 
         return mediaList;
+    }
+
+    @NonNull
+    protected ArrayList<ContentModel> getContent(JSONArray response) {
+        ArrayList<ContentModel> contentList = new ArrayList<>();
+
+        for (int i = 0; i < response.length(); i++) {
+            JSONObject object = null;
+            try {
+                object = response.getJSONObject(i);
+                contentList.add(new ContentModel(object));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return contentList;
     }
 
 }

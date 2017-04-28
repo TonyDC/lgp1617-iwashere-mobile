@@ -49,14 +49,6 @@
                     />
             </LinearLayout>
 
-
-            <RatingBar
-                android:id="@+id/userRatingBar"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_gravity="center_horizontal"
-                android:numStars="5"
-                android:stepSize="1.0" />
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -75,15 +67,25 @@
                     <ImageView
                         android:layout_width="36dp"
                         android:layout_height="36dp"
-                        android:src="@drawable/ic_star_black_36dp"
+                        android:url="@drawable/ic_star_black_36dp"
                         />
                     <TextView
+                        android:id="@+id/poiRating"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:padding="10dp"
                         android:text="@string/default_pontuation_poi"
                         />
                 </LinearLayout>
+
+                <RatingBar
+                    android:id="@+id/userRatingBar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_horizontal"
+                    android:numStars="5"
+                    android:stepSize="1.0" />
+
                 <LinearLayout
                     android:id="@+id/addressPinPoint"
                     android:layout_width="match_parent"
@@ -97,7 +99,7 @@
                         android:id="@+id/ic_location"
                         android:layout_width="36dp"
                         android:layout_height="36dp"
-                        android:src="@drawable/ic_location_on_black_32dp" />
+                        android:url="@drawable/ic_location_on_black_32dp" />
 
                     <LinearLayout
                         android:id="@+id/addressBox"

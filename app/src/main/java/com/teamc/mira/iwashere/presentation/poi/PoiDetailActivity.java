@@ -1,7 +1,6 @@
 package com.teamc.mira.iwashere.presentation.poi;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -26,6 +25,7 @@ import com.teamc.mira.iwashere.domain.executor.Executor;
 import com.teamc.mira.iwashere.domain.executor.MainThread;
 import com.teamc.mira.iwashere.domain.executor.impl.ThreadExecutor;
 import com.teamc.mira.iwashere.domain.interactors.PoiDetailInteractor;
+import com.teamc.mira.iwashere.domain.interactors.impl.PoiContentInteractorImpl;
 import com.teamc.mira.iwashere.domain.interactors.impl.PoiDetailInteractorImpl;
 import com.teamc.mira.iwashere.domain.interactors.impl.PoiRatingInteractorImpl;
 import com.teamc.mira.iwashere.domain.model.PoiModel;
@@ -42,26 +42,29 @@ public class PoiDetailActivity extends AppCompatActivity {
 
     public static final String TAG = PoiDetailActivity.class.getSimpleName();
     public static final int MAX_LINES = 8;
+    public static final int CONTENT_LIMIT = 8;
 
     PoiModel poi;
+    int contentOffeset = 0;
     FirebaseAuth auth;
 
     /* View components */
     SliderLayout sliderShow;
     TextView textDescription, addressT, addressF, hoursT, hoursF;
     ImageView pinPoint;
+    TextView poiRatingText;
     RatingBar userRatingBar;
+
     GridView photoGallery;
-
-
     GridView gridView;
+    boolean moreContent = true;
+
     String[] gridViewString = {
             "Alram", "Android", "Mobile", "Website", "Profile", "WordPress",
             "Alram", "Android", "Mobile", "Website", "Profile", "WordPress",
             "Alram", "Android", "Mobile", "Website", "Profile", "WordPress",
 
     };
-
     int[] gridViewImageId = {
             R.drawable.logo, R.drawable.ic_location_on_black_32dp, R.drawable.logo, R.drawable.ic_location_on_black_32dp, R.drawable.logo, R.drawable.ic_location_on_black_32dp,
             R.drawable.logo, R.drawable.ic_location_on_black_32dp, R.drawable.logo, R.drawable.ic_location_on_black_32dp, R.drawable.logo, R.drawable.ic_location_on_black_32dp,
@@ -77,36 +80,10 @@ public class PoiDetailActivity extends AppCompatActivity {
 
         setToolBar();
         setPoiInfoTemp();
-
-
-        final TextView descriptionText = (TextView) findViewById(R.id.description);
-        descriptionText.setMaxLines(MAX_LINES);
-
-        final TextView readMore = (TextView) findViewById(R.id.moreInformation);
-
-        readMore.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (descriptionText.getMaxLines() != Integer.MAX_VALUE) {
-                    descriptionText.setMaxLines(Integer.MAX_VALUE);
-                    readMore.setText(Html.fromHtml(getString(R.string.less_info)));
-
-                } else {
-                    descriptionText.setMaxLines(MAX_LINES);
-                    readMore.setText(Html.fromHtml(getString(R.string.more_info)));
-                }
-            }
-        });
-
-        ExpandableHeightGridView mAppsGrid = (ExpandableHeightGridView) findViewById(R.id.grid_view_image_text);
-        mAppsGrid.setExpanded(true);
-
     }
 
+    // for test purposes; TODO replace by API interactor
     private void setPoiInfoTemp() {
-        // for test purposes; TODO replace by API interactor
-
-
         URL url1 = null, url2 = null;
         ArrayList<URL> urls = new ArrayList<URL>();
         try {
@@ -123,7 +100,7 @@ public class PoiDetailActivity extends AppCompatActivity {
         poi.setRating(4);
         poi.setUserRating(1);
 
-        setPoiSlider();
+        setPoiMediaSlider();
         setPoiDescriptionText();
         setPoiRatingBars();
         setPoiContentGrid();
@@ -151,7 +128,7 @@ public class PoiDetailActivity extends AppCompatActivity {
             public void onSuccess(PoiModel poiInformation) {
                 poi = poiInformation;
 
-                setPoiSlider();
+                setPoiMediaSlider();
                 setPoiDescriptionText();
                 setPoiRatingBars();
                 //setPoiContentGrid();
@@ -165,7 +142,6 @@ public class PoiDetailActivity extends AppCompatActivity {
 
         setPoiContentGrid();
 
-
         PoiDetailInteractor poiDetailInteractor = new PoiDetailInteractorImpl(
                 executor,
                 mainThread,
@@ -177,8 +153,63 @@ public class PoiDetailActivity extends AppCompatActivity {
         poiDetailInteractor.execute();
     }
 
+    private void fetchPoiContent(String poiId) {
+        if (!moreContent) {
+            return;
+        }
+
+        MainThread mainThread = MainThreadImpl.getInstance();
+        Executor executor = ThreadExecutor.getInstance();
+        PoiRepository poiRepository = new PoiRepositoryImpl(this);
+        PoiDetailInteractor.CallBack callback = new PoiDetailInteractor.CallBack() {
+
+            @Override
+            public void onNetworkFail() {
+                onError(null, null);
+            }
+
+            @Override
+            public void onError(String code, String message) {
+                // TODO: redirect to previous display?
+            }
+
+            @Override
+            public void onSuccess(PoiModel poi) {
+                onSuccess(poi, true);
+            }
+
+            @Override
+            public void onSuccess(PoiModel poiInformation, boolean hasMoreContent) {
+                poi = poiInformation;
+                moreContent = hasMoreContent;
+
+                // TODO update content grid
+            }
+        };
+
+        String userId = null;
+        if (auth.getCurrentUser() != null) {
+            userId = auth.getCurrentUser().getUid();
+        }
+
+        PoiDetailInteractor poiContentInteractor = new PoiContentInteractorImpl(
+                executor,
+                mainThread,
+                callback,
+                poiRepository,
+                poi,
+                userId,
+                contentOffeset,
+                CONTENT_LIMIT);
+
+        poiContentInteractor.execute();
+    }
+
     // TODO: improve this
     private void setPoiContentGrid() {
+        ExpandableHeightGridView mAppsGrid = (ExpandableHeightGridView) findViewById(R.id.grid_view_image_text);
+        mAppsGrid.setExpanded(true);
+
         GridViewAdapter adapterView = new GridViewAdapter(PoiDetailActivity.this, gridViewString, gridViewImageId);
         gridView = (GridView) findViewById(R.id.grid_view_image_text);
         gridView.setAdapter(adapterView);
@@ -199,12 +230,32 @@ public class PoiDetailActivity extends AppCompatActivity {
     private void setPoiDescriptionText() {
         textDescription = (TextView) findViewById(R.id.description);
         textDescription.setText(poi.getDescription());
+
+        textDescription = (TextView) findViewById(R.id.description);
+        textDescription.setMaxLines(MAX_LINES);
+
+        final TextView readMore = (TextView) findViewById(R.id.moreInformation);
+
+        readMore.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (textDescription.getMaxLines() != Integer.MAX_VALUE) {
+                    textDescription.setMaxLines(Integer.MAX_VALUE);
+                    readMore.setText(Html.fromHtml(getString(R.string.less_info)));
+
+                } else {
+                    textDescription.setMaxLines(MAX_LINES);
+                    readMore.setText(Html.fromHtml(getString(R.string.more_info)));
+                }
+            }
+        });
+
     }
 
     /**
      * Create POI slider with the pictures associated to the POI model.
      */
-    private void setPoiSlider() {
+    private void setPoiMediaSlider() {
         sliderShow = (SliderLayout) findViewById(R.id.slider);
 
         for (URL imageURL : poi.getPhotos()) {
@@ -222,10 +273,12 @@ public class PoiDetailActivity extends AppCompatActivity {
      */
     private void setPoiRatingBars() {
 
+        poiRatingText = (TextView) findViewById(R.id.poiRating);
         userRatingBar = (RatingBar) findViewById(R.id.userRatingBar);
 
         setPoiRating();
 
+        // TODO: check if this is async
         if (auth.getCurrentUser() == null) {
             ((ViewGroup) userRatingBar.getParent()).removeView(userRatingBar);
 
@@ -280,15 +333,17 @@ public class PoiDetailActivity extends AppCompatActivity {
         });
     }
 
-    private void setPoiRating() {
-
-    }
-
     private void setToolBar() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    }
+
+    // TODO update poi rating display
+    private void setPoiRating() {
+        DecimalFormat decimalFormat = new DecimalFormat("#.##");
+        poiRatingText.setText(decimalFormat.format(poi.getRating()) + "/5");
     }
 
     @Override
