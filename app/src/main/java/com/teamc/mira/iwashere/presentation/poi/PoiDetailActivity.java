@@ -24,6 +24,7 @@ import com.teamc.mira.iwashere.data.source.remote.PoiRepositoryImpl;
 import com.teamc.mira.iwashere.domain.executor.Executor;
 import com.teamc.mira.iwashere.domain.executor.MainThread;
 import com.teamc.mira.iwashere.domain.executor.impl.ThreadExecutor;
+import com.teamc.mira.iwashere.domain.interactors.PoiContentInteractor;
 import com.teamc.mira.iwashere.domain.interactors.PoiDetailInteractor;
 import com.teamc.mira.iwashere.domain.interactors.impl.PoiContentInteractorImpl;
 import com.teamc.mira.iwashere.domain.interactors.impl.PoiDetailInteractorImpl;
@@ -161,7 +162,7 @@ public class PoiDetailActivity extends AppCompatActivity {
         MainThread mainThread = MainThreadImpl.getInstance();
         Executor executor = ThreadExecutor.getInstance();
         PoiRepository poiRepository = new PoiRepositoryImpl(this);
-        PoiDetailInteractor.CallBack callback = new PoiDetailInteractor.CallBack() {
+        PoiContentInteractor.CallBack callback = new PoiContentInteractor.CallBack() {
 
             @Override
             public void onNetworkFail() {
@@ -171,11 +172,6 @@ public class PoiDetailActivity extends AppCompatActivity {
             @Override
             public void onError(String code, String message) {
                 // TODO: redirect to previous display?
-            }
-
-            @Override
-            public void onSuccess(PoiModel poi) {
-                onSuccess(poi, true);
             }
 
             @Override
@@ -192,7 +188,7 @@ public class PoiDetailActivity extends AppCompatActivity {
             userId = auth.getCurrentUser().getUid();
         }
 
-        PoiDetailInteractor poiContentInteractor = new PoiContentInteractorImpl(
+        PoiContentInteractor poiContentInteractor = new PoiContentInteractorImpl(
                 executor,
                 mainThread,
                 callback,
@@ -340,7 +336,6 @@ public class PoiDetailActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
-    // TODO update poi rating display
     private void setPoiRating() {
         DecimalFormat decimalFormat = new DecimalFormat("#.##");
         poiRatingText.setText(decimalFormat.format(poi.getRating()) + "/5");

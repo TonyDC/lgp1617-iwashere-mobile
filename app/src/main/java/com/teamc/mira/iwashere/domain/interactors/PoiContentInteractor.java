@@ -3,9 +3,7 @@ package com.teamc.mira.iwashere.domain.interactors;
 import com.teamc.mira.iwashere.domain.interactors.base.Interactor;
 import com.teamc.mira.iwashere.domain.model.PoiModel;
 
-import java.util.ArrayList;
-
-public interface PoiDetailInteractor extends Interactor {
+public interface PoiContentInteractor extends Interactor {
 
     interface CallBack {
 
@@ -13,7 +11,7 @@ public interface PoiDetailInteractor extends Interactor {
 
         void onError(String code, String message);
 
-        void onSuccess(PoiModel poi);
+        void onSuccess(PoiModel poi, boolean moreResults);
     }
 
     void notifyError(String code, String message);
