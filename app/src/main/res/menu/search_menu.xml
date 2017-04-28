@@ -1,10 +1,13 @@
-<?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.teamc.mira.iwashere.presentation.main.MainActivity">
     <item
         android:id="@+id/action_search"
-        android:icon="@drawable/ic_action_search"
         android:orderInCategory="100"
         android:title="@string/search_hint_text"
-        app:showAsAction="always" />
+        android:icon="@drawable/ic_action_search"
+        app:actionViewClass="android.support.v7.widget.SearchView"
+        app:showAsAction="ifRoom|collapseActionView"
+        app:popupTheme="@style/AppTheme.SearchView"/>
 </menu>

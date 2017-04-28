@@ -2,6 +2,7 @@ package com.teamc.mira.iwashere.presentation.main;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.app.SearchManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -15,6 +16,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -23,13 +25,9 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ExpandableListView;
 import android.widget.Toast;
 
-import com.claudiodegio.msv.FilterMaterialSearchView;
-import com.claudiodegio.msv.OnFilterViewListener;
-import com.claudiodegio.msv.OnSearchViewListener;
-import com.claudiodegio.msv.model.Filter;
-import com.claudiodegio.msv.model.Section;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -49,12 +47,14 @@ import com.teamc.mira.iwashere.domain.interactors.PoiMapInteractor;
 import com.teamc.mira.iwashere.domain.interactors.impl.PoiMapInteractorImpl;
 import com.teamc.mira.iwashere.domain.interactors.impl.SearchInteractorImpl;
 import com.teamc.mira.iwashere.domain.model.PoiModel;
+import com.teamc.mira.iwashere.presentation.list.ChildRow;
+import com.teamc.mira.iwashere.presentation.list.MyExpandableListAdapter;
+import com.teamc.mira.iwashere.presentation.list.ParentRow;
 import com.teamc.mira.iwashere.presentation.poi.PoiDetailActivity;
 import com.teamc.mira.iwashere.threading.MainThreadImpl;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 public class MapFragment extends Fragment implements
 //        GoogleMap.OnCameraMoveStartedListener,
@@ -62,7 +62,7 @@ public class MapFragment extends Fragment implements
 //        GoogleMap.OnCameraMoveCanceledListener,
 //        GoogleMap.OnCameraIdleListener,
         OnMapReadyCallback,
-        GoogleApiClient.OnConnectionFailedListener, OnSearchViewListener, OnFilterViewListener {
+        GoogleApiClient.OnConnectionFailedListener, SearchView.OnQueryTextListener, SearchView.OnCloseListener {
 
 
     private static final String TAG = MapFragment.class.getSimpleName();
@@ -70,11 +70,10 @@ public class MapFragment extends Fragment implements
     private static final int MAX_NAME_LENGTH = 30;
     private static final String INTENT_NEW_LOCATION = "New Location";
     public static final float ZOOM = 14.0f;
-    public static final String CONTENT_AUTHORITY = "MapFragment.SearchView";
 
     private MapView mMapView;
     private GoogleMap mGoogleMap;
-    private FilterMaterialSearchView searchView;
+    //private FilterMaterialSearchView searchView;
 
     private static double mLatitude;
     private static double mLongitude;
@@ -87,17 +86,33 @@ public class MapFragment extends Fragment implements
     private long mLastCallMs = Long.MIN_VALUE;
     private LatLngBounds mCurrentCameraBounds;
 
+    private SearchManager searchManager;
+    private SearchView searchView;
+    private MyExpandableListAdapter listAdapter;
+    private ExpandableListView myList;
+    private ArrayList<ParentRow> parentList = new ArrayList<ParentRow>();
+    private ArrayList<ParentRow> showTheseParentList = new ArrayList<ParentRow>();
+    private MenuItem searchItem;
+    View mRootView;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        View rootView = inflater.inflate(R.layout.fragment_map, container, false);
+        mRootView = inflater.inflate(R.layout.fragment_map, container, false);
 
-        Toolbar myToolbar = (Toolbar) rootView.findViewById(R.id.toolbar);
+        Toolbar myToolbar = (Toolbar) mRootView.findViewById(R.id.toolbar);
         ((AppCompatActivity) getActivity()).setSupportActionBar(myToolbar);
-        searchView = (FilterMaterialSearchView) rootView.findViewById(R.id.sv);
         setHasOptionsMenu(true);
         getActivity().setTitle(null);
-        initCustom();
+        parentList = new ArrayList<ParentRow>();
+        showTheseParentList = new ArrayList<ParentRow>();
+
+        // The app will crash if display list is not called here.
+        displayList(mRootView);
+
+        // This expands the list.
+        expandAll();
+
         // registering receivers for certain intents
         IntentFilter intentNewLocation = new IntentFilter(INTENT_NEW_LOCATION);
         getActivity().getApplicationContext().registerReceiver(mReceiver, intentNewLocation);
@@ -105,7 +120,7 @@ public class MapFragment extends Fragment implements
         mLatitude = 0;
         mLongitude = 0;
 
-        mMapView = (MapView) rootView.findViewById(R.id.map);
+        mMapView = (MapView) mRootView.findViewById(R.id.map);
         mMapView.onCreate(savedInstanceState);
         mMapView.onResume();
 
@@ -116,7 +131,7 @@ public class MapFragment extends Fragment implements
         }
 
         mMapView.getMapAsync(this);
-        return rootView;
+        return mRootView;
     }
 
     @Override
@@ -165,6 +180,7 @@ public class MapFragment extends Fragment implements
             mFirstZoomFlag = true;
         }
     }
+
     private void checkLocationPermission() {
         if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -280,12 +296,15 @@ public class MapFragment extends Fragment implements
 
                 onPoiFetch(poiModels);
             }
+
             @Override
             public void onFail(String message) {
-                if(message == null || message.length() == 0) message = getString(R.string.error_fetch);
+                if (message == null || message.length() == 0)
+                    message = getString(R.string.error_fetch);
 
                 Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
             }
+
             @Override
             public void onNetworkError() {
                 Toast.makeText(getActivity(), R.string.error_connection, Toast.LENGTH_SHORT).show();
@@ -297,11 +316,11 @@ public class MapFragment extends Fragment implements
                 MainThreadImpl.getInstance(),
                 callBack,
                 new PoiRepositoryImpl(getContext()),
-                minLat,maxLat,minLng,maxLng
+                minLat, maxLat, minLng, maxLng
         );
         poiMapInteractor.execute();
 
-        Log.d(TAG, "Lat: "+minLat+" - "+maxLat +" ; Lng: "+minLng+" - "+maxLng);
+        Log.d(TAG, "Lat: " + minLat + " - " + maxLat + " ; Lng: " + minLng + " - " + maxLng);
     }
 
     private void onPoiFetch(ArrayList<PoiModel> poiModels) {
@@ -311,25 +330,32 @@ public class MapFragment extends Fragment implements
 
             // TODO: 21/04/2017 Added markers in other way to avoid adding existing markers
             MarkerOptions markerOptions = new MarkerOptions();
-            markerOptions.position(new LatLng(new Double(model.getLatitude()),new Double(model.getLongitude())));
+            markerOptions.position(new LatLng(new Double(model.getLatitude()), new Double(model.getLongitude())));
             markerOptions.title(model.getName());
 
             markerOptions.icon(BitmapDescriptorFactory.fromResource(R.mipmap.marker_primary));
 
             Marker marker = mGoogleMap.addMarker(markerOptions);
 
-            poiHashMap.put(marker,model);
+            poiHashMap.put(marker, model);
 
-            Log.d(TAG, "POI MARKER: "+model.getName());
+            Log.d(TAG, "POI MARKER: " + model.getName());
         }
     }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.search_menu, menu);
-        super.onCreateOptionsMenu(menu,inflater);
-        MenuItem item = menu.findItem(R.id.action_search);
-        searchView.setMenuItem(item);
+        super.onCreateOptionsMenu(menu, inflater);
+
+        searchManager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
+
+        searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
+        searchView.setSubmitButtonEnabled(true);
+        searchView.setOnQueryTextListener(this);
+        searchView.setOnCloseListener(this);
+        searchView.requestFocus();
     }
 
     private void searchForResults(String query) {
@@ -341,12 +367,15 @@ public class MapFragment extends Fragment implements
 
                 onSearchPoiFetch(poiModels);
             }
+
             @Override
             public void onFail(String message) {
-                if(message == null || message.length() == 0) message = getString(R.string.error_fetch);
+                if (message == null || message.length() == 0)
+                    message = getString(R.string.error_fetch);
 
                 Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
             }
+
             @Override
             public void onNetworkError() {
                 Toast.makeText(getActivity(), R.string.error_connection, Toast.LENGTH_SHORT).show();
@@ -362,72 +391,95 @@ public class MapFragment extends Fragment implements
         );
         searchInteractor.execute();
 
-        Log.d(TAG, "Searched Query: "+query+" Lat: "+mLatitude+" Lng: "+mLongitude);
+        Log.d(TAG, "Searched Query: " + query + " Lat: " + mLatitude + " Lng: " + mLongitude);
     }
 
     private void onSearchPoiFetch(ArrayList<PoiModel> poiModels) {
         PoiModel model;
         for (int i = 0; i < poiModels.size(); i++) {
             model = poiModels.get(i);
-            Log.d(TAG, "POI MODEL SEARCH: "+model.getName());
+            Log.d(TAG, "POI MODEL SEARCH: " + model.getName());
 
-            listResult(1, model.getName(), 0, R.drawable.ic_location_on_black_32dp, R.color.black_55);
+            ArrayList<ChildRow> childRows = new ArrayList<ChildRow>();
+            ParentRow parentRow = null;
 
-            listResult(2, model.getName(), 1, R.drawable.ic_pound, R.color.black_55);
+            childRows.add(new ChildRow(R.drawable.ic_location_on_black_32dp, model.getName()));
+            parentRow = new ParentRow("Places", childRows);
+            parentList.add(parentRow);
+
+            ArrayList<ChildRow> childRows2 = new ArrayList<ChildRow>();
+
+            childRows2.add(new ChildRow(R.drawable.ic_pound, model.getName()));
+            parentRow = new ParentRow("Tags", childRows2);
+            parentList.add(parentRow);
+
+            displayList(mRootView);
+            //listResult(1, model.getName(), 0, R.drawable.ic_location_on_black_32dp, R.color.black_55);
+
+            //listResult(2, model.getName(), 1, R.drawable.ic_pound, R.color.black_55);
 
             /**if (model.getName().length() > MAX_NAME_LENGTH) {
-                searchView.addSuggestion(model.getName().substring(0, MAX_NAME_LENGTH) + "...");
-            } else searchView.addSuggestion(model.getName());**/
+             searchView.addSuggestion(model.getName().substring(0, MAX_NAME_LENGTH) + "...");
+             } else searchView.addSuggestion(model.getName());**/
         }
     }
 
     @Override
-    public void onFilterAdded(Filter filter) {
-
-    }
-
-    @Override
-    public void onFilterRemoved(Filter filter) {
-
-    }
-
-    @Override
-    public void onFilterChanged(List<Filter> list) {
-
-    }
-
-    @Override
-    public void onSearchViewShown() {
-
-    }
-
-    @Override
-    public void onSearchViewClosed() {
-
-    }
-
-    @Override
-    public boolean onQueryTextSubmit(String s) {
+    public boolean onClose() {
+        listAdapter.filterData("");
+        expandAll();
         return false;
     }
 
     @Override
-    public void onQueryTextChange(String s) {
-        if (s.length() != 0) searchForResults(s);
+    public boolean onQueryTextSubmit(String query) {
+        listAdapter.filterData(query);
+        expandAll();
+        return false;
     }
 
-    private void listResult(int categoryNumber, String name, int id, int icon, int color) {
-        Filter filter = new Filter(categoryNumber, name, id, icon, color);
-        searchView.addFilter(filter);
+    @Override
+    public boolean onQueryTextChange(String newText) {
+        listAdapter.filterData(newText);
+        searchForResults(newText);
+        expandAll();
+        return false;
     }
 
-    protected void initCustom() {
-        searchView.setOnSearchViewListener(this);
-        searchView.setOnFilterViewListener(this);
-        searchView.addSection(new Section("Places"));
-        searchView.addSection(new Section("Routes"));
-        searchView.addSection(new Section("Tags"));
+    private void loadData() {
+        ArrayList<ChildRow> childRows = new ArrayList<ChildRow>();
+        ParentRow parentRow = null;
 
+        childRows.add(new ChildRow(R.mipmap.marker_primary
+                , "Lorem ipsum dolor sit amet, consectetur adipiscing elit."));
+        childRows.add(new ChildRow(R.mipmap.marker_primary
+                , "Sit Fido, sit."));
+        parentRow = new ParentRow("Places", childRows);
+        parentList.add(parentRow);
 
+        childRows = new ArrayList<ChildRow>();
+        childRows.add(new ChildRow(R.mipmap.marker_primary
+                , "Fido is the name of my dog."));
+        childRows.add(new ChildRow(R.mipmap.marker_primary
+                , "Add two plus two."));
+        parentRow = new ParentRow("Routes", childRows);
+        parentList.add(parentRow);
+
+    }
+
+    private void expandAll() {
+        int count = listAdapter.getGroupCount();
+        for (int i = 0; i < count; i++) {
+            myList.expandGroup(i);
+        } //end for (int i = 0; i < count; i++)
+    }
+
+    private void displayList(View rooView) {
+        //loadData();
+
+        myList = (ExpandableListView) rooView.findViewById(R.id.expandableListView_search);
+        listAdapter = new MyExpandableListAdapter(getActivity(), parentList);
+
+        myList.setAdapter(listAdapter);
     }
 }
