@@ -67,7 +67,7 @@
                     <ImageView
                         android:layout_width="36dp"
                         android:layout_height="36dp"
-                        android:url="@drawable/ic_star_black_36dp"
+                        android:src="@drawable/ic_star_black_36dp"
                         />
                     <TextView
                         android:id="@+id/poiRating"
@@ -99,7 +99,7 @@
                         android:id="@+id/ic_location"
                         android:layout_width="36dp"
                         android:layout_height="36dp"
-                        android:url="@drawable/ic_location_on_black_32dp" />
+                        android:src="@drawable/ic_location_on_black_32dp" />
 
                     <LinearLayout
                         android:id="@+id/addressBox"
