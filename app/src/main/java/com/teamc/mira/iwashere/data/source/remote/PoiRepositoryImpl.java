@@ -186,11 +186,59 @@ public class PoiRepositoryImpl extends AbstractPoiRepository implements PoiRepos
 
         url = url.concat(searchQuery + "&" + lat + "&" + lng);
         Log.d(TAG, url);
-        RequestFuture<JSONArray> future = RequestFuture.newFuture();
-        JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, url, null, future, future);
+        RequestFuture<JSONObject> future = RequestFuture.newFuture();
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null, future, future);
         queue.add(request);
 
-        return getPoiModelsFromRequest(future);
+        return getPoiSearchModelsFromRequest(future);
+    }
+
+    @Nullable
+    ArrayList<PoiModel> getPoiSearchModelsFromRequest(RequestFuture<JSONObject> future) throws RemoteDataException {
+        try {
+            JSONObject response = future.get(3000, TimeUnit.MILLISECONDS); // this will block
+            System.out.println(TAG + ": " + String.valueOf(response));
+
+            ArrayList<PoiModel> poiModels = new ArrayList<PoiModel>();
+            PoiModel poiModel;
+            JSONObject object;
+
+            JSONArray results = response.getJSONArray("results");
+            System.out.println(TAG + ": " + String.valueOf(results));
+
+            for (int i = 0; i < results.length(); i++) {
+                object = results.getJSONObject(i);
+                poiModel = new PoiModel(object);
+                poiModels.add(poiModel);
+            }
+
+            return poiModels;
+        } catch (InterruptedException | ExecutionException e) {
+            //check to see if the throwable in an instance of the volley error
+            if (e.getCause() instanceof VolleyError) {
+                //grab the volley error from the throwable and cast it back
+                VolleyError volleyError = (VolleyError) e.getCause();
+                //now just grab the network response like normal
+                NetworkResponse networkResponse = volleyError.networkResponse;
+                try {
+                    Log.d(TAG, "raw data: " + new String(networkResponse.data));
+                    JSONObject data = new JSONObject(new String(networkResponse.data));
+                    Log.d(TAG, data.toString());
+
+                    String code = data.getString("code");
+
+                    throw (RemoteDataException) new BasicRemoteException(code);
+                } catch (JSONException e1) {
+                    e1.printStackTrace();
+                    throw (RemoteDataException) new BasicRemoteException("unknown-error");
+                }
+            }
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw (RemoteDataException) new BasicRemoteException("unknown-error");
+        }
+        return null;
     }
 
     @Nullable

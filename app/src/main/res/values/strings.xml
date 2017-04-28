@@ -66,6 +66,7 @@
     <string name="error_fetch">Error fetching data</string>
     <string name="error_connection">Failed connection!</string>
     <string name="address">Address</string>
+    <string name="search_hint_text">Search for places, routes, tags...</string>
 
     <string-array name="query_suggestions">
         <item>Android</item>

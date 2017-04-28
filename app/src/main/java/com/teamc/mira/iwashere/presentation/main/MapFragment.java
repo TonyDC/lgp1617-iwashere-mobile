@@ -25,6 +25,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.claudiodegio.msv.FilterMaterialSearchView;
+import com.claudiodegio.msv.OnFilterViewListener;
+import com.claudiodegio.msv.OnSearchViewListener;
+import com.claudiodegio.msv.model.Filter;
+import com.claudiodegio.msv.model.Section;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -37,7 +42,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.miguelcatalan.materialsearchview.MaterialSearchView;
 import com.teamc.mira.iwashere.R;
 import com.teamc.mira.iwashere.data.source.remote.PoiRepositoryImpl;
 import com.teamc.mira.iwashere.domain.executor.impl.ThreadExecutor;
@@ -50,6 +54,7 @@ import com.teamc.mira.iwashere.threading.MainThreadImpl;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class MapFragment extends Fragment implements
 //        GoogleMap.OnCameraMoveStartedListener,
@@ -57,16 +62,19 @@ public class MapFragment extends Fragment implements
 //        GoogleMap.OnCameraMoveCanceledListener,
 //        GoogleMap.OnCameraIdleListener,
         OnMapReadyCallback,
-        GoogleApiClient.OnConnectionFailedListener {
+        GoogleApiClient.OnConnectionFailedListener, OnSearchViewListener, OnFilterViewListener {
+
 
     private static final String TAG = MapFragment.class.getSimpleName();
     private static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
+    private static final int MAX_NAME_LENGTH = 30;
     private static final String INTENT_NEW_LOCATION = "New Location";
     public static final float ZOOM = 14.0f;
+    public static final String CONTENT_AUTHORITY = "MapFragment.SearchView";
 
     private MapView mMapView;
     private GoogleMap mGoogleMap;
-    private MaterialSearchView searchView;
+    private FilterMaterialSearchView searchView;
 
     private static double mLatitude;
     private static double mLongitude;
@@ -86,37 +94,10 @@ public class MapFragment extends Fragment implements
 
         Toolbar myToolbar = (Toolbar) rootView.findViewById(R.id.toolbar);
         ((AppCompatActivity) getActivity()).setSupportActionBar(myToolbar);
-        searchView = (MaterialSearchView) rootView.findViewById(R.id.search_view);
+        searchView = (FilterMaterialSearchView) rootView.findViewById(R.id.sv);
         setHasOptionsMenu(true);
         getActivity().setTitle(null);
-        searchView.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                //Do some magic
-                searchForResults(query);
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                //Do some magic
-
-                return false;
-            }
-        });
-
-        searchView.setOnSearchViewListener(new MaterialSearchView.SearchViewListener() {
-            @Override
-            public void onSearchViewShown() {
-                //Do some magic
-            }
-
-            @Override
-            public void onSearchViewClosed() {
-                //Do some magic
-            }
-        });
-
+        initCustom();
         // registering receivers for certain intents
         IntentFilter intentNewLocation = new IntentFilter(INTENT_NEW_LOCATION);
         getActivity().getApplicationContext().registerReceiver(mReceiver, intentNewLocation);
@@ -349,8 +330,6 @@ public class MapFragment extends Fragment implements
         super.onCreateOptionsMenu(menu,inflater);
         MenuItem item = menu.findItem(R.id.action_search);
         searchView.setMenuItem(item);
-
-        searchView.setSuggestions(getResources().getStringArray(R.array.query_suggestions));
     }
 
     private void searchForResults(String query) {
@@ -358,7 +337,7 @@ public class MapFragment extends Fragment implements
         SearchInteractorImpl.CallBack callBack = new SearchInteractorImpl.CallBack() {
             @Override
             public void onSuccess(ArrayList<PoiModel> poiModels) {
-                Log.d(TAG, "PoiMapInteractor.CallBack onSuccess");
+                Log.d(TAG, "PoiMapInteractor.CallBack SEARCH onSuccess");
 
                 onSearchPoiFetch(poiModels);
             }
@@ -390,7 +369,65 @@ public class MapFragment extends Fragment implements
         PoiModel model;
         for (int i = 0; i < poiModels.size(); i++) {
             model = poiModels.get(i);
-            Log.d(TAG, "POI MARKER: "+model.getName());
+            Log.d(TAG, "POI MODEL SEARCH: "+model.getName());
+
+            listResult(1, model.getName(), 0, R.drawable.ic_location_on_black_32dp, R.color.black_55);
+
+            listResult(2, model.getName(), 1, R.drawable.ic_pound, R.color.black_55);
+
+            /**if (model.getName().length() > MAX_NAME_LENGTH) {
+                searchView.addSuggestion(model.getName().substring(0, MAX_NAME_LENGTH) + "...");
+            } else searchView.addSuggestion(model.getName());**/
         }
+    }
+
+    @Override
+    public void onFilterAdded(Filter filter) {
+
+    }
+
+    @Override
+    public void onFilterRemoved(Filter filter) {
+
+    }
+
+    @Override
+    public void onFilterChanged(List<Filter> list) {
+
+    }
+
+    @Override
+    public void onSearchViewShown() {
+
+    }
+
+    @Override
+    public void onSearchViewClosed() {
+
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String s) {
+        return false;
+    }
+
+    @Override
+    public void onQueryTextChange(String s) {
+        if (s.length() != 0) searchForResults(s);
+    }
+
+    private void listResult(int categoryNumber, String name, int id, int icon, int color) {
+        Filter filter = new Filter(categoryNumber, name, id, icon, color);
+        searchView.addFilter(filter);
+    }
+
+    protected void initCustom() {
+        searchView.setOnSearchViewListener(this);
+        searchView.setOnFilterViewListener(this);
+        searchView.addSection(new Section("Places"));
+        searchView.addSection(new Section("Routes"));
+        searchView.addSection(new Section("Tags"));
+
+
     }
 }
