@@ -33,7 +33,6 @@ import com.teamc.mira.iwashere.domain.repository.PoiRepository;
 import com.teamc.mira.iwashere.domain.repository.Repository;
 import com.teamc.mira.iwashere.domain.repository.UserRepository;
 import com.teamc.mira.iwashere.presentation.auth.AuthenticateActivity;
-import com.teamc.mira.iwashere.presentation.camera.CameraApi;
 import com.teamc.mira.iwashere.presentation.camera.CameraInit;
 import com.teamc.mira.iwashere.presentation.misc.AboutActivity;
 import com.teamc.mira.iwashere.presentation.poi.PoiDetailActivity;
