@@ -35,6 +35,7 @@ public class PoiRepositoryImpl extends AbstractPoiRepository implements PoiRepos
     private static final String API_POI_URL = ServerUrl.getUrl() + ServerUrl.API + ServerUrl.POI;
     private static final String API_POI_RATING_URL = ServerUrl.getUrl() + ServerUrl.API + ServerUrl.POI + ServerUrl.RATING;
     private static final String API_POI_MEDIA_URL = ServerUrl.getUrl() + ServerUrl.API + ServerUrl.POI + ServerUrl.MEDIA;
+    private static final String API_POI_CONTENT_URL = ServerUrl.getUrl() + ServerUrl.API + ServerUrl.CONTENT + ServerUrl.POI_CONTENT;;
 
     public PoiRepositoryImpl(Context mContext) {
         super(mContext);
@@ -155,6 +156,32 @@ public class PoiRepositoryImpl extends AbstractPoiRepository implements PoiRepos
     }
 
     @Override
+    public boolean fetchPoiContent(PoiModel poi, String userId, int contentOffset, int contentLimit) throws RemoteDataException {
+        RequestQueue queue = mRequestQueue;
+
+        String url = API_POI_CONTENT_URL;
+        if (userId == null) {
+            url += "/" + userId;
+        }
+        url += "/" + poi.getId() + "/" + contentOffset + "/" + contentLimit;
+
+        RequestFuture<JSONArray> future = RequestFuture.newFuture();
+        JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, url, null, future, future);
+        queue.add(request);
+
+        try {
+            JSONArray response = future.get(TIMEOUT, TIMEOUT_TIME_UNIT); // this will block
+
+            poi.setContent(getContent(response));
+
+            return true;
+        } catch (InterruptedException | ExecutionException | TimeoutException e) {
+            handleError(e);
+            return false;
+        }
+    }
+
+    @Override
     public PoiModel setReminder(PoiModel poi) throws RemoteDataException {
         throw new UnsupportedOperationException();
     }
@@ -166,7 +193,6 @@ public class PoiRepositoryImpl extends AbstractPoiRepository implements PoiRepos
 
     @Override
     public ArrayList<PoiModel> fetchPoisInArea(double maxLat, double minLat, double maxLong, double minLong) throws RemoteDataException {
-        // Instantiate the RequestQueue.
         RequestQueue queue = mRequestQueue;
 
         String url = ServerUrl.getUrl()+ServerUrl.API+ServerUrl.POI+ServerUrl.RANGE;
