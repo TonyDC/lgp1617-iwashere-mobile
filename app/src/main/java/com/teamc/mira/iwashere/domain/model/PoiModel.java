@@ -51,12 +51,22 @@ public class PoiModel implements Serializable{
     }
 
     public PoiModel(JSONObject poi) throws JSONException {
-        this.id = poi.getString("poiId");
-        this.name = poi.getString("name");
-        this.description = poi.getString("description");
-        this.address = poi.getString("address");
-        this.longitude = poi.getString("longitude");
-        this.latitude = poi.getString("latitude");
+        if(poi.has("poiId")) this.id = poi.getString("poiId");
+        if(poi.has("name")) this.name = poi.getString("name");
+        if(poi.has("description")) this.description = poi.getString("description");
+        if(poi.has("address")) this.address = poi.getString("address");
+        if(poi.has("longitude")) this.longitude = poi.getString("longitude");
+        if(poi.has("latitude")) this.latitude = poi.getString("latitude");
+
+    }
+
+    public PoiModel(String id, String name, String description, String address, String longitude, String latitude) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.address = address;
+        this.longitude = longitude;
+        this.latitude = latitude;
     }
 
     public String getId() {

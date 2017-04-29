@@ -1,33 +1,37 @@
-package com.teamc.mira.iwashere.presentation.poi;
+package com.teamc.mira.iwashere.util;
 
-import android.app.Activity;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
-import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
 import com.teamc.mira.iwashere.R;
 
-import java.util.ArrayList;
-
 public class GridViewAdapter extends BaseAdapter {
-    private Context mContext;
-    private final String[] gridViewString;
-    private final int[] gridViewImageId;
+    int mTemplateImageId = R.mipmap.default_thumbnail;
+    Context mContext;
+    String[] mGridViewString;
+    String[] mGridViewImageUrl;
 
-    public GridViewAdapter(Context context, String[] gridViewString, int[] gridViewImageId) {
+    public GridViewAdapter(Context context, String[] gridViewString, String[] gridViewImageUrl) {
         mContext = context;
-        this.gridViewImageId = gridViewImageId;
-        this.gridViewString = gridViewString;
+        this.mGridViewImageUrl = gridViewImageUrl;
+        this.mGridViewString = gridViewString;
+    }
+
+    public GridViewAdapter(Context context, String[] gridViewString, String[] gridViewImageUrl, int mTemplateImageId) {
+        this(context,gridViewString, gridViewImageUrl);
+        this.mTemplateImageId = mTemplateImageId;
+
+
     }
 
     @Override
     public int getCount() {
-        return gridViewString.length;
+        return mGridViewString.length;
     }
 
     @Override
@@ -48,12 +52,14 @@ public class GridViewAdapter extends BaseAdapter {
 
         if (convertView == null) {
 
-            gridViewAndroid = new View(mContext);
             gridViewAndroid = inflater.inflate(R.layout.activity_poi_grid_item, null);
-            TextView textViewAndroid = (TextView) gridViewAndroid.findViewById(R.id.android_gridview_text);
-            ImageView imageViewAndroid = (ImageView) gridViewAndroid.findViewById(R.id.android_gridview_image);
-            textViewAndroid.setText(gridViewString[i]);
-            imageViewAndroid.setImageResource(gridViewImageId[i]);
+            ImageView imageView = (ImageView) gridViewAndroid.findViewById(R.id.android_gridview_image);
+
+            imageView.setImageResource(mTemplateImageId);
+
+            Picasso.with(this.mContext).load(mGridViewImageUrl[i])
+                    .into(imageView);
+
         } else {
             gridViewAndroid = (View) convertView;
         }

@@ -148,7 +148,7 @@
                 </LinearLayout>
             </LinearLayout>
 
-            <com.teamc.mira.iwashere.util.ExpandableHeightGridView
+            <com.teamc.mira.iwashere.util.ViewMoreGridView
                 android:id="@+id/grid_view_image_text"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"

@@ -1,12 +1,12 @@
 package com.teamc.mira.iwashere.presentation.poi;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -28,14 +28,16 @@ import com.teamc.mira.iwashere.domain.executor.impl.ThreadExecutor;
 import com.teamc.mira.iwashere.domain.interactors.PoiDetailInteractor;
 import com.teamc.mira.iwashere.domain.interactors.impl.PoiDetailInteractorImpl;
 import com.teamc.mira.iwashere.domain.interactors.impl.PoiRatingInteractorImpl;
+import com.teamc.mira.iwashere.domain.model.ContentModel;
 import com.teamc.mira.iwashere.domain.model.PoiModel;
 import com.teamc.mira.iwashere.domain.repository.PoiRepository;
 import com.teamc.mira.iwashere.threading.MainThreadImpl;
 import com.teamc.mira.iwashere.util.ExpandableHeightGridView;
+import com.teamc.mira.iwashere.util.GridViewAdapter;
+import com.teamc.mira.iwashere.util.ViewMoreGridView;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 public class PoiDetailActivity extends AppCompatActivity {
@@ -54,19 +56,9 @@ public class PoiDetailActivity extends AppCompatActivity {
     GridView photoGallery;
 
 
-    GridView gridView;
-    String[] gridViewString = {
-            "Alram", "Android", "Mobile", "Website", "Profile", "WordPress",
-            "Alram", "Android", "Mobile", "Website", "Profile", "WordPress",
-            "Alram", "Android", "Mobile", "Website", "Profile", "WordPress",
-
-    };
-
-    int[] gridViewImageId = {
-            R.drawable.logo, R.drawable.ic_location_on_black_32dp, R.drawable.logo, R.drawable.ic_location_on_black_32dp, R.drawable.logo, R.drawable.ic_location_on_black_32dp,
-            R.drawable.logo, R.drawable.ic_location_on_black_32dp, R.drawable.logo, R.drawable.ic_location_on_black_32dp, R.drawable.logo, R.drawable.ic_location_on_black_32dp,
-            R.drawable.logo, R.drawable.ic_location_on_black_32dp, R.drawable.logo, R.drawable.ic_location_on_black_32dp, R.drawable.logo, R.drawable.ic_location_on_black_32dp,
-    };
+    ViewMoreGridView gridView;
+    private ArrayList<String> contentIdList;
+    private ArrayList<String> contentUrlList;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -77,8 +69,15 @@ public class PoiDetailActivity extends AppCompatActivity {
 
         setToolBar();
         setPoiInfoTemp();
+        setDynamicDescriptionSize();
 
+        // GridView size changes with number of components
+        ExpandableHeightGridView mAppsGrid = (ExpandableHeightGridView) findViewById(R.id.grid_view_image_text);
+        mAppsGrid.setExpanded(true);
 
+    }
+
+    private void setDynamicDescriptionSize() {
         final TextView descriptionText = (TextView) findViewById(R.id.description);
         descriptionText.setMaxLines(MAX_LINES);
 
@@ -97,17 +96,11 @@ public class PoiDetailActivity extends AppCompatActivity {
                 }
             }
         });
-
-        ExpandableHeightGridView mAppsGrid = (ExpandableHeightGridView) findViewById(R.id.grid_view_image_text);
-        mAppsGrid.setExpanded(true);
-
     }
 
     private void setPoiInfoTemp() {
-        // for test purposes; TODO replace by API interactor
 
-
-        URL url1 = null, url2 = null;
+        URL url1 ,url2;
         ArrayList<URL> urls = new ArrayList<URL>();
         try {
             url1 = new URL("http://images.boomsbeat.com/data/images/full/19640/game-of-thrones-season-4-jpg.jpg");
@@ -118,10 +111,15 @@ public class PoiDetailActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        poi = new PoiModel("1", "poi name", "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam sodales suscipit venenatis. Sed ut rhoncus mi. Curabitur nec scelerisque ipsum. Fusce et diam eros. Pellentesque vel dolor ante. Suspendisse convallis diam nec eleifend tincidunt. Etiam vestibulum mi elit. Sed egestas tellus mattis, fermentum turpis eu, gravida neque. Sed at turpis ultricies, laoreet purus sed, sollicitudin urna. Donec diam ex, porta quis sollicitudin id, sollicitudin id urna. Nunc commodo rutrum odio sit amet viverra. Vestibulum blandit euismod efficitur. Nunc sit amet hendrerit enim. Pellentesque id diam lacus. Etiam vitae tellus sed turpis suscipit laoreet. Integer commodo in nulla nec vehicula.", "Street noname, 4200-008 Porto", "longitude", "latitude",
-                urls, null, null);
-        poi.setRating(4);
-        poi.setUserRating(1);
+        poi = new PoiModel(
+                "FEUP",
+                "FEUP",
+                "Melhor faculdade de engenharia do país",
+                "-1",
+                "1",
+                "Address"
+        );
+
 
         setPoiSlider();
         setPoiDescriptionText();
@@ -179,16 +177,44 @@ public class PoiDetailActivity extends AppCompatActivity {
 
     // TODO: improve this
     private void setPoiContentGrid() {
-        GridViewAdapter adapterView = new GridViewAdapter(PoiDetailActivity.this, gridViewString, gridViewImageId);
-        gridView = (GridView) findViewById(R.id.grid_view_image_text);
+        ArrayList<ContentModel> contentList = poi.getContent();
+        if (contentList.isEmpty()) {
+            return;
+        }
+        /*contentList.add(new ContentModel(
+                "https://www.gstatic.com/images/branding/googlelogo/2x/googlelogo_color_284x96dp.png",
+                "123"));*/
+        contentIdList = new ArrayList<>();
+        contentUrlList = new ArrayList<>();
+
+
+        for (ContentModel content : contentList){
+            contentIdList.add(content.getId());
+            contentUrlList.add(content.getUrl());
+        }
+
+        ViewMoreGridView.ViewMoreGridViewAdapter adapterView = new ViewMoreGridView.ViewMoreGridViewAdapter(
+                PoiDetailActivity.this,
+                contentIdList.toArray(new String[contentIdList.size()]),
+                contentUrlList.toArray(new String[contentUrlList.size()]));
+
+        Log.d(TAG, contentUrlList.toArray(new String[contentUrlList.size()])[0]);
+        gridView = (ViewMoreGridView) findViewById(R.id.grid_view_image_text);
         gridView.setAdapter(adapterView);
 
-        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        gridView.setOnItemClickListener(new ViewMoreGridView.OnItemClickListener() {
+
+            @Override
+            public void onViewMoreItemClick() {
+                Toast.makeText(PoiDetailActivity.this, "View More", Toast.LENGTH_SHORT).show();
+                // TODO: 29/04/2017 Start activity with view more
+            }
 
             @Override
             public void onItemClick(AdapterView<?> parent, View view,
                                     int i, long id) {
-                Toast.makeText(PoiDetailActivity.this, "GridView Item: " + gridViewString[+i], Toast.LENGTH_LONG).show();
+                Toast.makeText(PoiDetailActivity.this, id+"", Toast.LENGTH_SHORT).show();
+                // TODO: 28/04/2017 Start activity with post
             }
         });
     }
