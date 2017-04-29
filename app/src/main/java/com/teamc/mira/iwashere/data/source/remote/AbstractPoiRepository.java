@@ -1,7 +1,10 @@
 package com.teamc.mira.iwashere.data.source.remote;
 
+import android.content.Context;
 import android.support.annotation.NonNull;
 
+import com.android.volley.RequestQueue;
+import com.teamc.mira.iwashere.domain.model.ContentModel;
 import com.teamc.mira.iwashere.domain.model.PoiModel;
 import com.teamc.mira.iwashere.domain.repository.PoiRepository;
 import com.teamc.mira.iwashere.domain.repository.UserRepository;
@@ -15,7 +18,15 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public abstract class AbstractPOIRepository implements PoiRepository {
+public abstract class AbstractPoiRepository extends AbstractRepository implements PoiRepository {
+
+    public AbstractPoiRepository(RequestQueue requestQueue) {
+        super(requestQueue);
+    }
+
+    public AbstractPoiRepository(Context context) {
+        super(context);
+    }
 
     @NonNull
     protected HashMap<String, String> getPostRatingParams(String poiId, String userId, int newPoiRating) {
@@ -44,6 +55,23 @@ public abstract class AbstractPOIRepository implements PoiRepository {
         }
 
         return mediaList;
+    }
+
+    @NonNull
+    protected ArrayList<ContentModel> getContent(JSONArray response) {
+        ArrayList<ContentModel> contentList = new ArrayList<>();
+
+        for (int i = 0; i < response.length(); i++) {
+            JSONObject object = null;
+            try {
+                object = response.getJSONObject(i);
+                contentList.add(new ContentModel(object));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return contentList;
     }
 
 }

@@ -3,6 +3,7 @@ package com.teamc.mira.iwashere.domain.repository;
 import com.teamc.mira.iwashere.data.source.remote.exceptions.RemoteDataException;
 import com.teamc.mira.iwashere.domain.model.PoiModel;
 
+import java.util.ArrayList;
 import org.json.JSONObject;
 
 public interface PoiRepository {
@@ -53,7 +54,22 @@ public interface PoiRepository {
      */
     boolean setPoiUserRating(PoiModel poi, String userId, int newPoiRating) throws RemoteDataException;
 
+    /**
+     * Fetch the Content associated to the POI, updating the PoiModel.
+     * @param poi the PoiModel with information about the POI
+     * @param userId the user's id
+     * @param contentOffset
+     * @param contentLimit
+     * @return true upon success, false otherwise
+     * @throws RemoteDataException
+     */
+    boolean fetchPoiContent(PoiModel poi, String userId, int contentOffset, int contentLimit) throws RemoteDataException;
+
     PoiModel setReminder(PoiModel poi)throws RemoteDataException;
 
     PoiModel removeReminder(PoiModel poi)throws RemoteDataException;
+
+    ArrayList<PoiModel> fetchPoisInArea(double maxLat, double minLat, double maxLong, double minLong) throws RemoteDataException;
+
+    ArrayList<PoiModel> searchPois(String searchQuery);
 }

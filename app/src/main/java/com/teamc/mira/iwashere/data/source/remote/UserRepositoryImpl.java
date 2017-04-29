@@ -20,13 +20,19 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeoutException;
+
+import static com.teamc.mira.iwashere.data.source.remote.ServerUrl.TIMEOUT;
+import static com.teamc.mira.iwashere.data.source.remote.ServerUrl.TIMEOUT_TIME_UNIT;
 
 public class UserRepositoryImpl extends AbstractUserRepository implements UserRepository {
 
-    Context mContext;
-
     public UserRepositoryImpl(Context mContext) {
-        this.mContext = mContext;
+        super(mContext);
+    }
+
+    public UserRepositoryImpl(RequestQueue requestQueue){
+        super(requestQueue);
     }
 
     public static final String TAG = UserRepositoryImpl.class.getSimpleName();
@@ -38,10 +44,9 @@ public class UserRepositoryImpl extends AbstractUserRepository implements UserRe
     @Override
     public boolean signup(String email, String username, String password, String confirmPassword) throws RemoteDataException {
         // Instantiate the RequestQueue.
-        RequestQueue queue = MySingleton.getInstance(mContext).getRequestQueue();
+        RequestQueue queue = mRequestQueue;
 
-        // TODO: 03/04/2017 Extract url
-        String url ="http://192.168.1.69:8080/api/signup";
+        String url = ServerUrl.getUrl();
 
         final HashMap<String, String> params = getRegisterParamsHashMap(email, username, password, confirmPassword);
 
@@ -50,11 +55,11 @@ public class UserRepositoryImpl extends AbstractUserRepository implements UserRe
         queue.add(request);
 
         try {
-            JSONObject response = future.get(); // this will block
+            JSONObject response = future.get(TIMEOUT, TIMEOUT_TIME_UNIT); // this will block
             Log.d(TAG, String.valueOf(response));
 
             return true;
-        } catch (InterruptedException | ExecutionException e) {
+        } catch (InterruptedException | ExecutionException | TimeoutException e) {
             //check to see if the throwable in an instance of the volley error
             if(e.getCause() instanceof VolleyError)
             {

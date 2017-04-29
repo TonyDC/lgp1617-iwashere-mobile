@@ -1,16 +1,14 @@
 package com.teamc.mira.iwashere.presentation.poi;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Html;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.GridView;
-import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.RatingBar.OnRatingBarChangeListener;
 import android.widget.TextView;
@@ -24,12 +22,17 @@ import com.teamc.mira.iwashere.data.source.remote.PoiRepositoryImpl;
 import com.teamc.mira.iwashere.domain.executor.Executor;
 import com.teamc.mira.iwashere.domain.executor.MainThread;
 import com.teamc.mira.iwashere.domain.executor.impl.ThreadExecutor;
+import com.teamc.mira.iwashere.domain.interactors.PoiContentInteractor;
 import com.teamc.mira.iwashere.domain.interactors.PoiDetailInteractor;
+import com.teamc.mira.iwashere.domain.interactors.impl.PoiContentInteractorImpl;
 import com.teamc.mira.iwashere.domain.interactors.impl.PoiDetailInteractorImpl;
 import com.teamc.mira.iwashere.domain.interactors.impl.PoiRatingInteractorImpl;
+import com.teamc.mira.iwashere.domain.model.ContentModel;
 import com.teamc.mira.iwashere.domain.model.PoiModel;
 import com.teamc.mira.iwashere.domain.repository.PoiRepository;
 import com.teamc.mira.iwashere.threading.MainThreadImpl;
+import com.teamc.mira.iwashere.util.ExpandableHeightGridView;
+import com.teamc.mira.iwashere.util.ViewMoreGridView;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -38,31 +41,25 @@ import java.util.ArrayList;
 
 public class PoiDetailActivity extends AppCompatActivity {
 
+    public static final String TAG = PoiDetailActivity.class.getSimpleName();
+    public static final int MAX_LINES = 8;
+    public static final int CONTENT_LIMIT = 8;
+    public static final String POI = "poi";
+
     PoiModel poi;
+    int contentOffeset = 0;
     FirebaseAuth auth;
 
     /* View components */
     SliderLayout sliderShow;
-    TextView textDescription, addressT, addressF, hoursT, hoursF;
-    ImageView pinPoint;
-    RatingBar poiRatingBar;
     TextView poiRatingText;
     RatingBar userRatingBar;
-    GridView photoGallery;
+    boolean moreContent = true;
 
-    GridView gridView;
-    String[] gridViewString = {
-            "Alram", "Android", "Mobile", "Website", "Profile", "WordPress",
-            "Alram", "Android", "Mobile", "Website", "Profile", "WordPress",
-            "Alram", "Android", "Mobile", "Website", "Profile", "WordPress",
 
-    };
-
-    int[] gridViewImageId = {
-            R.drawable.logo, R.drawable.place, R.drawable.logo, R.drawable.place, R.drawable.logo, R.drawable.place,
-            R.drawable.logo, R.drawable.place, R.drawable.logo, R.drawable.place, R.drawable.logo, R.drawable.place,
-            R.drawable.logo, R.drawable.place, R.drawable.logo, R.drawable.place, R.drawable.logo, R.drawable.place,
-    };
+    ViewMoreGridView gridView;
+    private ArrayList<String> contentIdList;
+    private ArrayList<String> contentUrlList;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -72,34 +69,43 @@ public class PoiDetailActivity extends AppCompatActivity {
         auth = FirebaseAuth.getInstance();
 
         setToolBar();
-        setPoiInfoTemp();
+        poi = (PoiModel) getIntent().getSerializableExtra(POI);
+        setPoi();
+        setDynamicDescriptionSize();
+
+        // GridView size changes with number of components
+        ExpandableHeightGridView mAppsGrid = (ExpandableHeightGridView) findViewById(R.id.grid_view_image_text);
+        mAppsGrid.setExpanded(true);
+
     }
 
-    private void setPoiInfoTemp() {
-        // for test purposes; TODO replace by API interactor
+    private void setDynamicDescriptionSize() {
+        final TextView descriptionText = (TextView) findViewById(R.id.description);
+        descriptionText.setMaxLines(MAX_LINES);
 
+        final TextView readMore = (TextView) findViewById(R.id.moreInformation);
 
-        URL url1 = null, url2 = null;
-        ArrayList<URL> urls = new ArrayList<URL>();
-        try {
-            url1 = new URL("http://images.boomsbeat.com/data/images/full/19640/game-of-thrones-season-4-jpg.jpg");
-            url2 = new URL("http://images.boomsbeat.com/data/images/full/19640/game-of-thrones-season-4-jpg.jpg");
-            urls.add(url1);
-            urls.add(url2);
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        }
+        readMore.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (descriptionText.getMaxLines() != Integer.MAX_VALUE) {
+                    descriptionText.setMaxLines(Integer.MAX_VALUE);
+                    readMore.setText(Html.fromHtml(getString(R.string.less_info)));
 
-        poi = new PoiModel("1", "poi name", "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam sodales suscipit venenatis. Sed ut rhoncus mi. Curabitur nec scelerisque ipsum. Fusce et diam eros. Pellentesque vel dolor ante. Suspendisse convallis diam nec eleifend tincidunt. Etiam vestibulum mi elit. Sed egestas tellus mattis, fermentum turpis eu, gravida neque. Sed at turpis ultricies, laoreet purus sed, sollicitudin urna. Donec diam ex, porta quis sollicitudin id, sollicitudin id urna. Nunc commodo rutrum odio sit amet viverra. Vestibulum blandit euismod efficitur. Nunc sit amet hendrerit enim. Pellentesque id diam lacus. Etiam vitae tellus sed turpis suscipit laoreet. Integer commodo in nulla nec vehicula.", "Street noname, 4200-008 Porto", "longitude", "latitude",
-                urls, null, null);
-        poi.setRating(4);
-        poi.setUserRating(1);
+                } else {
+                    descriptionText.setMaxLines(MAX_LINES);
+                    readMore.setText(Html.fromHtml(getString(R.string.more_info)));
+                }
+            }
+        });
+    }
 
-        setPoiSlider();
+    private void setPoi() {
+
+        setPoiMediaSlider();
         setPoiDescriptionText();
         setPoiRatingBars();
-        setPoiAddressPanel();
-        setPoiContentGrid();
+        setPoiContentGrid(poi.getContent(),moreContent);
         getSupportActionBar().setTitle(poi.getName());
 
     }
@@ -124,11 +130,10 @@ public class PoiDetailActivity extends AppCompatActivity {
             public void onSuccess(PoiModel poiInformation) {
                 poi = poiInformation;
 
-                setPoiSlider();
+                setPoiMediaSlider();
                 setPoiDescriptionText();
                 setPoiRatingBars();
-                setPoiAddressPanel();
-                //setPoiContentGrid();
+                setPoiContentGrid(poi.getContent(), moreContent);
             }
         };
 
@@ -136,8 +141,6 @@ public class PoiDetailActivity extends AppCompatActivity {
         if (auth.getCurrentUser() != null) {
             userId = auth.getCurrentUser().getUid();
         }
-
-        setPoiContentGrid();
 
 
         PoiDetailInteractor poiDetailInteractor = new PoiDetailInteractorImpl(
@@ -151,57 +154,112 @@ public class PoiDetailActivity extends AppCompatActivity {
         poiDetailInteractor.execute();
     }
 
-    // TODO: improve this
-    private void setPoiContentGrid() {
-        GridViewAdapter adapterView = new GridViewAdapter(PoiDetailActivity.this, gridViewString, gridViewImageId);
-        gridView = (GridView) findViewById(R.id.grid_view_image_text);
+    private void fetchPoiContent(String poiId) {
+        if (!moreContent) {
+            return;
+        }
+
+        MainThread mainThread = MainThreadImpl.getInstance();
+        Executor executor = ThreadExecutor.getInstance();
+        PoiRepository poiRepository = new PoiRepositoryImpl(this);
+        PoiContentInteractor.CallBack callback = new PoiContentInteractor.CallBack() {
+
+            @Override
+            public void onNetworkFail() {
+                onError(null, null);
+            }
+
+            @Override
+            public void onError(String code, String message) {
+                // TODO: redirect to previous display?
+            }
+
+            @Override
+            public void onSuccess(PoiModel poiInformation, boolean hasMoreContent) {
+                poi = poiInformation;
+                moreContent = hasMoreContent;
+
+                setPoiContentGrid(poi.getContent(), moreContent);
+            }
+        };
+
+        String userId = null;
+        if (auth.getCurrentUser() != null) {
+            userId = auth.getCurrentUser().getUid();
+        }
+
+        PoiContentInteractor poiContentInteractor = new PoiContentInteractorImpl(
+                executor,
+                mainThread,
+                callback,
+                poiRepository,
+                poi,
+                userId,
+                contentOffeset,
+                CONTENT_LIMIT);
+
+        poiContentInteractor.execute();
+    }
+
+    /**
+     * Add content to the Content Poi grid.
+     * @param contentList List of content to be added to the grid
+     * @param moreContent If true, adds View More content button
+     */
+    private void setPoiContentGrid(ArrayList<ContentModel> contentList, boolean moreContent) {
+
+        if (contentList.isEmpty()) {
+            return;
+        }
+
+        contentIdList = new ArrayList<>();
+        contentUrlList = new ArrayList<>();
+
+
+        for (ContentModel content : contentList){
+            contentIdList.add(content.getId());
+            contentUrlList.add(content.getUrl().toString());
+        }
+
+        ViewMoreGridView.ViewMoreGridViewAdapter adapterView = new ViewMoreGridView.ViewMoreGridViewAdapter(
+                PoiDetailActivity.this,
+                contentIdList.toArray(new String[contentIdList.size()]),
+                contentUrlList.toArray(new String[contentUrlList.size()]),
+                moreContent
+        );
+
+        gridView = (ViewMoreGridView) findViewById(R.id.grid_view_image_text);
         gridView.setAdapter(adapterView);
 
-        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        gridView.setOnItemClickListener(new ViewMoreGridView.OnItemClickListener() {
+
+            @Override
+            public void onViewMoreItemClick() {
+                Toast.makeText(PoiDetailActivity.this, "View More", Toast.LENGTH_SHORT).show();
+                // TODO: 29/04/2017 Start ViewMoreContentActivity
+            }
 
             @Override
             public void onItemClick(AdapterView<?> parent, View view,
                                     int i, long id) {
-                Toast.makeText(PoiDetailActivity.this, "GridView Item: " + gridViewString[+i], Toast.LENGTH_LONG).show();
+                Toast.makeText(PoiDetailActivity.this, id+"", Toast.LENGTH_SHORT).show();
+                // TODO: 29/04/2017 Start ContentActivity
             }
         });
-    }
-
-    // TODO: improve this
-    private void setPoiAddressPanel() {
-        findViewById(R.id.addressPinPoint).setBackgroundColor(Color.parseColor("#35A8DF"));
-        findViewById(R.id.hours).setVisibility(View.GONE);
-        addressF = (TextView) findViewById(R.id.addressF);
-        addressT = (TextView) findViewById(R.id.addressT);
-        hoursF = (TextView) findViewById(R.id.hoursF);
-        hoursT = (TextView) findViewById(R.id.hoursT);
-        pinPoint = (ImageView) findViewById(R.id.pinpointImg);
-
-
-        addressT.setText("Address");
-        addressT.setTextColor(Color.WHITE);
-        addressF.setText(poi.getAddress());
-        addressF.setTextColor(Color.BLACK);
-
-        hoursT.setText("Hours");
-        hoursT.setTextColor(Color.WHITE);
-        hoursF.setTextColor(Color.BLACK);
-        hoursF.setText("8-10pm");
-
     }
 
     /**
      * Create POI description field with the description associated to the POI model.
      */
     private void setPoiDescriptionText() {
-        textDescription = (TextView) findViewById(R.id.description);
+        TextView textDescription = (TextView) findViewById(R.id.description);
         textDescription.setText(poi.getDescription());
     }
 
     /**
      * Create POI slider with the pictures associated to the POI model.
      */
-    private void setPoiSlider() {
+    private void setPoiMediaSlider() {
         sliderShow = (SliderLayout) findViewById(R.id.slider);
 
         for (URL imageURL : poi.getPhotos()) {
@@ -219,15 +277,12 @@ public class PoiDetailActivity extends AppCompatActivity {
      */
     private void setPoiRatingBars() {
 
-        poiRatingBar = (RatingBar) findViewById(R.id.poiRatingBar);
-        poiRatingText = (TextView) findViewById(R.id.poiRatingText);
-
+        poiRatingText = (TextView) findViewById(R.id.poiRating);
         userRatingBar = (RatingBar) findViewById(R.id.userRatingBar);
 
-        poiRatingBar.setIsIndicator(true);
         setPoiRating();
-        setRatingBarsStyle();
 
+        // TODO: check if this is async
         if (auth.getCurrentUser() == null) {
             ((ViewGroup) userRatingBar.getParent()).removeView(userRatingBar);
 
@@ -282,24 +337,16 @@ public class PoiDetailActivity extends AppCompatActivity {
         });
     }
 
-    private void setRatingBarsStyle() {
-        findViewById(R.id.ratings).setBackgroundColor(Color.parseColor("#35A8DF"));
-        poiRatingText.setTextColor(Color.BLACK);
-        poiRatingBar.setBackgroundColor(Color.parseColor("#35A8DF"));
-        userRatingBar.setBackgroundColor(Color.parseColor("#35A8DF"));
-    }
-
-    private void setPoiRating() {
-        poiRatingBar.setRating(poi.getRating());
-        DecimalFormat decimalFormat = new DecimalFormat("#.##");
-        poiRatingText.setText(decimalFormat.format(poi.getRating()) + "/5");
-    }
-
     private void setToolBar() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    }
+
+    private void setPoiRating() {
+        DecimalFormat decimalFormat = new DecimalFormat("#.##");
+        poiRatingText.setText(decimalFormat.format(poi.getRating()) + "/5");
     }
 
     @Override

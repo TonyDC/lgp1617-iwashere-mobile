@@ -18,6 +18,6 @@
     <android.support.v7.widget.AppCompatTextView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="Hello World: Account"/>
-
+        android:text="Hello World: Account"
+        android:id="@+id/hello_world_account"/>
 </LinearLayout>

@@ -10,7 +10,7 @@
     <item
         android:id="@+id/action_feed"
         android:enabled="true"
-        android:icon="@drawable/ic_pound"
+        android:icon="@drawable/ic_iwashere"
         android:title="@string/menu_feed"
         app:showAsAction="ifRoom" />
     <item
@@ -18,12 +18,6 @@
         android:enabled="true"
         android:icon="@drawable/ic_photo_camera_black_24dp"
         android:title="@string/menu_camera"
-        app:showAsAction="ifRoom" />
-    <item
-        android:id="@+id/action_search"
-        android:enabled="true"
-        android:icon="@drawable/ic_search_black_24dp"
-        android:title="@string/menu_search"
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/action_account"

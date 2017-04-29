@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 
 import com.teamc.mira.iwashere.R;
 
-class FeedFragment extends Fragment {
+public class FeedFragment extends Fragment {
 
     @Nullable
     @Override

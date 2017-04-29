@@ -55,11 +55,7 @@ public class MainActivity extends AppCompatActivity {
                             fragmentTransaction.replace(R.id.flContainer, feed).commit();
                             return true;
                         case R.id.action_camera:
-                            //// TODO: 11/04/2017 Start new activity with camera and image uploading
-                            return true;
-                        case R.id.action_search:
-                            fragmentTransaction = fragmentManager.beginTransaction();
-                            fragmentTransaction.replace(R.id.flContainer, search).commit();
+                            // TODO: 11/04/2017 Start new activity with camera and image uploading
                             return true;
                         case R.id.action_account:
                             fragmentTransaction = fragmentManager.beginTransaction();
