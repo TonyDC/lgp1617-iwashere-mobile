@@ -8,7 +8,7 @@ import java.util.concurrent.TimeUnit;
 
 public class ServerUrl {
 
-    static final String DOMAIN = "172.30.5.114";
+    static final String DOMAIN = "192.168.1.78";
     static final String PORT = "8080";
 
     static final int TIMEOUT = 3000;

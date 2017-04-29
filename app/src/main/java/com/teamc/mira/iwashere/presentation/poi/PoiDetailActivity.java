@@ -1,18 +1,14 @@
 package com.teamc.mira.iwashere.presentation.poi;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.GridView;
-import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.RatingBar.OnRatingBarChangeListener;
 import android.widget.TextView;
@@ -38,8 +34,6 @@ import com.teamc.mira.iwashere.threading.MainThreadImpl;
 import com.teamc.mira.iwashere.util.ExpandableHeightGridView;
 import com.teamc.mira.iwashere.util.ViewMoreGridView;
 
-import org.json.JSONException;
-
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.DecimalFormat;
@@ -50,6 +44,7 @@ public class PoiDetailActivity extends AppCompatActivity {
     public static final String TAG = PoiDetailActivity.class.getSimpleName();
     public static final int MAX_LINES = 8;
     public static final int CONTENT_LIMIT = 8;
+    public static final String POI = "poi";
 
     PoiModel poi;
     int contentOffeset = 0;
@@ -74,7 +69,8 @@ public class PoiDetailActivity extends AppCompatActivity {
         auth = FirebaseAuth.getInstance();
 
         setToolBar();
-        setPoiInfoTemp();
+        poi = (PoiModel) getIntent().getSerializableExtra(POI);
+        setPoi();
         setDynamicDescriptionSize();
 
         // GridView size changes with number of components
@@ -104,28 +100,7 @@ public class PoiDetailActivity extends AppCompatActivity {
         });
     }
 
-    private void setPoiInfoTemp() {
-
-        URL url1 ,url2;
-        ArrayList<URL> urls = new ArrayList<URL>();
-        try {
-            url1 = new URL("http://images.boomsbeat.com/data/images/full/19640/game-of-thrones-season-4-jpg.jpg");
-            url2 = new URL("http://images.boomsbeat.com/data/images/full/19640/game-of-thrones-season-4-jpg.jpg");
-            urls.add(url1);
-            urls.add(url2);
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        }
-
-        poi = new PoiModel(
-                "FEUP",
-                "FEUP",
-                "Melhor faculdade de engenharia do país",
-                "-1",
-                "1",
-                "Address"
-        );
-
+    private void setPoi() {
 
         setPoiMediaSlider();
         setPoiDescriptionText();

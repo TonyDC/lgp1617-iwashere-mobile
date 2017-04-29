@@ -47,6 +47,8 @@ import com.teamc.mira.iwashere.threading.MainThreadImpl;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import static com.teamc.mira.iwashere.presentation.poi.PoiDetailActivity.POI;
+
 public class MapFragment extends Fragment implements
 //        GoogleMap.OnCameraMoveStartedListener,
         GoogleMap.OnCameraMoveListener,
@@ -126,7 +128,7 @@ public class MapFragment extends Fragment implements
             @Override
             public void onInfoWindowClick(Marker marker) {
                 Intent intent = new Intent(getActivity(), PoiDetailActivity.class);
-                intent.putExtra("poi", poiHashMap.get(marker));
+                intent.putExtra(POI, poiHashMap.get(marker));
                 startActivity(intent);
             }
         });
