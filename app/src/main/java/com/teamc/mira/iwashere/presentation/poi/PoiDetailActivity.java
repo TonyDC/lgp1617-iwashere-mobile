@@ -3,9 +3,11 @@ package com.teamc.mira.iwashere.presentation.poi;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -34,10 +36,11 @@ import com.teamc.mira.iwashere.threading.MainThreadImpl;
 import com.teamc.mira.iwashere.util.ExpandableHeightGridView;
 import com.teamc.mira.iwashere.util.ViewMoreGridView;
 
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+
+import static android.widget.Toast.LENGTH_SHORT;
 
 public class PoiDetailActivity extends AppCompatActivity {
 
@@ -60,6 +63,7 @@ public class PoiDetailActivity extends AppCompatActivity {
     ViewMoreGridView gridView;
     private ArrayList<String> contentIdList;
     private ArrayList<String> contentUrlList;
+    private SwipeRefreshLayout mSwipeContainer;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -77,6 +81,21 @@ public class PoiDetailActivity extends AppCompatActivity {
         ExpandableHeightGridView mAppsGrid = (ExpandableHeightGridView) findViewById(R.id.grid_view_image_text);
         mAppsGrid.setExpanded(true);
 
+        mSwipeContainer = (SwipeRefreshLayout) findViewById(R.id.swipeContainer);
+        // Setup refresh listener which triggers new data loading
+        mSwipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                fetchPoiInfo(poi);
+            }
+        });
+
+        fetchPoiInfo(poi);
+        mSwipeContainer.setRefreshing(true);
+    }
+
+    private void fetchPoiInfo(PoiModel poi) {
+        fetchPoiInfo(poi.getId());
     }
 
     private void setDynamicDescriptionSize() {
@@ -118,16 +137,22 @@ public class PoiDetailActivity extends AppCompatActivity {
 
             @Override
             public void onNetworkFail() {
-                onError(null, null);
+                Log.d(TAG,"Network Error");
+                mSwipeContainer.setRefreshing(false);
+                Toast.makeText(getApplicationContext(),R.string.error_connection, LENGTH_SHORT).show();
             }
 
             @Override
             public void onError(String code, String message) {
-                // TODO: redirect to previous display?
+                Log.d(TAG,"Error fetching data");
+                mSwipeContainer.setRefreshing(false);
+                Toast.makeText(getApplicationContext(),R.string.error_fetch, LENGTH_SHORT).show();
             }
 
             @Override
             public void onSuccess(PoiModel poiInformation) {
+                Log.d(TAG,"Fetched data");
+                mSwipeContainer.setRefreshing(false);
                 poi = poiInformation;
 
                 setPoiMediaSlider();
@@ -235,14 +260,14 @@ public class PoiDetailActivity extends AppCompatActivity {
 
             @Override
             public void onViewMoreItemClick() {
-                Toast.makeText(PoiDetailActivity.this, "View More", Toast.LENGTH_SHORT).show();
+                Toast.makeText(PoiDetailActivity.this, "View More", LENGTH_SHORT).show();
                 // TODO: 29/04/2017 Start ViewMoreContentActivity
             }
 
             @Override
             public void onItemClick(AdapterView<?> parent, View view,
                                     int i, long id) {
-                Toast.makeText(PoiDetailActivity.this, id+"", Toast.LENGTH_SHORT).show();
+                Toast.makeText(PoiDetailActivity.this, id+"", LENGTH_SHORT).show();
                 // TODO: 29/04/2017 Start ContentActivity
             }
         });

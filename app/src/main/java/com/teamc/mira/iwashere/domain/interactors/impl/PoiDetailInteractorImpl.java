@@ -1,5 +1,7 @@
 package com.teamc.mira.iwashere.domain.interactors.impl;
 
+import android.util.Log;
+
 import com.teamc.mira.iwashere.data.source.remote.exceptions.RemoteDataException;
 import com.teamc.mira.iwashere.domain.executor.Executor;
 import com.teamc.mira.iwashere.domain.executor.MainThread;
@@ -9,6 +11,7 @@ import com.teamc.mira.iwashere.domain.model.PoiModel;
 import com.teamc.mira.iwashere.domain.repository.PoiRepository;
 
 public class PoiDetailInteractorImpl extends AbstractInteractor implements PoiDetailInteractor {
+    private static final String TAG = PoiDetailInteractorImpl.class.getSimpleName();
     String poiId;
     String userId;
 
@@ -44,10 +47,12 @@ public class PoiDetailInteractorImpl extends AbstractInteractor implements PoiDe
 
     @Override
     public void notifyError(final String code, final String message) {
+        Log.d(TAG, "notifyError start");
         mMainThread.post(new Runnable() {
             @Override
             public void run() {
                 // TODO: 12/04/2017 extract hardcoded fails
+                Log.d(TAG, "notifyError callback start");
                 if (code.equals("network-fail")) {
                     mCallBack.onNetworkFail();
                 }else {
@@ -76,23 +81,28 @@ public class PoiDetailInteractorImpl extends AbstractInteractor implements PoiDe
     public void run() {
         PoiModel poi;
         try {
+            Log.d(TAG, "Start fetching poi");
             poi = mRepository.fetchPoi(poiId);
-
+            Log.d(TAG, "Start fetching poi rating");
             if (!mRepository.fetchPoiRating(poi)) {
                 notifyError("520", "Error fetching POI rating.");
                 return;
             }
 
+            Log.d(TAG, "Start fetching poi media");
             if(!mRepository.fetchPoiMedia(poi)) {
                 notifyError("520", "Error fetching POI's media.");
                 return;
             }
 
-            if (userId != null && !mRepository.fetchPoiUserRating(poi, userId)) {
+            Log.d(TAG, "Start fetching poi User Rating");
+            // TODO: 29/04/2017 Can't fix issue where the fetchPoiUserRating function blocks indefinitely and doesn't timeout
+            /*if (userId != null && !mRepository.fetchPoiUserRating(poi, userId)) {
                 notifyError("520", "Error fetching POI user's rating.");
                 return;
-            }
+            }*/
 
+            Log.d(TAG, "Start nofitySuccess");
             notifySuccess(poi);
         }catch (RemoteDataException ex){
             notifyError(ex.getCode(), ex.getErrorMessage());

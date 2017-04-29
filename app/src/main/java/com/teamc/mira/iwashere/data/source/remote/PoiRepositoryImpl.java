@@ -1,12 +1,14 @@
 package com.teamc.mira.iwashere.data.source.remote;
 
 import android.content.Context;
+import android.icu.text.LocaleDisplayNames;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
+import com.android.volley.RetryPolicy;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
@@ -119,11 +121,12 @@ public class PoiRepositoryImpl extends AbstractPoiRepository implements PoiRepos
 
         RequestFuture<JSONObject> future = RequestFuture.newFuture();
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null, future, future);
-        queue.add(request);
+        future.setRequest(queue.add(request));
 
         try {
+            Log.d(TAG, "Start poi user rating fetch");
             JSONObject response = future.get(TIMEOUT, TIMEOUT_TIME_UNIT); // this will block
-
+            Log.d(TAG, "Finished poi user rating fetch");
             poi.setUserRating((float) response.getDouble("rating"));
             return true;
         } catch (InterruptedException | ExecutionException | JSONException | TimeoutException e) {

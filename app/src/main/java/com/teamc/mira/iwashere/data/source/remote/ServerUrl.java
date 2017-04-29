@@ -11,8 +11,8 @@ public class ServerUrl {
     static final String DOMAIN = "192.168.1.78";
     static final String PORT = "8080";
 
-    static final int TIMEOUT = 3000;
-    static final TimeUnit TIMEOUT_TIME_UNIT = TimeUnit.MILLISECONDS;
+    static final long TIMEOUT = 3;
+    static final TimeUnit TIMEOUT_TIME_UNIT = TimeUnit.SECONDS;
 
     public static String getUrl(){
         return "http://"+DOMAIN+":"+PORT;
