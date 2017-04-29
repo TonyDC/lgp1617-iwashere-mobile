@@ -17,6 +17,11 @@ public class ContentModel {
     private ArrayList<String> tags;
     private URL url;
 
+    public ContentModel(String id, URL url) {
+        this.id = id;
+        this.url = url;
+    }
+
     public ContentModel(JSONObject content) throws JSONException {
         this.id = content.getString("postId");
         this.createdAt = content.getString("postDate");

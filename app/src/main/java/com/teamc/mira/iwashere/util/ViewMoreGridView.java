@@ -22,14 +22,18 @@ public class ViewMoreGridView extends ExpandableHeightGridView {
         static final String VIEW_MORE_ITEM_ID = "viewMore";
         static final String VIEW_MORE_ITEM_URL = "viewMoreUrl";
 
-        public ViewMoreGridViewAdapter(Context context, String[] gridViewString, String[] gridViewImageUrl) {
+        public ViewMoreGridViewAdapter(Context context, String[] gridViewString, String[] gridViewImageUrl, boolean hasMoreContent) {
             super(context, gridViewString, gridViewImageUrl);
-            add(VIEW_MORE_ITEM_ID, VIEW_MORE_ITEM_URL);
+            if (hasMoreContent) {
+                add(VIEW_MORE_ITEM_ID, VIEW_MORE_ITEM_URL);
+            }
         }
 
-        public ViewMoreGridViewAdapter(Context context, String[] gridViewString, String[] gridViewImageUrl, int mTemplateImageId) {
+        public ViewMoreGridViewAdapter(Context context, String[] gridViewString, String[] gridViewImageUrl, int mTemplateImageId, boolean hasMoreContent) {
             super(context, gridViewString, gridViewImageUrl, mTemplateImageId);
-            add(VIEW_MORE_ITEM_ID, VIEW_MORE_ITEM_URL);
+            if (hasMoreContent) {
+                add(VIEW_MORE_ITEM_ID, VIEW_MORE_ITEM_URL);
+            }
         }
 
         private void add(String id, String url){
