@@ -14,6 +14,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -32,12 +33,16 @@ import com.teamc.mira.iwashere.domain.repository.Repository;
 import com.teamc.mira.iwashere.domain.repository.UserRepository;
 import com.teamc.mira.iwashere.presentation.auth.AuthenticateActivity;
 import com.teamc.mira.iwashere.presentation.misc.AboutActivity;
+import com.teamc.mira.iwashere.presentation.poi.PoiDetailActivity;
 import com.teamc.mira.iwashere.threading.MainThreadImpl;
 
 import java.util.ArrayList;
 
-public class AccountFragment extends Fragment {
 
+
+class AccountFragment extends Fragment implements View.OnClickListener{
+
+    View v;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,6 +54,7 @@ public class AccountFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View v = inflater.inflate(R.layout.fragment_account, container, false);
+        v.findViewById(R.id.poi_test).setOnClickListener(this);
         setHasOptionsMenu(true);
         Toolbar toolbar = (Toolbar) v.findViewById(R.id.toolbar);
         toolbar.setTitle(FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
@@ -125,6 +131,15 @@ public class AccountFragment extends Fragment {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+
+    public void onClick(View v) {
+
+        int i = v.getId();
+        if (i == R.id.poi_test) {
+            startActivity(new Intent(this.getContext(), PoiDetailActivity.class));
+        }
     }
 }
 

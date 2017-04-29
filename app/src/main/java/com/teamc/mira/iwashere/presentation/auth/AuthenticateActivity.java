@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
 import com.teamc.mira.iwashere.R;
+import com.teamc.mira.iwashere.presentation.poi.PoiDetailActivity;
 
 public class AuthenticateActivity extends AppCompatActivity implements View.OnClickListener{
     @Override
@@ -17,6 +18,7 @@ public class AuthenticateActivity extends AppCompatActivity implements View.OnCl
         // Buttons
         findViewById(R.id.main_sign_in_btn).setOnClickListener(this);
         findViewById(R.id.main_sign_up_btn).setOnClickListener(this);
+        findViewById(R.id.main_test_slider).setOnClickListener(this);
 
     }
 
@@ -27,6 +29,8 @@ public class AuthenticateActivity extends AppCompatActivity implements View.OnCl
             startActivity(new Intent(this, LoginActivity.class));
         } else if (i == R.id.main_sign_up_btn) {
             startActivity(new Intent(this, SignupActivity.class));
+        }else if (i == R.id.main_test_slider) {
+            startActivity(new Intent(this, PoiDetailActivity.class));
         }
         finish();
     }

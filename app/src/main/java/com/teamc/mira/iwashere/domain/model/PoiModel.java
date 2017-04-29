@@ -1,6 +1,7 @@
 package com.teamc.mira.iwashere.domain.model;
 
-import android.graphics.Bitmap;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -16,6 +17,9 @@ public class PoiModel implements Serializable{
     private String address;
     private String longitude;
     private String latitude;
+    private float rating;
+    private int ratingCount;
+    private float userRating;
 
     private ArrayList<URL> photos = new ArrayList<>();
     private ArrayList<ContentModel> content = new ArrayList<>();
@@ -23,6 +27,8 @@ public class PoiModel implements Serializable{
     private ArrayList<PoiModel> relatedPois = new ArrayList<>();
 
     private boolean reminder;
+
+    public PoiModel() {}
 
     public PoiModel(String id,
                     String name,
@@ -45,12 +51,22 @@ public class PoiModel implements Serializable{
     }
 
     public PoiModel(JSONObject poi) throws JSONException {
-        this.id = poi.getString("id");
-        this.name = poi.getString("name");
-        this.description = poi.getString("description");
-        this.address = poi.getString("address");
-        this.longitude = poi.getString("longitude");
-        this.latitude = poi.getString("latitude");
+        if(poi.has("poiId")) this.id = poi.getString("poiId");
+        if(poi.has("name")) this.name = poi.getString("name");
+        if(poi.has("description")) this.description = poi.getString("description");
+        if(poi.has("address")) this.address = poi.getString("address");
+        if(poi.has("longitude")) this.longitude = poi.getString("longitude");
+        if(poi.has("latitude")) this.latitude = poi.getString("latitude");
+
+    }
+
+    public PoiModel(String id, String name, String description, String address, String longitude, String latitude) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.address = address;
+        this.longitude = longitude;
+        this.latitude = latitude;
     }
 
     public String getId() {
@@ -123,5 +139,29 @@ public class PoiModel implements Serializable{
 
     public void setRelatedPois(ArrayList<PoiModel> relatedPois) {
         this.relatedPois = relatedPois;
+    }
+
+    public float getRating() {
+        return rating;
+    }
+
+    public void setRating(float rating) {
+        this.rating = rating;
+    }
+
+    public float getUserRating() {
+        return userRating;
+    }
+
+    public void setUserRating(float userRating) {
+        this.userRating = userRating;
+    }
+
+    public int getRatingCount() {
+        return ratingCount;
+    }
+
+    public void setRatingCount(int ratingCount) {
+        this.ratingCount = ratingCount;
     }
 }

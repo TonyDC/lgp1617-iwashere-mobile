@@ -6,6 +6,15 @@
     <include layout="@layout/toolbar"
         android:id="@+id/include"></include>
 
+    <Button
+        android:id="@+id/poi_test"
+        android:layout_width="175dp"
+        android:layout_height="92dp"
+        android:layout_marginTop="20dip"
+        android:background="@color/colorAccentPrimary"
+        android:text="poi_test"
+        android:textColor="@color/textColorSecundary" />
+
     <android.support.v7.widget.AppCompatTextView
         android:layout_width="match_parent"
         android:layout_height="match_parent"

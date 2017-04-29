@@ -37,4 +37,15 @@
             android:textColor="@color/textColorSecundary"
             android:textStyle="bold" />
 
+        <!--TODO delete following button-->
+
+        <Button
+            android:id="@+id/main_test_slider"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dip"
+            android:background="@color/colorAccentPrimary"
+            android:text="test"
+            android:textColor="@color/textColorSecundary" />
+
 </LinearLayout>

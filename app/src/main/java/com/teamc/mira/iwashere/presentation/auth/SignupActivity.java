@@ -91,7 +91,7 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
             }
 
             if (!TextUtils.equals(password,confirmPassword)) {
-                Toast.makeText(getApplicationContext(), "Passwords don't match", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Passwords don't match!", Toast.LENGTH_SHORT).show();
                 return;
             }
 
