@@ -228,7 +228,8 @@ public class PoiDetailActivity extends AppCompatActivity {
 
     /**
      * Add content to the Content Poi grid.
-     * If the
+     * @param contentList List of content to be added to the grid
+     * @param moreContent If true, adds View More content button
      */
     private void setPoiContentGrid(ArrayList<ContentModel> contentList, boolean moreContent) {
 
