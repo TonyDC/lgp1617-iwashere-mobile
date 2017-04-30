@@ -5,6 +5,7 @@ import android.icu.text.LocaleDisplayNames;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -27,6 +28,8 @@ import java.util.HashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
+import static com.teamc.mira.iwashere.data.source.remote.ErrorCodes.NETWORK_FAIL;
+import static com.teamc.mira.iwashere.data.source.remote.ErrorCodes.UNKNOWN_ERROR;
 import static com.teamc.mira.iwashere.data.source.remote.ServerUrl.TIMEOUT;
 import static com.teamc.mira.iwashere.data.source.remote.ServerUrl.TIMEOUT_TIME_UNIT;
 
@@ -61,6 +64,8 @@ public class PoiRepositoryImpl extends AbstractPoiRepository implements PoiRepos
         try {
             JSONObject response = future.get(TIMEOUT, TIMEOUT_TIME_UNIT); // this will block
 
+
+            future.cancel(true);
             return new PoiModel(response);
         } catch (InterruptedException | ExecutionException | JSONException | TimeoutException e) {
             handleError(e);
@@ -82,6 +87,8 @@ public class PoiRepositoryImpl extends AbstractPoiRepository implements PoiRepos
 
             poi.setPhotos(getMedia(response));
 
+
+            future.cancel(true);
             return true;
         } catch (InterruptedException | ExecutionException | TimeoutException e) {
             handleError(e);
@@ -106,6 +113,7 @@ public class PoiRepositoryImpl extends AbstractPoiRepository implements PoiRepos
             poi.setRating(currentRating);
             poi.setRatingCount(currentRatingCount);
 
+            future.cancel(true);
             return true;
         } catch (InterruptedException | ExecutionException | JSONException | TimeoutException e) {
             handleError(e);
@@ -121,12 +129,10 @@ public class PoiRepositoryImpl extends AbstractPoiRepository implements PoiRepos
 
         RequestFuture<JSONObject> future = RequestFuture.newFuture();
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null, future, future);
-        future.setRequest(queue.add(request));
+        queue.add(request);
 
         try {
-            Log.d(TAG, "Start poi user rating fetch");
             JSONObject response = future.get(TIMEOUT, TIMEOUT_TIME_UNIT); // this will block
-            Log.d(TAG, "Finished poi user rating fetch");
             poi.setUserRating((float) response.getDouble("rating"));
             return true;
         } catch (InterruptedException | ExecutionException | JSONException | TimeoutException e) {
@@ -197,7 +203,6 @@ public class PoiRepositoryImpl extends AbstractPoiRepository implements PoiRepos
     @Override
     public ArrayList<PoiModel> fetchPoisInArea(double maxLat, double minLat, double maxLong, double minLong) throws RemoteDataException {
         RequestQueue queue = mRequestQueue;
-
         String url = ServerUrl.getUrl()+ServerUrl.API+ServerUrl.POI+ServerUrl.RANGE;
 
         url = url.concat("/"+minLat+"/"+maxLat+"/"+minLong+"/"+maxLong);
@@ -206,17 +211,7 @@ public class PoiRepositoryImpl extends AbstractPoiRepository implements PoiRepos
         JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, url, null, future, future);
         queue.add(request);
 
-        return getPoiModelsFromRequest(future);
-    }
-
-    @Override
-    public ArrayList<PoiModel> searchPois(String searchQuery) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Nullable
-    ArrayList<PoiModel> getPoiModelsFromRequest(RequestFuture<JSONArray> future) throws RemoteDataException {
-        try {
+        try{
             JSONArray response = future.get(TIMEOUT, TIMEOUT_TIME_UNIT); // this will block
             System.out.println(TAG+": " + String.valueOf(response));
 
@@ -231,34 +226,17 @@ public class PoiRepositoryImpl extends AbstractPoiRepository implements PoiRepos
             }
 
             return poiModels;
-        } catch (InterruptedException | ExecutionException e) {
-            //check to see if the throwable in an instance of the volley error
-            if(e.getCause() instanceof VolleyError)
-            {
-                //grab the volley error from the throwable and cast it back
-                VolleyError volleyError = (VolleyError)e.getCause();
-                //now just grab the network response like normal
-                NetworkResponse networkResponse = volleyError.networkResponse;
-                try {
-                    Log.d(TAG, "raw data: "+ new String(networkResponse.data));
-                    JSONObject data = new JSONObject(new String(networkResponse.data));
-                    Log.d(TAG, data.toString());
-
-                    String code = data.getString("code");
-
-                    throw (RemoteDataException) new BasicRemoteException(code);
-                } catch (JSONException e1) {
-                    e1.printStackTrace();
-                    throw (RemoteDataException) new BasicRemoteException("unknown-error");
-                }
-            }
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw (RemoteDataException) new BasicRemoteException("unknown-error");
+        }catch (InterruptedException | ExecutionException | TimeoutException | JSONException e){
+            handleError(e);
+            return null;
         }
-        return null;
     }
+
+    @Override
+    public ArrayList<PoiModel> searchPois(String searchQuery) {
+        throw new UnsupportedOperationException();
+    }
+
 
     private void handleError(Exception e) throws RemoteDataException {
         // check to see if the throwable is an instance of the volley error
@@ -271,16 +249,22 @@ public class PoiRepositoryImpl extends AbstractPoiRepository implements PoiRepos
             try {
                 Log.d(TAG, "raw data: "+ new String(networkResponse.data));
                 JSONObject data = new JSONObject(new String(networkResponse.data));
-                Log.d(TAG, data.toString());
 
                 String code = data.getString("code");
 
                 throw new BasicRemoteException(code);
             } catch (JSONException e1) {
                 e1.printStackTrace();
-                return;
+                throw  new BasicRemoteException(UNKNOWN_ERROR);
             }
         }
-        e.printStackTrace();
+
+        if (e instanceof TimeoutException) {
+           throw new BasicRemoteException(NETWORK_FAIL);
+        }
+
+        if (e instanceof JSONException) {
+            throw new BasicRemoteException(ErrorCodes.JSON_PARSING_ERROR);
+        }
     }
 }

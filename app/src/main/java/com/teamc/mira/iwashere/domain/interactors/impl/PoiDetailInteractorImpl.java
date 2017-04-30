@@ -97,10 +97,10 @@ public class PoiDetailInteractorImpl extends AbstractInteractor implements PoiDe
 
             Log.d(TAG, "Start fetching poi User Rating");
             // TODO: 29/04/2017 Can't fix issue where the fetchPoiUserRating function blocks indefinitely and doesn't timeout
-            /*if (userId != null && !mRepository.fetchPoiUserRating(poi, userId)) {
+            if (userId != null && !mRepository.fetchPoiUserRating(poi, userId)) {
                 notifyError("520", "Error fetching POI user's rating.");
                 return;
-            }*/
+            }
 
             Log.d(TAG, "Start nofitySuccess");
             notifySuccess(poi);
