@@ -31,9 +31,6 @@ allprojects {
         maven { url 'https://jitpack.io' }
     }
 }
-dependencies {
-    compile 'com.github.claudiodegio:MsvSearch:1.0.0'
-}
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
@@ -54,7 +51,7 @@ dependencies {
     compile 'com.squareup.picasso:picasso:2.3.2'
     compile 'com.nineoldandroids:library:2.4.0'
     compile 'com.daimajia.slider:library:1.1.5@aar'
-
+    compile 'com.github.claudiodegio:MsvSearch:1.0.0'
 
     testCompile 'junit:junit:4.12'
     testCompile 'org.mockito:mockito-core:1.10.19'

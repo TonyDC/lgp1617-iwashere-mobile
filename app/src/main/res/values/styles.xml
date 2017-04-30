@@ -26,8 +26,7 @@
 
     <style name="AppTheme.SearchView" parent="Widget.AppCompat.Light.SearchView">
         <item name="searchIcon">@drawable/ic_action_search</item>
-        <item name="closeIcon">@drawable/com_facebook_button_send_icon_blue</item>
-        <item name="android:textColor">@color/white</item>
+        <item name="textColor">@color/white</item>
         <item name="android:editTextColor">@color/white</item>
         <item name="android:textColorHint">@color/white</item>
     </style>

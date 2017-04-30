@@ -16,7 +16,6 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -28,6 +27,8 @@ import android.view.ViewGroup;
 import android.widget.ExpandableListView;
 import android.widget.Toast;
 
+import com.claudiodegio.msv.BaseMaterialSearchView;
+import com.claudiodegio.msv.OnSearchViewListener;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -62,7 +63,7 @@ public class MapFragment extends Fragment implements
 //        GoogleMap.OnCameraMoveCanceledListener,
 //        GoogleMap.OnCameraIdleListener,
         OnMapReadyCallback,
-        GoogleApiClient.OnConnectionFailedListener, SearchView.OnQueryTextListener, SearchView.OnCloseListener {
+        GoogleApiClient.OnConnectionFailedListener, OnSearchViewListener {
 
 
     private static final String TAG = MapFragment.class.getSimpleName();
@@ -87,7 +88,7 @@ public class MapFragment extends Fragment implements
     private LatLngBounds mCurrentCameraBounds;
 
     private SearchManager searchManager;
-    private SearchView searchView;
+    private BaseMaterialSearchView searchView;
     private MyExpandableListAdapter listAdapter;
     private ExpandableListView myList;
     private ArrayList<ParentRow> parentList = new ArrayList<ParentRow>();
@@ -102,6 +103,8 @@ public class MapFragment extends Fragment implements
 
         Toolbar myToolbar = (Toolbar) mRootView.findViewById(R.id.toolbar);
         ((AppCompatActivity) getActivity()).setSupportActionBar(myToolbar);
+        searchView = (BaseMaterialSearchView) mRootView.findViewById(R.id.sv);
+        searchView.setOnSearchViewListener(this);
         setHasOptionsMenu(true);
         getActivity().setTitle(null);
         parentList = new ArrayList<ParentRow>();
@@ -347,15 +350,9 @@ public class MapFragment extends Fragment implements
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.search_menu, menu);
         super.onCreateOptionsMenu(menu, inflater);
+        MenuItem item = menu.findItem(R.id.action_search);
+        searchView.setMenuItem(item);
 
-        searchManager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
-
-        searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
-        searchView.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
-        searchView.setSubmitButtonEnabled(true);
-        searchView.setOnQueryTextListener(this);
-        searchView.setOnCloseListener(this);
-        searchView.requestFocus();
     }
 
     private void searchForResults(String query) {
@@ -364,7 +361,7 @@ public class MapFragment extends Fragment implements
             @Override
             public void onSuccess(ArrayList<PoiModel> poiModels) {
                 Log.d(TAG, "PoiMapInteractor.CallBack SEARCH onSuccess");
-
+                Toast.makeText(getActivity(), "onSuccess SEARCH", Toast.LENGTH_SHORT).show();
                 onSearchPoiFetch(poiModels);
             }
 
@@ -396,75 +393,24 @@ public class MapFragment extends Fragment implements
 
     private void onSearchPoiFetch(ArrayList<PoiModel> poiModels) {
         PoiModel model;
+
+        parentList = new ArrayList<ParentRow>();
+        ArrayList<ChildRow> childRowsPlaces = new ArrayList<ChildRow>();
+        ArrayList<ChildRow> childRowsTags = new ArrayList<ChildRow>();
+        ParentRow parentRow = null;
         for (int i = 0; i < poiModels.size(); i++) {
             model = poiModels.get(i);
             Log.d(TAG, "POI MODEL SEARCH: " + model.getName());
-
-            ArrayList<ChildRow> childRows = new ArrayList<ChildRow>();
-            ParentRow parentRow = null;
-
-            childRows.add(new ChildRow(R.drawable.ic_location_on_black_32dp, model.getName()));
-            parentRow = new ParentRow("Places", childRows);
-            parentList.add(parentRow);
-
-            ArrayList<ChildRow> childRows2 = new ArrayList<ChildRow>();
-
-            childRows2.add(new ChildRow(R.drawable.ic_pound, model.getName()));
-            parentRow = new ParentRow("Tags", childRows2);
-            parentList.add(parentRow);
-
-            displayList(mRootView);
-            //listResult(1, model.getName(), 0, R.drawable.ic_location_on_black_32dp, R.color.black_55);
-
-            //listResult(2, model.getName(), 1, R.drawable.ic_pound, R.color.black_55);
-
-            /**if (model.getName().length() > MAX_NAME_LENGTH) {
-             searchView.addSuggestion(model.getName().substring(0, MAX_NAME_LENGTH) + "...");
-             } else searchView.addSuggestion(model.getName());**/
+            childRowsPlaces.add(new ChildRow(R.drawable.ic_location_on_black_32dp, model.getName()));
+            childRowsTags.add(new ChildRow(R.drawable.ic_pound, model.getName()));
         }
-    }
-
-    @Override
-    public boolean onClose() {
-        listAdapter.filterData("");
-        expandAll();
-        return false;
-    }
-
-    @Override
-    public boolean onQueryTextSubmit(String query) {
-        listAdapter.filterData(query);
-        expandAll();
-        return false;
-    }
-
-    @Override
-    public boolean onQueryTextChange(String newText) {
-        listAdapter.filterData(newText);
-        searchForResults(newText);
-        expandAll();
-        return false;
-    }
-
-    private void loadData() {
-        ArrayList<ChildRow> childRows = new ArrayList<ChildRow>();
-        ParentRow parentRow = null;
-
-        childRows.add(new ChildRow(R.mipmap.marker_primary
-                , "Lorem ipsum dolor sit amet, consectetur adipiscing elit."));
-        childRows.add(new ChildRow(R.mipmap.marker_primary
-                , "Sit Fido, sit."));
-        parentRow = new ParentRow("Places", childRows);
+        parentRow = new ParentRow("Places", childRowsPlaces);
         parentList.add(parentRow);
 
-        childRows = new ArrayList<ChildRow>();
-        childRows.add(new ChildRow(R.mipmap.marker_primary
-                , "Fido is the name of my dog."));
-        childRows.add(new ChildRow(R.mipmap.marker_primary
-                , "Add two plus two."));
-        parentRow = new ParentRow("Routes", childRows);
+        parentRow = new ParentRow("Tags", childRowsTags);
         parentList.add(parentRow);
-
+        displayList(mRootView);
+        expandAll();
     }
 
     private void expandAll() {
@@ -475,11 +421,37 @@ public class MapFragment extends Fragment implements
     }
 
     private void displayList(View rooView) {
-        //loadData();
-
         myList = (ExpandableListView) rooView.findViewById(R.id.expandableListView_search);
         listAdapter = new MyExpandableListAdapter(getActivity(), parentList);
-
         myList.setAdapter(listAdapter);
+    }
+
+    @Override
+    public void onSearchViewShown() {
+        Toast.makeText(getActivity(), "onSearchViewShown", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onSearchViewClosed() {
+
+        Toast.makeText(getActivity(), "onSearchViewClosed", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        Toast.makeText(getActivity(), "onQueryTextSubmit: " + query, Toast.LENGTH_SHORT).show();
+        listAdapter.filterData(query);
+        expandAll();
+        return true;
+    }
+
+    @Override
+    public void onQueryTextChange(String newText) {
+        Toast.makeText(getActivity(), "onQueryTextChange: " + newText, Toast.LENGTH_SHORT).show();
+        listAdapter.filterData(newText);
+        if (newText.length() != 0){
+            searchForResults(newText);
+            expandAll();
+        }
     }
 }
