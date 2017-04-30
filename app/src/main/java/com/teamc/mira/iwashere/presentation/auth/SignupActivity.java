@@ -13,7 +13,7 @@ import android.widget.Toast;
 import com.google.firebase.auth.FirebaseAuth;
 import com.teamc.mira.iwashere.IWasHereActivity;
 import com.teamc.mira.iwashere.R;
-import com.teamc.mira.iwashere.data.source.remote.UserRepositoryImpl;
+import com.teamc.mira.iwashere.data.source.remote.impl.UserRepositoryImpl;
 import com.teamc.mira.iwashere.domain.executor.Executor;
 import com.teamc.mira.iwashere.domain.executor.MainThread;
 import com.teamc.mira.iwashere.domain.executor.impl.ThreadExecutor;

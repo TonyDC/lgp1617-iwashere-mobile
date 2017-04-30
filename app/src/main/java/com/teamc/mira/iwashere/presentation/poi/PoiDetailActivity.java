@@ -1,6 +1,5 @@
 package com.teamc.mira.iwashere.presentation.poi;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -20,7 +19,7 @@ import com.daimajia.slider.library.SliderLayout;
 import com.daimajia.slider.library.SliderTypes.TextSliderView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.teamc.mira.iwashere.R;
-import com.teamc.mira.iwashere.data.source.remote.PoiRepositoryImpl;
+import com.teamc.mira.iwashere.data.source.remote.impl.PoiRepositoryImpl;
 import com.teamc.mira.iwashere.domain.executor.Executor;
 import com.teamc.mira.iwashere.domain.executor.MainThread;
 import com.teamc.mira.iwashere.domain.executor.impl.ThreadExecutor;
@@ -74,7 +73,7 @@ public class PoiDetailActivity extends AppCompatActivity {
 
         setToolBar();
         poi = (PoiModel) getIntent().getSerializableExtra(POI);
-        setPoi();
+        setPoiInfo();
         setDynamicDescriptionSize();
 
         // GridView size changes with number of components
@@ -92,6 +91,51 @@ public class PoiDetailActivity extends AppCompatActivity {
 
         fetchPoiInfo(poi);
         mSwipeContainer.setRefreshing(true);
+
+        userRatingBar.setOnRatingBarChangeListener(new OnRatingBarChangeListener() {
+            public void onRatingChanged(RatingBar ratingBar, final float rating,
+                                        boolean fromUser) {
+
+                if (!fromUser) {
+                    return;
+                }
+
+                MainThread mainThread = MainThreadImpl.getInstance();
+                Executor executor = ThreadExecutor.getInstance();
+                PoiRepository poiRepository = new PoiRepositoryImpl(getApplicationContext());
+                PoiDetailInteractor.CallBack callback = new PoiDetailInteractor.CallBack() {
+
+                    @Override
+                    public void onNetworkFail() {
+                        Toast.makeText(getApplicationContext(), R.string.error_connection, LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onError(String code, String message) {
+                        userRatingBar.setRating(poi.getUserRating());
+                        Toast.makeText(getApplicationContext(), R.string.error_request, LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onSuccess(PoiModel updatedPoi) {
+                        poi.setUserRating(rating);
+                        poi.setRating(updatedPoi.getRating());
+//                        setPoiRating(poi);
+                    }
+                };
+
+                PoiDetailInteractor poiRatingInteractor = new PoiRatingInteractorImpl(
+                        executor,
+                        mainThread,
+                        callback,
+                        poiRepository,
+                        poi,
+                        auth.getCurrentUser().getUid(),
+                        (int) rating);
+
+                poiRatingInteractor.execute();
+            }
+        });
     }
 
     private void fetchPoiInfo(PoiModel poi) {
@@ -119,11 +163,11 @@ public class PoiDetailActivity extends AppCompatActivity {
         });
     }
 
-    private void setPoi() {
+    private void setPoiInfo() {
 
-        setPoiMediaSlider();
-        setPoiDescriptionText();
-        setPoiRatingBars();
+        setPoiMediaSlider(poi);
+        setPoiDescriptionText(poi);
+        setPoiRatingBars(poi);
         setPoiContentGrid(poi.getContent(),moreContent);
         getSupportActionBar().setTitle(poi.getName());
 
@@ -155,10 +199,7 @@ public class PoiDetailActivity extends AppCompatActivity {
                 mSwipeContainer.setRefreshing(false);
                 poi = poiInformation;
 
-                setPoiMediaSlider();
-                setPoiDescriptionText();
-                setPoiRatingBars();
-                setPoiContentGrid(poi.getContent(), moreContent);
+                setPoiInfo();
             }
         };
 
@@ -276,7 +317,7 @@ public class PoiDetailActivity extends AppCompatActivity {
     /**
      * Create POI description field with the description associated to the POI model.
      */
-    private void setPoiDescriptionText() {
+    private void setPoiDescriptionText(PoiModel poi) {
         TextView textDescription = (TextView) findViewById(R.id.description);
         textDescription.setText(poi.getDescription());
     }
@@ -284,7 +325,7 @@ public class PoiDetailActivity extends AppCompatActivity {
     /**
      * Create POI slider with the pictures associated to the POI model.
      */
-    private void setPoiMediaSlider() {
+    private void setPoiMediaSlider(PoiModel poi) {
         sliderShow = (SliderLayout) findViewById(R.id.slider);
 
         for (URL imageURL : poi.getPhotos()) {
@@ -300,66 +341,19 @@ public class PoiDetailActivity extends AppCompatActivity {
      * If a user is authenticated, a second rating bar with the rating
      * attributed to this POI is created.
      */
-    private void setPoiRatingBars() {
+    private void setPoiRatingBars(final PoiModel poi) {
 
         poiRatingText = (TextView) findViewById(R.id.poiRating);
         userRatingBar = (RatingBar) findViewById(R.id.userRatingBar);
 
-        setPoiRating();
+        setPoiRating(poi);
 
-        // TODO: check if this is async
         if (auth.getCurrentUser() == null) {
             ((ViewGroup) userRatingBar.getParent()).removeView(userRatingBar);
-
             return;
         }
 
-        final Context thisContext = this;
-
         userRatingBar.setRating(poi.getUserRating());
-        userRatingBar.setOnRatingBarChangeListener(new OnRatingBarChangeListener() {
-            public void onRatingChanged(RatingBar ratingBar, final float rating,
-                                        boolean fromUser) {
-
-                if (!fromUser) {
-                    return;
-                }
-
-                MainThread mainThread = MainThreadImpl.getInstance();
-                Executor executor = ThreadExecutor.getInstance();
-                PoiRepository poiRepository = new PoiRepositoryImpl(thisContext);
-                PoiDetailInteractor.CallBack callback = new PoiDetailInteractor.CallBack() {
-
-                    @Override
-                    public void onNetworkFail() {
-                        onError(null, null);
-                    }
-
-                    @Override
-                    public void onError(String code, String message) {
-                        userRatingBar.setRating(poi.getUserRating());
-                    }
-
-                    @Override
-                    public void onSuccess(PoiModel updatedPoi) {
-                        poi.setUserRating(rating);
-                        poi.setRating(updatedPoi.getRating());
-                        setPoiRating();
-                    }
-                };
-
-                PoiDetailInteractor poiRatingInteractor = new PoiRatingInteractorImpl(
-                        executor,
-                        mainThread,
-                        callback,
-                        poiRepository,
-                        poi,
-                        auth.getCurrentUser().getUid(),
-                        (int) rating);
-
-                poiRatingInteractor.execute();
-            }
-        });
     }
 
     private void setToolBar() {
@@ -369,7 +363,7 @@ public class PoiDetailActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
-    private void setPoiRating() {
+    private void setPoiRating(PoiModel poi) {
         DecimalFormat decimalFormat = new DecimalFormat("#.##");
         poiRatingText.setText(decimalFormat.format(poi.getRating()) + "/5");
     }

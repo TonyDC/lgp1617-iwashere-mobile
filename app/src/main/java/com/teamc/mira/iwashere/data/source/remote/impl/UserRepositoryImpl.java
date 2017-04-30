@@ -1,29 +1,27 @@
-package com.teamc.mira.iwashere.data.source.remote;
+package com.teamc.mira.iwashere.data.source.remote.impl;
 
 import android.content.Context;
 import android.util.Log;
 
-import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.RequestFuture;
 import com.google.firebase.auth.FirebaseAuth;
-import com.teamc.mira.iwashere.data.source.remote.exceptions.BasicRemoteException;
+import com.teamc.mira.iwashere.data.source.remote.AbstractUserRepository;
+import com.teamc.mira.iwashere.data.source.remote.base.ServerUrl;
 import com.teamc.mira.iwashere.data.source.remote.exceptions.RemoteDataException;
 import com.teamc.mira.iwashere.domain.model.UserModel;
 import com.teamc.mira.iwashere.domain.repository.UserRepository;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
-import static com.teamc.mira.iwashere.data.source.remote.ServerUrl.TIMEOUT;
-import static com.teamc.mira.iwashere.data.source.remote.ServerUrl.TIMEOUT_TIME_UNIT;
+import static com.teamc.mira.iwashere.data.source.remote.base.ServerUrl.TIMEOUT;
+import static com.teamc.mira.iwashere.data.source.remote.base.ServerUrl.TIMEOUT_TIME_UNIT;
 
 public class UserRepositoryImpl extends AbstractUserRepository implements UserRepository {
 
@@ -43,7 +41,6 @@ public class UserRepositoryImpl extends AbstractUserRepository implements UserRe
 
     @Override
     public boolean signup(String email, String username, String password, String confirmPassword) throws RemoteDataException {
-        // Instantiate the RequestQueue.
         RequestQueue queue = mRequestQueue;
 
         String url = ServerUrl.getUrl();
@@ -60,27 +57,7 @@ public class UserRepositoryImpl extends AbstractUserRepository implements UserRe
 
             return true;
         } catch (InterruptedException | ExecutionException | TimeoutException e) {
-            //check to see if the throwable in an instance of the volley error
-            if(e.getCause() instanceof VolleyError)
-            {
-                //grab the volley error from the throwable and cast it back
-                VolleyError volleyError = (VolleyError)e.getCause();
-                //now just grab the network response like normal
-                NetworkResponse networkResponse = volleyError.networkResponse;
-                try {
-                    Log.d(TAG, "raw data: "+ new String(networkResponse.data));
-                    JSONObject data = new JSONObject(new String(networkResponse.data));
-                    Log.d(TAG, data.toString());
-
-                    String code = data.getString("code");
-
-                    throw (RemoteDataException) new BasicRemoteException(code);
-                } catch (JSONException e1) {
-                    e1.printStackTrace();
-                    return false;
-                }
-            }
-            e.printStackTrace();
+            handleError(e);
         }
         return false;
     }

@@ -4,10 +4,9 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 
 import com.android.volley.RequestQueue;
+import com.teamc.mira.iwashere.data.source.remote.base.AbstractRepository;
 import com.teamc.mira.iwashere.domain.model.ContentModel;
-import com.teamc.mira.iwashere.domain.model.PoiModel;
 import com.teamc.mira.iwashere.domain.repository.PoiRepository;
-import com.teamc.mira.iwashere.domain.repository.UserRepository;
 
 import org.json.JSONArray;
 import org.json.JSONException;

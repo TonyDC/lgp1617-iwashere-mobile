@@ -1,4 +1,4 @@
-package com.teamc.mira.iwashere.data.source.remote;
+package com.teamc.mira.iwashere.data.source.remote.base;
 
 /**
  * Created by Duart on 30/04/2017.

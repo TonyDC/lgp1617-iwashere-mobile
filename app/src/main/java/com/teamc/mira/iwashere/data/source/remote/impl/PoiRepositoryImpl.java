@@ -1,20 +1,15 @@
-package com.teamc.mira.iwashere.data.source.remote;
+package com.teamc.mira.iwashere.data.source.remote.impl;
 
 import android.content.Context;
-import android.icu.text.LocaleDisplayNames;
-import android.support.annotation.Nullable;
 import android.util.Log;
 
-import com.android.volley.DefaultRetryPolicy;
-import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-import com.android.volley.RetryPolicy;
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.RequestFuture;
-import com.teamc.mira.iwashere.data.source.remote.exceptions.BasicRemoteException;
+import com.teamc.mira.iwashere.data.source.remote.AbstractPoiRepository;
+import com.teamc.mira.iwashere.data.source.remote.base.ServerUrl;
 import com.teamc.mira.iwashere.data.source.remote.exceptions.RemoteDataException;
 import com.teamc.mira.iwashere.domain.model.PoiModel;
 import com.teamc.mira.iwashere.domain.repository.PoiRepository;
@@ -28,10 +23,8 @@ import java.util.HashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
-import static com.teamc.mira.iwashere.data.source.remote.ErrorCodes.NETWORK_FAIL;
-import static com.teamc.mira.iwashere.data.source.remote.ErrorCodes.UNKNOWN_ERROR;
-import static com.teamc.mira.iwashere.data.source.remote.ServerUrl.TIMEOUT;
-import static com.teamc.mira.iwashere.data.source.remote.ServerUrl.TIMEOUT_TIME_UNIT;
+import static com.teamc.mira.iwashere.data.source.remote.base.ServerUrl.TIMEOUT;
+import static com.teamc.mira.iwashere.data.source.remote.base.ServerUrl.TIMEOUT_TIME_UNIT;
 
 // TODO: 19/04/2017 Implement functions, test those already implemented
 public class PoiRepositoryImpl extends AbstractPoiRepository implements PoiRepository {
@@ -237,34 +230,4 @@ public class PoiRepositoryImpl extends AbstractPoiRepository implements PoiRepos
         throw new UnsupportedOperationException();
     }
 
-
-    private void handleError(Exception e) throws RemoteDataException {
-        // check to see if the throwable is an instance of the volley error
-        if(e.getCause() instanceof VolleyError)
-        {
-            // grab the volley error from the throwable and cast it back
-            VolleyError volleyError = (VolleyError)e.getCause();
-            // now just grab the network response like normal
-            NetworkResponse networkResponse = volleyError.networkResponse;
-            try {
-                Log.d(TAG, "raw data: "+ new String(networkResponse.data));
-                JSONObject data = new JSONObject(new String(networkResponse.data));
-
-                String code = data.getString("code");
-
-                throw new BasicRemoteException(code);
-            } catch (JSONException e1) {
-                e1.printStackTrace();
-                throw  new BasicRemoteException(UNKNOWN_ERROR);
-            }
-        }
-
-        if (e instanceof TimeoutException) {
-           throw new BasicRemoteException(NETWORK_FAIL);
-        }
-
-        if (e instanceof JSONException) {
-            throw new BasicRemoteException(ErrorCodes.JSON_PARSING_ERROR);
-        }
-    }
 }
