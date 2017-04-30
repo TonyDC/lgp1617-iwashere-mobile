@@ -43,11 +43,14 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.teamc.mira.iwashere.R;
 import com.teamc.mira.iwashere.data.source.remote.PoiRepositoryImpl;
+import com.teamc.mira.iwashere.data.source.remote.SearchRepositoryImpl;
 import com.teamc.mira.iwashere.domain.executor.impl.ThreadExecutor;
 import com.teamc.mira.iwashere.domain.interactors.PoiMapInteractor;
+import com.teamc.mira.iwashere.domain.interactors.SearchInteractor;
 import com.teamc.mira.iwashere.domain.interactors.impl.PoiMapInteractorImpl;
 import com.teamc.mira.iwashere.domain.interactors.impl.SearchInteractorImpl;
 import com.teamc.mira.iwashere.domain.model.PoiModel;
+import com.teamc.mira.iwashere.domain.model.SearchModel;
 import com.teamc.mira.iwashere.presentation.list.ChildRow;
 import com.teamc.mira.iwashere.presentation.list.MyExpandableListAdapter;
 import com.teamc.mira.iwashere.presentation.list.ParentRow;
@@ -357,12 +360,12 @@ public class MapFragment extends Fragment implements
 
     private void searchForResults(String query) {
 
-        SearchInteractorImpl.CallBack callBack = new SearchInteractorImpl.CallBack() {
+        SearchInteractor.CallBack callBack = new SearchInteractor.CallBack() {
             @Override
-            public void onSuccess(ArrayList<PoiModel> poiModels) {
+            public void onSuccess(SearchModel searchModel) {
                 Log.d(TAG, "PoiMapInteractor.CallBack SEARCH onSuccess");
                 Toast.makeText(getActivity(), "onSuccess SEARCH", Toast.LENGTH_SHORT).show();
-                onSearchPoiFetch(poiModels);
+                onSearchPoiFetch(searchModel);
             }
 
             @Override
@@ -383,7 +386,7 @@ public class MapFragment extends Fragment implements
                 ThreadExecutor.getInstance(),
                 MainThreadImpl.getInstance(),
                 callBack,
-                new PoiRepositoryImpl(getContext()),
+                new SearchRepositoryImpl(getContext()),
                 query, mLatitude, mLongitude
         );
         searchInteractor.execute();
@@ -391,13 +394,15 @@ public class MapFragment extends Fragment implements
         Log.d(TAG, "Searched Query: " + query + " Lat: " + mLatitude + " Lng: " + mLongitude);
     }
 
-    private void onSearchPoiFetch(ArrayList<PoiModel> poiModels) {
+    private void onSearchPoiFetch(SearchModel searchModel) {
         PoiModel model;
+
 
         parentList = new ArrayList<ParentRow>();
         ArrayList<ChildRow> childRowsPlaces = new ArrayList<ChildRow>();
         ArrayList<ChildRow> childRowsTags = new ArrayList<ChildRow>();
         ParentRow parentRow = null;
+        /**
         for (int i = 0; i < poiModels.size(); i++) {
             model = poiModels.get(i);
             Log.d(TAG, "POI MODEL SEARCH: " + model.getName());
@@ -410,7 +415,7 @@ public class MapFragment extends Fragment implements
         parentRow = new ParentRow("Tags", childRowsTags);
         parentList.add(parentRow);
         displayList(mRootView);
-        expandAll();
+        expandAll();**/
     }
 
     private void expandAll() {

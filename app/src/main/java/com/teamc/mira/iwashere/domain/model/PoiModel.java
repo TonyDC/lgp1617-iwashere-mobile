@@ -7,9 +7,7 @@ import java.io.Serializable;
 import java.net.URL;
 import java.util.ArrayList;
 
-public class PoiModel implements Serializable{
-    private String id;
-    private String name;
+public class PoiModel extends BasicModel implements Serializable {
     private String description;
     private String address;
     private String longitude;
@@ -25,7 +23,9 @@ public class PoiModel implements Serializable{
 
     private boolean reminder;
 
-    public PoiModel() {}
+    public PoiModel() {
+        super();
+    }
 
     public PoiModel(String id,
                     String name,
@@ -36,8 +36,7 @@ public class PoiModel implements Serializable{
                     ArrayList<URL> photos,
                     ArrayList<ContentModel> content,
                     ArrayList<PoiModel> relatedContent) {
-        this.id = id;
-        this.name = name;
+        super(id, name);
         this.description = description;
         this.address = address;
         this.longitude = longitude;
