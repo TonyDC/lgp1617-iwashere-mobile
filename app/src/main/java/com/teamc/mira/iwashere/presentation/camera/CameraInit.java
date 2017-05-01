@@ -4,12 +4,14 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Point;
 import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.Display;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -19,13 +21,17 @@ import com.teamc.mira.iwashere.R;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class CameraInit extends Activity {
     private static final int CAMERA_REQUEST = 1888;
     private ImageView imageView;
     private Button postButton;
     private Uri imageToUploadUri;
+
 
 
     @Override
@@ -46,8 +52,10 @@ public class CameraInit extends Activity {
     }
 
     public void callCamera(){
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "IWasHere" + timeStamp + "_";
         Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-        File f = new File(Environment.getExternalStorageDirectory(), "POST_IMAGE.jpg");
+        File f = new File(Environment.getExternalStorageDirectory(), imageFileName+".jpg");
         cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(f));
         imageToUploadUri = Uri.fromFile(f);
         startActivityForResult(cameraIntent, CAMERA_REQUEST);
@@ -62,6 +70,7 @@ public class CameraInit extends Activity {
     }
 
     private Bitmap getBitmap(Uri uri) {
+
         InputStream inputStream = null;
         try {
             inputStream = getContentResolver().openInputStream(uri);
@@ -76,7 +85,8 @@ public class CameraInit extends Activity {
 
         options.inJustDecodeBounds = false;
         Bitmap bitmap = BitmapFactory.decodeStream(inputStream, rect, options);
-        return bitmap;
+        Bitmap scaledBitmap = scaleBitmap(bitmap);
+        return scaledBitmap;
     }
 
     private int getInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
@@ -96,4 +106,18 @@ public class CameraInit extends Activity {
 
         return inSampleSize;
     }
+
+    private Bitmap scaleBitmap(Bitmap myBitmap){
+        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        int width = size.x;
+        int height = size.y;
+        float scaleHt =(float) width/myBitmap.getWidth();
+        Log.e("Scaled percent ", " "+scaleHt);
+        Bitmap scaled = Bitmap.createScaledBitmap(myBitmap, width, (int)(myBitmap.getWidth()*scaleHt), true);
+        return scaled;
+
+    }
+
 }
