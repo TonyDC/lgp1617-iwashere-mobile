@@ -28,7 +28,7 @@ import com.teamc.mira.iwashere.presentation.poi.PoiDetailActivity;
 import com.teamc.mira.iwashere.threading.MainThreadImpl;
 
 
-class AccountFragment extends Fragment implements View.OnClickListener{
+public class AccountFragment extends Fragment {
 
     View v;
     @Override
@@ -42,41 +42,10 @@ class AccountFragment extends Fragment implements View.OnClickListener{
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View v = inflater.inflate(R.layout.fragment_account, container, false);
-        v.findViewById(R.id.poi_test).setOnClickListener(this);
         setHasOptionsMenu(true);
         Toolbar toolbar = (Toolbar) v.findViewById(R.id.toolbar);
         toolbar.setTitle(FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
         ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
-
-
-        /*PoiMapInteractor.CallBack callBack = new PoiMapInteractor.CallBack() {
-            @Override
-            public void onSuccess(ArrayList<PoiModel> poiModels) {
-                TextView textView = (TextView) v.findViewById(R.id.hello_world_account);
-                textView.setText(" POI1: "+ poiModels.get(0).getName()+"\n POI2: "+poiModels.get(1).getName());
-                Toast.makeText(getActivity(), ""+poiModels.size(), Toast.LENGTH_LONG).show();
-            }
-
-            @Override
-            public void onFail(String message) {
-                Toast.makeText(getActivity(), "Falhou", Toast.LENGTH_LONG).show();
-            }
-
-            @Override
-            public void onNetworkError() {
-                Toast.makeText(getActivity(), "Falha na conecção", Toast.LENGTH_LONG).show();
-            }
-        };
-        PoiRepository poiRepository = new PoiRepositoryImpl(getActivity());
-        PoiMapInteractorImpl poiMapInteractor = new PoiMapInteractorImpl(
-                ThreadExecutor.getInstance(),
-                MainThreadImpl.getInstance(),
-                callBack,
-                poiRepository,
-                43,44,43,44
-        );
-
-        poiMapInteractor.execute();*/
 
         return v;
     }
@@ -119,15 +88,6 @@ class AccountFragment extends Fragment implements View.OnClickListener{
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-
-    public void onClick(View v) {
-
-        int i = v.getId();
-        if (i == R.id.poi_test) {
-            startActivity(new Intent(this.getContext(), PoiDetailActivity.class));
-        }
     }
 }
 
