@@ -81,7 +81,7 @@ public class CameraInit extends Activity {
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
 
-        options.inSampleSize = getInSampleSize(options, 128, 128);
+        options.inSampleSize = getInSampleSize(options, 64, 64);
 
         options.inJustDecodeBounds = false;
         Bitmap bitmap = BitmapFactory.decodeStream(inputStream, rect, options);
@@ -108,16 +108,9 @@ public class CameraInit extends Activity {
     }
 
     private Bitmap scaleBitmap(Bitmap myBitmap){
-        Display display = getWindowManager().getDefaultDisplay();
-        Point size = new Point();
-        display.getSize(size);
-        int width = size.x;
-        int height = size.y;
-        float scaleHt =(float) width/myBitmap.getWidth();
-        Log.e("Scaled percent ", " "+scaleHt);
-        Bitmap scaled = Bitmap.createScaledBitmap(myBitmap, width, (int)(myBitmap.getWidth()*scaleHt), true);
+        int nh = (int) ( myBitmap.getHeight() * (512.0 / myBitmap.getWidth()) );
+        Bitmap scaled = Bitmap.createScaledBitmap(myBitmap, 512, nh, true);
         return scaled;
-
     }
 
 }
