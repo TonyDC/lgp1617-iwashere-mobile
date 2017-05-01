@@ -70,6 +70,13 @@ public class CameraInit extends Activity {
     }
 
     public void callCamera(){
+        if (Build.VERSION.SDK_INT>Build.VERSION_CODES.LOLLIPOP_MR1){
+            String[] perms = {"android.permission.WRITE_EXTERNAL_STORAGE"};
+
+            int permsRequestCode = 200;
+
+            requestPermissions(perms, permsRequestCode);
+        }
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String imageFileName = "IWasHere" + timeStamp + "_";
         Intent cameraIntent;
@@ -100,10 +107,10 @@ public class CameraInit extends Activity {
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == CAMERA_REQUEST && resultCode == Activity.RESULT_OK) {
-            //Bitmap photo = getBitmap(imageToUploadUri);
+            Bitmap photo = getBitmap(imageToUploadUri);
             videoView.setVisibility(View.GONE);
-           // imageView.setImageBitmap(photo);
-            imageView.setImageURI(imageToUploadUri);
+            imageView.setImageBitmap(photo);
+            //imageView.setImageURI(imageToUploadUri);
         }
         if (requestCode == REQUEST_VIDEO_CAPTURE && resultCode == RESULT_OK) {
             imageView.setVisibility(View.GONE);
@@ -113,15 +120,8 @@ public class CameraInit extends Activity {
         }
 
     }
-/*
+
     private Bitmap getBitmap(Uri uri) {
-        if (Build.VERSION.SDK_INT>Build.VERSION_CODES.LOLLIPOP_MR1){
-            String[] perms = {"android.permission.WRITE_EXTERNAL_STORAGE"};
-
-            int permsRequestCode = 200;
-
-            requestPermissions(perms, permsRequestCode);
-        }
         InputStream inputStream = null;
         try {
             inputStream = getContentResolver().openInputStream(uri);
@@ -157,18 +157,18 @@ public class CameraInit extends Activity {
 
         return inSampleSize;
     }
-
+/*
     private void dispatchTakeVideoIntent() {
         Intent takeVideoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
         if (takeVideoIntent.resolveActivity(getPackageManager()) != null) {
             startActivityForResult(takeVideoIntent, REQUEST_VIDEO_CAPTURE);
         }
     }
-
+*/
     private Bitmap scaleBitmap(Bitmap myBitmap){
         int nh = (int) ( myBitmap.getHeight() * (512.0 / myBitmap.getWidth()) );
         Bitmap scaled = Bitmap.createScaledBitmap(myBitmap, 512, nh, true);
         return scaled;
     }
-*/
+
 }
