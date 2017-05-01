@@ -16,7 +16,6 @@
             android:cropToPadding="true"
             android:background="@drawable/border_image"
             android:layout_width="match_parent"
-            android:rotation="90"
             android:layout_height="350dp"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
