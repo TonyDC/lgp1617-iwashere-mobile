@@ -16,7 +16,7 @@
             android:cropToPadding="true"
             android:background="@drawable/border_image"
             android:layout_width="match_parent"
-            android:layout_height="350dp"
+            android:layout_height="305dp"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
             android:layout_gravity=""
@@ -38,30 +38,45 @@
             android:overScrollMode="always"
             android:scrollHorizontally="false"
             android:scrollbarStyle="insideInset"
-            android:scrollbars="vertical" />
+            android:scrollbars="vertical"
+            android:hint="Description"/>
+        <EditText
+            android:id="@+id/textArea_information"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textMultiLine"
+            android:overScrollMode="always"
+            android:scrollHorizontally="false"
+            android:scrollbarStyle="insideInset"
+            android:scrollbars="vertical"
+            android:hint="Where were you?"/>
 
     </LinearLayout>
 
-    <RelativeLayout
-        android:id="@+id/postBtnL"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:orientation="vertical"
-        android:padding="10dp">
+        android:layout_weight="1">
 
-        <Button
-            android:id="@+id/postBtn"
-            android:layout_width="wrap_content"
+        <RelativeLayout
+            android:id="@+id/postBtnL"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginBottom="10dp"
-            android:background="@color/colorAccentPrimary"
-            android:text="post"
-            android:textColor="@color/textColorSecundary" />
+            android:layout_gravity="bottom"
+            android:orientation="vertical"
+            android:padding="10dp">
 
-    </RelativeLayout>
+            <Button
+                android:id="@+id/postBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="10dp"
+                android:background="@color/colorAccentPrimary"
+                android:text="post"
+                android:textColor="@color/textColorSecundary" />
 
-
+        </RelativeLayout>
+    </LinearLayout>
 </LinearLayout>
