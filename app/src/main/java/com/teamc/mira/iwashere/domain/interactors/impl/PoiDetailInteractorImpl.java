@@ -9,14 +9,16 @@ import com.teamc.mira.iwashere.domain.interactors.base.AbstractInteractor;
 import com.teamc.mira.iwashere.domain.interactors.PoiDetailInteractor;
 import com.teamc.mira.iwashere.domain.model.PoiModel;
 import com.teamc.mira.iwashere.domain.repository.PoiRepository;
+import com.teamc.mira.iwashere.domain.repository.PostRepository;
 
 public class PoiDetailInteractorImpl extends AbstractInteractor implements PoiDetailInteractor {
     private static final String TAG = PoiDetailInteractorImpl.class.getSimpleName();
+    final PostRepository mPostRepository;
     String poiId;
     String userId;
 
     PoiDetailInteractor.CallBack mCallBack;
-    PoiRepository mRepository;
+    PoiRepository mPoiRepository;
 
     /**
      * Handle the retrieval of information about the POI with the specified id.
@@ -27,6 +29,7 @@ public class PoiDetailInteractorImpl extends AbstractInteractor implements PoiDe
      * @param mainThread
      * @param callBack
      * @param poiRepository
+     * @param postRepository
      * @param poiId
      * @param userId
      */
@@ -34,12 +37,14 @@ public class PoiDetailInteractorImpl extends AbstractInteractor implements PoiDe
                                    MainThread mainThread,
                                    PoiDetailInteractor.CallBack callBack,
                                    PoiRepository poiRepository,
+                                   PostRepository postRepository,
                                    String poiId,
                                    String userId) {
         super(threadExecutor, mainThread);
 
         mCallBack = callBack;
-        mRepository = poiRepository;
+        mPoiRepository = poiRepository;
+        mPostRepository = postRepository;
         this.poiId = poiId;
         this.userId = userId;
 
@@ -82,22 +87,22 @@ public class PoiDetailInteractorImpl extends AbstractInteractor implements PoiDe
         PoiModel poi;
         try {
             Log.d(TAG, "Start fetching poi");
-            poi = mRepository.fetchPoi(poiId);
+            poi = mPoiRepository.fetchPoi(poiId);
             Log.d(TAG, "Start fetching poi rating");
-            if (!mRepository.fetchPoiRating(poi)) {
+            if (!mPoiRepository.fetchPoiRating(poi)) {
                 notifyError("520", "Error fetching POI rating.");
                 return;
             }
 
             Log.d(TAG, "Start fetching poi media");
-            if(!mRepository.fetchPoiMedia(poi)) {
+            if(!mPoiRepository.fetchPoiMedia(poi)) {
                 notifyError("520", "Error fetching POI's media.");
                 return;
             }
 
             Log.d(TAG, "Start fetching poi User Rating");
             // TODO: 29/04/2017 Can't fix issue where the fetchPoiUserRating function blocks indefinitely and doesn't timeout
-            if (userId != null && !mRepository.fetchPoiUserRating(poi, userId)) {
+            if (userId != null && !mPoiRepository.fetchPoiUserRating(poi, userId)) {
                 notifyError("520", "Error fetching POI user's rating.");
                 return;
             }

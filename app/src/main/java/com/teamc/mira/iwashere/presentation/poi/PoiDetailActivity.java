@@ -20,6 +20,7 @@ import com.daimajia.slider.library.SliderTypes.TextSliderView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.teamc.mira.iwashere.R;
 import com.teamc.mira.iwashere.data.source.remote.impl.PoiRepositoryImpl;
+import com.teamc.mira.iwashere.data.source.remote.impl.PostRepositoryImpl;
 import com.teamc.mira.iwashere.domain.executor.Executor;
 import com.teamc.mira.iwashere.domain.executor.MainThread;
 import com.teamc.mira.iwashere.domain.executor.impl.ThreadExecutor;
@@ -174,9 +175,6 @@ public class PoiDetailActivity extends AppCompatActivity {
     }
 
     private void fetchPoiInfo(String poiId) {
-        MainThread mainThread = MainThreadImpl.getInstance();
-        Executor executor = ThreadExecutor.getInstance();
-        PoiRepository poiRepository = new PoiRepositoryImpl(this);
         PoiDetailInteractor.CallBack callback = new PoiDetailInteractor.CallBack() {
 
             @Override
@@ -208,14 +206,14 @@ public class PoiDetailActivity extends AppCompatActivity {
             userId = auth.getCurrentUser().getUid();
         }
 
-
         PoiDetailInteractor poiDetailInteractor = new PoiDetailInteractorImpl(
-                executor,
-                mainThread,
-                callback,
-                poiRepository,
-                poiId,
-                userId);
+            ThreadExecutor.getInstance(),
+            MainThreadImpl.getInstance(),
+            callback,
+            new PoiRepositoryImpl(this),
+            new PostRepositoryImpl(this),
+            poiId,
+            userId);
 
         poiDetailInteractor.execute();
     }
