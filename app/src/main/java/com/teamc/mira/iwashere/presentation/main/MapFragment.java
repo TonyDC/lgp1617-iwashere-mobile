@@ -2,7 +2,6 @@ package com.teamc.mira.iwashere.presentation.main;
 
 import android.Manifest;
 import android.app.AlertDialog;
-import android.app.SearchManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -73,13 +72,11 @@ public class MapFragment extends Fragment implements
 
     private static final String TAG = MapFragment.class.getSimpleName();
     private static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
-    private static final int MAX_NAME_LENGTH = 30;
     private static final String INTENT_NEW_LOCATION = "New Location";
     public static final float ZOOM = 14.0f;
 
     private MapView mMapView;
     private GoogleMap mGoogleMap;
-    //private FilterMaterialSearchView searchView;
 
     private static double mLatitude;
     private static double mLongitude;
@@ -92,14 +89,11 @@ public class MapFragment extends Fragment implements
     private long mLastCallMs = Long.MIN_VALUE;
     private LatLngBounds mCurrentCameraBounds;
 
-    private SearchManager searchManager;
-    private BaseMaterialSearchView searchView;
-    private MyExpandableListAdapter listAdapter;
-    private ExpandableListView myList;
-    private ArrayList<ParentRow> parentList = new ArrayList<ParentRow>();
-    private ArrayList<ParentRow> showTheseParentList = new ArrayList<ParentRow>();
-    private MenuItem searchItem;
-    View mRootView;
+    private BaseMaterialSearchView mSearchView;
+    private MyExpandableListAdapter mSearchListAdapter;
+    private ExpandableListView mSearchList;
+    private ArrayList<ParentRow> mCategoriesList = new ArrayList<>();
+    private View mRootView;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -108,18 +102,15 @@ public class MapFragment extends Fragment implements
 
         Toolbar myToolbar = (Toolbar) mRootView.findViewById(R.id.toolbar);
         ((AppCompatActivity) getActivity()).setSupportActionBar(myToolbar);
-        searchView = (BaseMaterialSearchView) mRootView.findViewById(R.id.sv);
-        searchView.setOnSearchViewListener(this);
+
+        mSearchView = (BaseMaterialSearchView) mRootView.findViewById(R.id.sv);
+        mSearchView.setOnSearchViewListener(this);
+
         setHasOptionsMenu(true);
         getActivity().setTitle(null);
-        parentList = new ArrayList<ParentRow>();
-        showTheseParentList = new ArrayList<ParentRow>();
-
-        // The app will crash if display list is not called here.
-        displayList(mRootView);
-
-        // This expands the list.
-        expandAll();
+        mCategoriesList = new ArrayList<>();
+        displaySearchResults(mRootView);
+        expandCategories();
 
         // registering receivers for certain intents
         IntentFilter intentNewLocation = new IntentFilter(INTENT_NEW_LOCATION);
@@ -338,7 +329,7 @@ public class MapFragment extends Fragment implements
 
             // TODO: 21/04/2017 Added markers in other way to avoid adding existing markers
             MarkerOptions markerOptions = new MarkerOptions();
-            markerOptions.position(new LatLng(new Double(model.getLatitude()), new Double(model.getLongitude())));
+            markerOptions.position(new LatLng(Double.valueOf(model.getLatitude()), Double.valueOf(model.getLongitude())));
             markerOptions.title(model.getName());
 
             markerOptions.icon(BitmapDescriptorFactory.fromResource(R.mipmap.marker_primary));
@@ -356,7 +347,7 @@ public class MapFragment extends Fragment implements
         inflater.inflate(R.menu.search_menu, menu);
         super.onCreateOptionsMenu(menu, inflater);
         MenuItem item = menu.findItem(R.id.action_search);
-        searchView.setMenuItem(item);
+        mSearchView.setMenuItem(item);
 
     }
 
@@ -366,7 +357,6 @@ public class MapFragment extends Fragment implements
             @Override
             public void onSuccess(SearchModel searchModel) {
                 Log.d(TAG, "PoiMapInteractor.CallBack SEARCH onSuccess");
-                Toast.makeText(getActivity(), "onSuccess SEARCH", Toast.LENGTH_SHORT).show();
                 onSearchPoiFetch(searchModel);
             }
 
@@ -398,7 +388,7 @@ public class MapFragment extends Fragment implements
 
     private void onSearchPoiFetch(SearchModel searchModel) {
 
-        parentList = new ArrayList<ParentRow>();
+        mCategoriesList = new ArrayList<>();
 
         if (!searchModel.getPois().isEmpty()) {
             ArrayList<ChildRow> childRowsPois = new ArrayList<>();
@@ -410,7 +400,7 @@ public class MapFragment extends Fragment implements
                 childRowsPois.add(new ChildRow(R.drawable.map_marker, model.getName()));
             }
             parentRow = new ParentRow("Points of Interest", childRowsPois);
-            parentList.add(parentRow);
+            mCategoriesList.add(parentRow);
         }
 
         if (!searchModel.getRoutes().isEmpty()) {
@@ -423,7 +413,7 @@ public class MapFragment extends Fragment implements
                 childRowsRoutes.add(new ChildRow(R.drawable.walk, model.getName()));
             }
             parentRow = new ParentRow("Routes", childRowsRoutes);
-            parentList.add(parentRow);
+            mCategoriesList.add(parentRow);
         }
 
         if (!searchModel.getTags().isEmpty()) {
@@ -436,52 +426,55 @@ public class MapFragment extends Fragment implements
                 childRowsTags.add(new ChildRow(R.drawable.pound, model.getName()));
             }
             parentRow = new ParentRow("Tags", childRowsTags);
-            parentList.add(parentRow);
+            mCategoriesList.add(parentRow);
         }
 
-        displayList(mRootView);
-        expandAll();
+        displaySearchResults(mRootView);
+        expandCategories();
     }
 
-    private void expandAll() {
-        int count = listAdapter.getGroupCount();
+    private void expandCategories() {
+        int count = mSearchListAdapter.getGroupCount();
         for (int i = 0; i < count; i++) {
-            myList.expandGroup(i);
-        } //end for (int i = 0; i < count; i++)
+            mSearchList.expandGroup(i);
+        }
     }
 
-    private void displayList(View rooView) {
-        myList = (ExpandableListView) rooView.findViewById(R.id.expandableListView_search);
-        listAdapter = new MyExpandableListAdapter(getActivity(), parentList);
-        myList.setAdapter(listAdapter);
+    private void displaySearchResults(View rooView) {
+        mSearchList = (ExpandableListView) rooView.findViewById(R.id.expandableListView_search);
+        mSearchListAdapter = new MyExpandableListAdapter(getActivity(), mCategoriesList);
+        mSearchList.setAdapter(mSearchListAdapter);
     }
 
     @Override
     public void onSearchViewShown() {
-        Toast.makeText(getActivity(), "onSearchViewShown", Toast.LENGTH_SHORT).show();
+        Log.d(TAG, "onSearchViewShown: clicked");
     }
 
     @Override
     public void onSearchViewClosed() {
-        Toast.makeText(getActivity(), "onSearchViewClosed", Toast.LENGTH_SHORT).show();
-        parentList = new ArrayList<ParentRow>();
-        displayList(mRootView);
-        expandAll();
+        Log.d(TAG, "onSearchViewClosed: clicked");
+        mCategoriesList = new ArrayList<>();
+        displaySearchResults(mRootView);
+        expandCategories();
     }
 
     @Override
     public boolean onQueryTextSubmit(String query) {
-        Toast.makeText(getActivity(), "onQueryTextSubmit: " + query, Toast.LENGTH_SHORT).show();
-        expandAll();
+        Log.d(TAG, "onQueryTextSubmit: " + query);
+        expandCategories();
         return true;
     }
 
     @Override
     public void onQueryTextChange(String newText) {
-        Toast.makeText(getActivity(), "onQueryTextChange: " + newText, Toast.LENGTH_SHORT).show();
-        if (newText.length() != 0){
+        Log.d(TAG, "onQueryTextChange: " + newText);
+        if (newText.length() != 0) {
             searchForResults(newText);
-            expandAll();
+        } else {
+            mCategoriesList = new ArrayList<>();
+            displaySearchResults(mRootView);
         }
+        expandCategories();
     }
 }

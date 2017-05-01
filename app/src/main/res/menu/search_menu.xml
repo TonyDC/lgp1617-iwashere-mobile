@@ -4,6 +4,6 @@
         android:id="@+id/action_search"
         android:icon="@drawable/ic_action_search"
         android:orderInCategory="100"
-        android:title="@string/abc_search_hint"
+        android:title="@string/search_hint_text"
         app:showAsAction="always" />
 </menu>

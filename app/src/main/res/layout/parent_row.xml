@@ -9,7 +9,9 @@
         android:layout_height="wrap_content"
         android:id="@+id/parent_text"
         android:paddingLeft="35sp"
-        android:textAppearance="?android:textAppearanceMedium"
-        android:textStyle="bold"/>
+        android:paddingTop="12sp"
+        android:paddingBottom="6sp"
+        android:text="@string/search_hint_text"
+        android:textColor="@color/colorPrimary"/>
 
 </LinearLayout>
