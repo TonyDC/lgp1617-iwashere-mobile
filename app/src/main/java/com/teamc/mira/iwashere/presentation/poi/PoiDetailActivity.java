@@ -327,7 +327,7 @@ public class PoiDetailActivity extends AppCompatActivity {
      */
     private void setPoiMediaSlider(PoiModel poi) {
         sliderShow = (SliderLayout) findViewById(R.id.slider);
-
+        sliderShow.removeAllSliders();
         for (URL imageURL : poi.getPhotos()) {
             TextSliderView textSliderView = new TextSliderView(this);
             textSliderView.image(imageURL.toString());

@@ -18,6 +18,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.ExecutionException;
@@ -77,8 +78,10 @@ public class PoiRepositoryImpl extends AbstractPoiRepository implements PoiRepos
 
         try {
             JSONArray response = future.get(TIMEOUT, TIMEOUT_TIME_UNIT); // this will block
-
-            poi.setPhotos(getMedia(response));
+            Log.d(TAG, "fetchPoiMedia raw data: "+response.toString());
+            ArrayList<URL> photos = getMedia(response);
+            Log.d(TAG, photos.toString());
+            poi.setPhotos(photos);
 
 
             future.cancel(true);
@@ -139,7 +142,7 @@ public class PoiRepositoryImpl extends AbstractPoiRepository implements PoiRepos
             // Instantiate the RequestQueue.
             RequestQueue queue = mRequestQueue;
 
-            final HashMap<String, String> params = getPostRatingParams(poi.getId(), userId, newPoiRating);
+            final HashMap<String, Object> params = getPostRatingParams(poi.getId(), userId, newPoiRating);
 
             RequestFuture<JSONObject> future = RequestFuture.newFuture();
             JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, API_POI_RATING_URL, new JSONObject(params), future, future);

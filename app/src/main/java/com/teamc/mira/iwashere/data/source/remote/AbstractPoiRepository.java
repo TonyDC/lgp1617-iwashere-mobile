@@ -28,11 +28,11 @@ public abstract class AbstractPoiRepository extends AbstractRepository implement
     }
 
     @NonNull
-    protected HashMap<String, String> getPostRatingParams(String poiId, String userId, int newPoiRating) {
-        HashMap<String, String> params = new HashMap<String, String>();
+    protected HashMap<String, Object> getPostRatingParams(String poiId, String userId, int newPoiRating) {
+        HashMap<String, Object> params = new HashMap<>();
         params.put("poiID",poiId);
         params.put("userID", userId);
-        params.put("rating", newPoiRating + "");
+        params.put("rating", newPoiRating);
         return params;
     }
 
@@ -45,7 +45,7 @@ public abstract class AbstractPoiRepository extends AbstractRepository implement
             try {
                 object = response.getJSONObject(i);
                 // TODO hadle videos as well ?
-                if (object.getString("type") == "IMG") {
+                if (object.getString("type").contains("image")) {
                     mediaList.add(new URL(object.getString("url")));
                 }
             } catch (JSONException | MalformedURLException  e) {
