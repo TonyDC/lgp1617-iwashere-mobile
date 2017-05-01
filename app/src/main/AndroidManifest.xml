@@ -89,6 +89,11 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".presentation.camera.Photo_video"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:parentActivityName=".presentation.main.MainActivity">
+        </activity>
+        <activity
             android:name=".presentation.camera.CameraInit"
             android:windowSoftInputMode="adjustPan"
             >

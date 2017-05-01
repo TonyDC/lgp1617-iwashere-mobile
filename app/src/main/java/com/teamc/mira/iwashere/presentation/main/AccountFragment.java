@@ -34,6 +34,7 @@ import com.teamc.mira.iwashere.domain.repository.Repository;
 import com.teamc.mira.iwashere.domain.repository.UserRepository;
 import com.teamc.mira.iwashere.presentation.auth.AuthenticateActivity;
 import com.teamc.mira.iwashere.presentation.camera.CameraInit;
+import com.teamc.mira.iwashere.presentation.camera.Photo_video;
 import com.teamc.mira.iwashere.presentation.misc.AboutActivity;
 import com.teamc.mira.iwashere.presentation.poi.PoiDetailActivity;
 import com.teamc.mira.iwashere.threading.MainThreadImpl;
@@ -140,7 +141,7 @@ class AccountFragment extends Fragment implements View.OnClickListener{
 
         int i = v.getId();
         if (i == R.id.poi_test) {
-            startActivity(new Intent(this.getContext(), CameraInit.class));
+            startActivity(new Intent(this.getContext(), Photo_video.class));
         }
     }
 }
