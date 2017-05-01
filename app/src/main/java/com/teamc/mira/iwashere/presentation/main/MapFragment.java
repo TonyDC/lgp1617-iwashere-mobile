@@ -50,7 +50,9 @@ import com.teamc.mira.iwashere.domain.interactors.SearchInteractor;
 import com.teamc.mira.iwashere.domain.interactors.impl.PoiMapInteractorImpl;
 import com.teamc.mira.iwashere.domain.interactors.impl.SearchInteractorImpl;
 import com.teamc.mira.iwashere.domain.model.PoiModel;
+import com.teamc.mira.iwashere.domain.model.RouteModel;
 import com.teamc.mira.iwashere.domain.model.SearchModel;
+import com.teamc.mira.iwashere.domain.model.TagModel;
 import com.teamc.mira.iwashere.presentation.list.ChildRow;
 import com.teamc.mira.iwashere.presentation.list.MyExpandableListAdapter;
 import com.teamc.mira.iwashere.presentation.list.ParentRow;
@@ -395,27 +397,50 @@ public class MapFragment extends Fragment implements
     }
 
     private void onSearchPoiFetch(SearchModel searchModel) {
-        PoiModel model;
-
 
         parentList = new ArrayList<ParentRow>();
-        ArrayList<ChildRow> childRowsPlaces = new ArrayList<ChildRow>();
-        ArrayList<ChildRow> childRowsTags = new ArrayList<ChildRow>();
-        ParentRow parentRow = null;
-        /**
-        for (int i = 0; i < poiModels.size(); i++) {
-            model = poiModels.get(i);
-            Log.d(TAG, "POI MODEL SEARCH: " + model.getName());
-            childRowsPlaces.add(new ChildRow(R.drawable.ic_location_on_black_32dp, model.getName()));
-            childRowsTags.add(new ChildRow(R.drawable.ic_pound, model.getName()));
-        }
-        parentRow = new ParentRow("Places", childRowsPlaces);
-        parentList.add(parentRow);
 
-        parentRow = new ParentRow("Tags", childRowsTags);
-        parentList.add(parentRow);
+        if (!searchModel.getPois().isEmpty()) {
+            ArrayList<ChildRow> childRowsPois = new ArrayList<>();
+            PoiModel model;
+            ParentRow parentRow;
+            for (int i = 0; i < searchModel.getPois().size(); i++) {
+                model = searchModel.getPois().get(i);
+                Log.d(TAG, "POI MODEL SEARCH: " + model.getName());
+                childRowsPois.add(new ChildRow(R.drawable.map_marker, model.getName()));
+            }
+            parentRow = new ParentRow("Points of Interest", childRowsPois);
+            parentList.add(parentRow);
+        }
+
+        if (!searchModel.getRoutes().isEmpty()) {
+            ArrayList<ChildRow> childRowsRoutes = new ArrayList<>();
+            RouteModel model;
+            ParentRow parentRow;
+            for (int i = 0; i < searchModel.getRoutes().size(); i++) {
+                model = searchModel.getRoutes().get(i);
+                Log.d(TAG, "ROUTE MODEL SEARCH: " + model.getName());
+                childRowsRoutes.add(new ChildRow(R.drawable.walk, model.getName()));
+            }
+            parentRow = new ParentRow("Routes", childRowsRoutes);
+            parentList.add(parentRow);
+        }
+
+        if (!searchModel.getTags().isEmpty()) {
+            ArrayList<ChildRow> childRowsTags = new ArrayList<>();
+            TagModel model;
+            ParentRow parentRow;
+            for (int i = 0; i < searchModel.getTags().size(); i++) {
+                model = searchModel.getTags().get(i);
+                Log.d(TAG, "TAG MODEL SEARCH: " + model.getName());
+                childRowsTags.add(new ChildRow(R.drawable.pound, model.getName()));
+            }
+            parentRow = new ParentRow("Tags", childRowsTags);
+            parentList.add(parentRow);
+        }
+
         displayList(mRootView);
-        expandAll();**/
+        expandAll();
     }
 
     private void expandAll() {
@@ -438,14 +463,15 @@ public class MapFragment extends Fragment implements
 
     @Override
     public void onSearchViewClosed() {
-
         Toast.makeText(getActivity(), "onSearchViewClosed", Toast.LENGTH_SHORT).show();
+        parentList = new ArrayList<ParentRow>();
+        displayList(mRootView);
+        expandAll();
     }
 
     @Override
     public boolean onQueryTextSubmit(String query) {
         Toast.makeText(getActivity(), "onQueryTextSubmit: " + query, Toast.LENGTH_SHORT).show();
-        listAdapter.filterData(query);
         expandAll();
         return true;
     }
@@ -453,7 +479,6 @@ public class MapFragment extends Fragment implements
     @Override
     public void onQueryTextChange(String newText) {
         Toast.makeText(getActivity(), "onQueryTextChange: " + newText, Toast.LENGTH_SHORT).show();
-        listAdapter.filterData(newText);
         if (newText.length() != 0){
             searchForResults(newText);
             expandAll();
