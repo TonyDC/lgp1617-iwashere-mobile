@@ -7,6 +7,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -70,7 +71,13 @@ public class CameraInit extends Activity {
     }
 
     private Bitmap getBitmap(Uri uri) {
+        if (Build.VERSION.SDK_INT>Build.VERSION_CODES.LOLLIPOP_MR1){
+            String[] perms = {"android.permission.WRITE_EXTERNAL_STORAGE"};
 
+            int permsRequestCode = 200;
+
+            requestPermissions(perms, permsRequestCode);
+        }
         InputStream inputStream = null;
         try {
             inputStream = getContentResolver().openInputStream(uri);
