@@ -8,24 +8,25 @@
         android:layout_height="match_parent">
 
         <ImageView
+            android:id="@+id/child_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/child_icon"
-            android:paddingLeft="6sp"
+            android:layout_alignParentStart="true"
             android:layout_centerVertical="true"
-            android:layout_alignParentStart="true" />
+            android:paddingLeft="6sp" />
 
         <TextView
+            android:id="@+id/child_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/child_text"
-            android:paddingLeft="35sp"
-            android:paddingTop="6sp"
-            android:paddingBottom="6sp"
             android:layout_centerInParent="true"
             android:layout_gravity="center_vertical"
+            android:paddingBottom="6sp"
+            android:paddingLeft="35sp"
+            android:paddingTop="6sp"
             android:text="@string/search_hint_text"
-            android:textAppearance="?android:textAppearanceLarge" />
+            android:textAppearance="?android:textAppearanceMedium"
+            android:textColor="@color/colorPrimary" />
 
     </RelativeLayout>
 

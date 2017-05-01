@@ -1,6 +1,7 @@
-package com.teamc.mira.iwashere.presentation.list;
+package com.teamc.mira.iwashere.presentation.searchList;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,7 +9,12 @@ import android.widget.BaseExpandableListAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.teamc.mira.iwashere.R;
+import com.teamc.mira.iwashere.domain.model.PoiModel;
+import com.teamc.mira.iwashere.domain.model.RouteModel;
+import com.teamc.mira.iwashere.domain.model.TagModel;
+import com.teamc.mira.iwashere.presentation.poi.PoiDetailActivity;
 
 import java.util.ArrayList;
 
@@ -67,8 +73,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter {
         ParentRow parentRow = (ParentRow) getGroup(groupPosition);
 
         if (convertView == null) {
-            LayoutInflater layoutInflater = (LayoutInflater)
-                    context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = layoutInflater.inflate(R.layout.parent_row, null);
         }
 
@@ -80,10 +85,9 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter {
 
     @Override
     public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
-        ChildRow childRow = (ChildRow) getChild(groupPosition, childPosition);
+        final ChildRow childRow = (ChildRow) getChild(groupPosition, childPosition);
         if (convertView == null) {
-            LayoutInflater layoutInflater = (LayoutInflater)
-                    context.getSystemService(context.LAYOUT_INFLATER_SERVICE);
+            LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(context.LAYOUT_INFLATER_SERVICE);
             convertView = layoutInflater.inflate(R.layout.child_row, null);
         }
 
@@ -91,15 +95,22 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter {
         childIcon.setImageResource(childRow.getIcon());
 
         final TextView childText = (TextView) convertView.findViewById(R.id.child_text);
-        childText.setText(childRow.getText().trim());
+        childText.setText(childRow.getBasicModel().getName().trim());
 
         final View finalConvertView = convertView;
         childText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(finalConvertView.getContext()
-                        , childText.getText()
-                        , Toast.LENGTH_SHORT).show();
+                Toast.makeText(finalConvertView.getContext(), childText.getText(), Toast.LENGTH_SHORT).show();
+                if (childRow.getBasicModel() instanceof PoiModel) {
+                    Intent intent = new Intent(context, PoiDetailActivity.class);
+                    intent.putExtra("poi", (PoiModel) childRow.getBasicModel());
+                    context.startActivity(intent);
+                } else if (childRow.getBasicModel() instanceof RouteModel) {
+                    //TODO 01.05.2017 Start Route Activity
+                } else if (childRow.getBasicModel() instanceof TagModel) {
+                    //TODO 01.05.2017 Start Tag Activity
+                }
             }
         });
 
@@ -109,32 +120,5 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter {
     @Override
     public boolean isChildSelectable(int groupPosition, int childPosition) {
         return true;
-    }
-
-    public void filterData(String query) {
-        query = query.toLowerCase();
-        parentRowList.clear();
-
-        if (query.isEmpty()) {
-            parentRowList.addAll(originalList);
-        }
-        else {
-            for (ParentRow parentRow : originalList) {
-                ArrayList<ChildRow> childList = parentRow.getChildList();
-                ArrayList<ChildRow> newList = new ArrayList<ChildRow>();
-
-                for (ChildRow childRow: childList) {
-                    if (childRow.getText().toLowerCase().contains(query)) {
-                        newList.add(childRow);
-                    }
-                } // end for (com.example.user.searchviewexpandablelistview.ChildRow childRow: childList)
-                if (newList.size() > 0) {
-                    ParentRow nParentRow = new ParentRow(parentRow.getName(), newList);
-                    parentRowList.add(nParentRow);
-                }
-            } // end or (com.example.user.searchviewexpandablelistview.ParentRow parentRow : originalList)
-        } // end else
-
-        notifyDataSetChanged();
     }
 }

@@ -1,4 +1,4 @@
-package com.teamc.mira.iwashere.presentation.list;
+package com.teamc.mira.iwashere.presentation.searchList;
 
 import java.util.ArrayList;
 

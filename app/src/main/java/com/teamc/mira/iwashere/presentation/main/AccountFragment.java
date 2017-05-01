@@ -65,7 +65,7 @@ class AccountFragment extends Fragment implements View.OnClickListener{
             @Override
             public void onSuccess(ArrayList<PoiModel> poiModels) {
                 TextView textView = (TextView) v.findViewById(R.id.hello_world_account);
-                textView.setText(" POI1: "+ poiModels.get(0).getName()+"\n POI2: "+poiModels.get(1).getName());
+                textView.setBasicModel(" POI1: "+ poiModels.get(0).getName()+"\n POI2: "+poiModels.get(1).getName());
                 Toast.makeText(getActivity(), ""+poiModels.size(), Toast.LENGTH_LONG).show();
             }
 

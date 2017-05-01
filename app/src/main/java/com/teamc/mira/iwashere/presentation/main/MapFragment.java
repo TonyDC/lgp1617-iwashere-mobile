@@ -52,9 +52,9 @@ import com.teamc.mira.iwashere.domain.model.PoiModel;
 import com.teamc.mira.iwashere.domain.model.RouteModel;
 import com.teamc.mira.iwashere.domain.model.SearchModel;
 import com.teamc.mira.iwashere.domain.model.TagModel;
-import com.teamc.mira.iwashere.presentation.list.ChildRow;
-import com.teamc.mira.iwashere.presentation.list.MyExpandableListAdapter;
-import com.teamc.mira.iwashere.presentation.list.ParentRow;
+import com.teamc.mira.iwashere.presentation.searchList.ChildRow;
+import com.teamc.mira.iwashere.presentation.searchList.MyExpandableListAdapter;
+import com.teamc.mira.iwashere.presentation.searchList.ParentRow;
 import com.teamc.mira.iwashere.presentation.poi.PoiDetailActivity;
 import com.teamc.mira.iwashere.threading.MainThreadImpl;
 
@@ -397,7 +397,7 @@ public class MapFragment extends Fragment implements
             for (int i = 0; i < searchModel.getPois().size(); i++) {
                 model = searchModel.getPois().get(i);
                 Log.d(TAG, "POI MODEL SEARCH: " + model.getName());
-                childRowsPois.add(new ChildRow(R.drawable.map_marker, model.getName()));
+                childRowsPois.add(new ChildRow(R.drawable.map_marker, model));
             }
             parentRow = new ParentRow("Points of Interest", childRowsPois);
             mCategoriesList.add(parentRow);
@@ -410,7 +410,7 @@ public class MapFragment extends Fragment implements
             for (int i = 0; i < searchModel.getRoutes().size(); i++) {
                 model = searchModel.getRoutes().get(i);
                 Log.d(TAG, "ROUTE MODEL SEARCH: " + model.getName());
-                childRowsRoutes.add(new ChildRow(R.drawable.walk, model.getName()));
+                childRowsRoutes.add(new ChildRow(R.drawable.walk, model));
             }
             parentRow = new ParentRow("Routes", childRowsRoutes);
             mCategoriesList.add(parentRow);
@@ -423,7 +423,7 @@ public class MapFragment extends Fragment implements
             for (int i = 0; i < searchModel.getTags().size(); i++) {
                 model = searchModel.getTags().get(i);
                 Log.d(TAG, "TAG MODEL SEARCH: " + model.getName());
-                childRowsTags.add(new ChildRow(R.drawable.pound, model.getName()));
+                childRowsTags.add(new ChildRow(R.drawable.pound, model));
             }
             parentRow = new ParentRow("Tags", childRowsTags);
             mCategoriesList.add(parentRow);
@@ -462,6 +462,12 @@ public class MapFragment extends Fragment implements
     @Override
     public boolean onQueryTextSubmit(String query) {
         Log.d(TAG, "onQueryTextSubmit: " + query);
+        if (query.length() != 0) {
+            searchForResults(query);
+        } else {
+            mCategoriesList = new ArrayList<>();
+            displaySearchResults(mRootView);
+        }
         expandCategories();
         return true;
     }
