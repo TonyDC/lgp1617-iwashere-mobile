@@ -61,6 +61,8 @@ import com.teamc.mira.iwashere.threading.MainThreadImpl;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import static com.teamc.mira.iwashere.presentation.poi.PoiDetailActivity.POI;
+
 public class MapFragment extends Fragment implements
 //        GoogleMap.OnCameraMoveStartedListener,
         GoogleMap.OnCameraMoveListener,
@@ -159,7 +161,7 @@ public class MapFragment extends Fragment implements
             @Override
             public void onInfoWindowClick(Marker marker) {
                 Intent intent = new Intent(getActivity(), PoiDetailActivity.class);
-                intent.putExtra("poi", poiHashMap.get(marker));
+                intent.putExtra(POI, poiHashMap.get(marker));
                 startActivity(intent);
             }
         });
@@ -292,21 +294,22 @@ public class MapFragment extends Fragment implements
             @Override
             public void onSuccess(ArrayList<PoiModel> poiModels) {
                 Log.d(TAG, "PoiMapInteractor.CallBack onSuccess");
-
                 onPoiFetch(poiModels);
             }
 
             @Override
             public void onFail(String message) {
-                if (message == null || message.length() == 0)
-                    message = getString(R.string.error_fetch);
-
-                Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
+                if (isAdded()) {
+                    if(message == null || message.length() == 0) message = getResources().getString(R.string.error_fetch);
+                    Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+                }
             }
 
             @Override
             public void onNetworkError() {
-                Toast.makeText(getActivity(), R.string.error_connection, Toast.LENGTH_SHORT).show();
+                if (isAdded()) {
+                    Toast.makeText(getContext(), R.string.error_connection, Toast.LENGTH_SHORT).show();
+                }
             }
         };
 

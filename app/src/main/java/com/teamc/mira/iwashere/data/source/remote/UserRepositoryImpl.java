@@ -20,6 +20,10 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeoutException;
+
+import static com.teamc.mira.iwashere.data.source.remote.ServerUrl.TIMEOUT;
+import static com.teamc.mira.iwashere.data.source.remote.ServerUrl.TIMEOUT_TIME_UNIT;
 
 public class UserRepositoryImpl extends AbstractUserRepository implements UserRepository {
 
@@ -51,11 +55,11 @@ public class UserRepositoryImpl extends AbstractUserRepository implements UserRe
         queue.add(request);
 
         try {
-            JSONObject response = future.get(); // this will block
+            JSONObject response = future.get(TIMEOUT, TIMEOUT_TIME_UNIT); // this will block
             Log.d(TAG, String.valueOf(response));
 
             return true;
-        } catch (InterruptedException | ExecutionException e) {
+        } catch (InterruptedException | ExecutionException | TimeoutException e) {
             //check to see if the throwable in an instance of the volley error
             if(e.getCause() instanceof VolleyError)
             {

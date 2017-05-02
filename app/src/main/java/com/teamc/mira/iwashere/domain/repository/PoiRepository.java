@@ -60,7 +60,18 @@ public interface PoiRepository {
      */
     boolean setPoiUserRating(PoiModel poi, String userId, int newPoiRating) throws RemoteDataException;
 
-    PoiModel setReminder(PoiModel poi) throws RemoteDataException;
+    /**
+     * Fetch the Content associated to the POI, updating the PoiModel.
+     * @param poi the PoiModel with information about the POI
+     * @param userId the user's id
+     * @param contentOffset
+     * @param contentLimit
+     * @return true upon success, false otherwise
+     * @throws RemoteDataException
+     */
+    boolean fetchPoiContent(PoiModel poi, String userId, int contentOffset, int contentLimit) throws RemoteDataException;
+
+    PoiModel setReminder(PoiModel poi)throws RemoteDataException;
 
     PoiModel removeReminder(PoiModel poi) throws RemoteDataException;
 
