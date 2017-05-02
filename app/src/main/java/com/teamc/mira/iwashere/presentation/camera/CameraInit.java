@@ -2,6 +2,7 @@ package com.teamc.mira.iwashere.presentation.camera;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
@@ -31,7 +32,9 @@ import java.util.Date;
 
 public class CameraInit extends Activity {
     private static final int CAMERA_REQUEST = 1888;
-    static final int REQUEST_VIDEO_CAPTURE = 1;
+    private static final int REQUEST_VIDEO_CAPTURE = 1;
+    private static final int RESULT_LOAD_IMAGE = 1;
+
 
     private ImageView imageView;
     private VideoView videoView;
@@ -96,6 +99,13 @@ public class CameraInit extends Activity {
             imageToUploadUri = Uri.fromFile(f);
             startActivityForResult(cameraIntent, REQUEST_VIDEO_CAPTURE);
         }
+        else if(key.equals("gallery")) {
+            Intent i = new Intent(
+                    Intent.ACTION_PICK,
+                    android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+
+            startActivityForResult(i, RESULT_LOAD_IMAGE);
+        }
         else{
             Toast.makeText(CameraInit.this, key, Toast.LENGTH_SHORT).show();
             return;
@@ -117,6 +127,23 @@ public class CameraInit extends Activity {
             videoView.setVideoURI(imageToUploadUri);
             videoView.setZOrderOnTop(true);
             videoView.start();
+        }
+
+        if (requestCode == RESULT_LOAD_IMAGE && resultCode == RESULT_OK && null != data) {
+            Uri selectedImage = data.getData();
+            String[] filePathColumn = { MediaStore.Images.Media.DATA };
+
+            Cursor cursor = getContentResolver().query(selectedImage,
+                    filePathColumn, null, null, null);
+            cursor.moveToFirst();
+
+            int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+            String picturePath = cursor.getString(columnIndex);
+            cursor.close();
+            videoView.setVisibility(View.GONE);
+            imageView.setVisibility(View.VISIBLE);
+            imageView.setImageBitmap(BitmapFactory.decodeFile(picturePath));
+
         }
 
     }
@@ -157,14 +184,7 @@ public class CameraInit extends Activity {
 
         return inSampleSize;
     }
-/*
-    private void dispatchTakeVideoIntent() {
-        Intent takeVideoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
-        if (takeVideoIntent.resolveActivity(getPackageManager()) != null) {
-            startActivityForResult(takeVideoIntent, REQUEST_VIDEO_CAPTURE);
-        }
-    }
-*/
+
     private Bitmap scaleBitmap(Bitmap myBitmap){
         int nh = (int) ( myBitmap.getHeight() * (512.0 / myBitmap.getWidth()) );
         Bitmap scaled = Bitmap.createScaledBitmap(myBitmap, 512, nh, true);

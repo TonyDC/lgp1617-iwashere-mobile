@@ -14,7 +14,7 @@ import com.teamc.mira.iwashere.R;
 
 public class Photo_video extends Activity{
 
-    ImageButton photoButton, videoButton;
+    ImageButton photoButton, videoButton, galleryButton;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -22,6 +22,7 @@ public class Photo_video extends Activity{
         setContentView(R.layout.photo_video);
         photoButton = (ImageButton) this.findViewById(R.id.photoBtn);
         videoButton = (ImageButton) this.findViewById(R.id.videoBtn);
+        galleryButton = (ImageButton) this.findViewById(R.id.galleryBtn);
 
         photoButton.setOnClickListener(new View.OnClickListener() {
 
@@ -43,6 +44,18 @@ public class Photo_video extends Activity{
                 Intent intent = new Intent(Photo_video.this, CameraInit.class);
                 Bundle b = new Bundle();
                 b.putString("key","video");
+                intent.putExtras(b); //Put your id to your next Intent
+                startActivity(intent);
+                finish();            }
+        });
+
+        galleryButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Photo_video.this, CameraInit.class);
+                Bundle b = new Bundle();
+                b.putString("key","gallery");
                 intent.putExtras(b); //Put your id to your next Intent
                 startActivity(intent);
                 finish();            }
