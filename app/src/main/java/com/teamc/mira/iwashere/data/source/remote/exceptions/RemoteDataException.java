@@ -23,8 +23,4 @@ public abstract class RemoteDataException extends Exception {
     public String getErrorMessage(){
         return super.getMessage();
     }
-
-    void setCode(String code) {
-        this.code = code;
-    }
 }

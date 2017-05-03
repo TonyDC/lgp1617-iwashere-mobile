@@ -5,7 +5,7 @@ import com.teamc.mira.iwashere.domain.executor.Executor;
 import com.teamc.mira.iwashere.domain.executor.MainThread;
 import com.teamc.mira.iwashere.domain.interactors.base.AbstractInteractor;
 import com.teamc.mira.iwashere.domain.interactors.AuthInteractor;
-import com.teamc.mira.iwashere.domain.repository.UserRepository;
+import com.teamc.mira.iwashere.domain.repository.remote.UserRepository;
 
 /**
  * Created by Duart on 02/04/2017.
@@ -49,7 +49,7 @@ public class SignupInteractorImpl extends AbstractInteractor implements AuthInte
         // check if we have failed to retrieve our message
         if (!result) {
             // notify the failure on the main thread
-            notifyError("network-failed", "Failed to establish a connection");
+            notifyError("network-fail", "Failed to establish a connection");
             return;
         }
 

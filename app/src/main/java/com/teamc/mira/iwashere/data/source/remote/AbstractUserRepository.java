@@ -1,12 +1,23 @@
 package com.teamc.mira.iwashere.data.source.remote;
 
+import android.content.Context;
 import android.support.annotation.NonNull;
 
-import com.teamc.mira.iwashere.domain.repository.UserRepository;
+import com.android.volley.RequestQueue;
+import com.teamc.mira.iwashere.data.source.remote.base.AbstractRepository;
+import com.teamc.mira.iwashere.domain.repository.remote.UserRepository;
 
 import java.util.HashMap;
 
-public abstract class AbstractUserRepository implements UserRepository {
+public abstract class AbstractUserRepository extends AbstractRepository implements UserRepository {
+
+    public AbstractUserRepository(Context mContext) {
+        super(mContext);
+    }
+
+    public AbstractUserRepository(RequestQueue requestQueue){
+        super(requestQueue);
+    }
 
     @NonNull
     protected HashMap<String, String> getRegisterParamsHashMap(String email, String username, String password, String confirmPassword) {
