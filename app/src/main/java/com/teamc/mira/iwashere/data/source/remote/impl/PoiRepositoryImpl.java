@@ -13,9 +13,11 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.teamc.mira.iwashere.data.source.local.UserRepository;
 import com.teamc.mira.iwashere.data.source.remote.AbstractPoiRepository;
 import com.teamc.mira.iwashere.data.source.remote.base.ServerUrl;
+import com.teamc.mira.iwashere.data.source.remote.exceptions.BasicRemoteException;
 import com.teamc.mira.iwashere.data.source.remote.exceptions.RemoteDataException;
 import com.teamc.mira.iwashere.domain.model.PoiModel;
 import com.teamc.mira.iwashere.domain.repository.remote.PoiRepository;
+import com.teamc.mira.iwashere.util.JsonObjectRequestWithNull;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -129,11 +131,18 @@ public class PoiRepositoryImpl extends AbstractPoiRepository implements PoiRepos
         String url = API_POI_GET_RATING_URL + "/" + poi.getId() + "/" + userId;
 
         RequestFuture<JSONObject> future = RequestFuture.newFuture();
-        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null, future, future);
+        Log.d(TAG, url);
+
+        JsonObjectRequestWithNull request = new JsonObjectRequestWithNull(Request.Method.GET, url, null, future, future);
         queue.add(request);
 
         try {
             JSONObject response = future.get(TIMEOUT, TIMEOUT_TIME_UNIT); // this will block
+
+            if(!response.has("rating")){
+                poi.setUserRating(0);
+//                throw new BasicRemoteException("no-content");
+            }
             poi.setUserRating((float) response.getDouble("rating"));
             return true;
         } catch (InterruptedException | ExecutionException | JSONException | TimeoutException e) {
