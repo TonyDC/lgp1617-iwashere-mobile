@@ -22,6 +22,7 @@ import android.widget.Toast;
 import android.widget.VideoView;
 
 import com.teamc.mira.iwashere.R;
+import com.teamc.mira.iwashere.presentation.main.MainActivity;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -116,6 +117,13 @@ public class CameraInit extends Activity {
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        if(data == null){
+            Intent intent = new Intent(CameraInit.this, MainActivity.class);
+            startActivity(intent);
+            finish();
+        }
+
         if (requestCode == CAMERA_REQUEST && resultCode == Activity.RESULT_OK) {
             Bitmap photo = getBitmap(imageToUploadUri);
             videoView.setVisibility(View.GONE);
