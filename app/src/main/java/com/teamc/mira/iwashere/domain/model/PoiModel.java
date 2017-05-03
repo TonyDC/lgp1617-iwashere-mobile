@@ -1,5 +1,7 @@
 package com.teamc.mira.iwashere.domain.model;
 
+import com.teamc.mira.iwashere.domain.model.util.Resource;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -21,7 +23,7 @@ public class PoiModel implements Serializable{
     private int ratingCount;
     private float userRating;
 
-    private ArrayList<URL> photos = new ArrayList<>();
+    private ArrayList<Resource> photos = new ArrayList<>();
     private ArrayList<ContentModel> content = new ArrayList<>();
 
     private ArrayList<PoiModel> relatedPois = new ArrayList<>();
@@ -36,7 +38,7 @@ public class PoiModel implements Serializable{
                     String address,
                     String longitude,
                     String latitude,
-                    ArrayList<URL> photos,
+                    ArrayList<Resource> photos,
                     ArrayList<ContentModel> content,
                     ArrayList<PoiModel> relatedContent) {
         this.id = id;
@@ -117,11 +119,11 @@ public class PoiModel implements Serializable{
         this.latitude = latitude;
     }
 
-    public ArrayList<URL> getPhotos() {
+    public ArrayList<Resource> getPhotos() {
         return photos;
     }
 
-    public void setPhotos(ArrayList<URL> photos) {
+    public void setPhotos(ArrayList<Resource> photos) {
         this.photos = photos;
     }
 

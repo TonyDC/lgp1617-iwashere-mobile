@@ -3,6 +3,7 @@ package com.teamc.mira.iwashere.presentation.poi;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -19,6 +20,8 @@ import android.widget.Toast;
 
 import com.daimajia.slider.library.SliderLayout;
 import com.daimajia.slider.library.SliderTypes.TextSliderView;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.teamc.mira.iwashere.R;
 import com.teamc.mira.iwashere.data.source.remote.impl.PoiRepositoryImpl;
@@ -33,12 +36,12 @@ import com.teamc.mira.iwashere.domain.interactors.impl.PoiDetailInteractorImpl;
 import com.teamc.mira.iwashere.domain.interactors.impl.PoiRatingInteractorImpl;
 import com.teamc.mira.iwashere.domain.model.ContentModel;
 import com.teamc.mira.iwashere.domain.model.PoiModel;
+import com.teamc.mira.iwashere.domain.model.util.Resource;
 import com.teamc.mira.iwashere.domain.repository.remote.PoiRepository;
 import com.teamc.mira.iwashere.threading.MainThreadImpl;
 import com.teamc.mira.iwashere.util.ExpandableHeightGridView;
 import com.teamc.mira.iwashere.util.ViewMoreGridView;
 
-import java.net.URL;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
@@ -64,7 +67,7 @@ public class PoiDetailActivity extends AppCompatActivity {
 
     ViewMoreGridView gridView;
     private ArrayList<String> contentIdList;
-    private ArrayList<String> contentUrlList;
+    private ArrayList<Resource> contentResourceList;
     private SwipeRefreshLayout mSwipeContainer;
 
     @Override
@@ -295,18 +298,18 @@ public class PoiDetailActivity extends AppCompatActivity {
         }
 
         contentIdList = new ArrayList<>();
-        contentUrlList = new ArrayList<>();
+        contentResourceList = new ArrayList<>();
 
 
         for (ContentModel content : contentList){
             contentIdList.add(content.getId());
-            contentUrlList.add(content.getUrl().toString());
+            contentResourceList.add(content.getResource());
         }
 
         ViewMoreGridView.ViewMoreGridViewAdapter adapterView = new ViewMoreGridView.ViewMoreGridViewAdapter(
                 PoiDetailActivity.this,
                 contentIdList.toArray(new String[contentIdList.size()]),
-                contentUrlList.toArray(new String[contentUrlList.size()]),
+                contentResourceList,
                 moreContent
         );
 
@@ -344,11 +347,18 @@ public class PoiDetailActivity extends AppCompatActivity {
     private void setPoiMediaSlider(PoiModel poi) {
         sliderShow = (SliderLayout) findViewById(R.id.slider);
         sliderShow.removeAllSliders();
-        for (URL imageURL : poi.getPhotos()) {
-            TextSliderView textSliderView = new TextSliderView(this);
-            textSliderView.image(imageURL.toString());
+        for (Resource image : poi.getPhotos()) {
+            image.fetchDownloadUrl(new OnCompleteListener() {
+                @Override
+                public void onComplete(@NonNull Task task) {
+                    String imageURL = task.getResult().toString();
+                    TextSliderView textSliderView = new TextSliderView(PoiDetailActivity.this);
+                    textSliderView.image(imageURL.toString());
 
-            sliderShow.addSlider(textSliderView);
+                    sliderShow.addSlider(textSliderView);
+                }
+            });
+
         }
     }
 

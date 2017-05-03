@@ -7,6 +7,7 @@ import com.android.volley.RequestQueue;
 import com.teamc.mira.iwashere.data.source.local.UserRepository;
 import com.teamc.mira.iwashere.data.source.remote.base.AbstractRepository;
 import com.teamc.mira.iwashere.domain.model.ContentModel;
+import com.teamc.mira.iwashere.domain.model.util.Resource;
 import com.teamc.mira.iwashere.domain.repository.remote.PoiRepository;
 
 import org.json.JSONArray;
@@ -37,18 +38,18 @@ public abstract class AbstractPoiRepository extends AbstractRepository implement
     }
 
     @NonNull
-    protected ArrayList<URL> getMedia(JSONArray response) {
-        ArrayList<URL> mediaList = new ArrayList<>();
+    protected ArrayList<Resource> getMedia(JSONArray response) {
+        ArrayList<Resource> mediaList = new ArrayList<>();
 
         for (int i = 0; i < response.length(); i++) {
             JSONObject object = null;
             try {
                 object = response.getJSONObject(i);
-                // TODO hadle videos as well ?
                 if (object.getString("type").contains("image")) {
-                    mediaList.add(new URL(object.getString("url")));
+                    Resource resource = new Resource( object.getString("url"));
+                    mediaList.add(resource);
                 }
-            } catch (JSONException | MalformedURLException  e) {
+            } catch (JSONException e) {
                 e.printStackTrace();
             }
         }

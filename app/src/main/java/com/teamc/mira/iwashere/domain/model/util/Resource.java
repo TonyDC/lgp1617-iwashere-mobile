@@ -13,16 +13,15 @@ public class Resource {
     public String storageUrl;
     public String downloadUrl;
 
-    Resource(String storageUrl){
+    public Resource(String storageUrl){
         this.storageUrl = storageUrl;
 //        fetchDownloadUrl();
-        this.downloadUrl = FirebaseStorage.getInstance().getReferenceFromUrl(storageUrl).getDownloadUrl().getResult().toString();
+//        this.downloadUrl = FirebaseStorage.getInstance().getReferenceFromUrl(storageUrl).getDownloadUrl().getResult().toString();
     }
 
 
-    Resource(String storageUrl, String downloadUrl){
+    public Resource(String storageUrl, String downloadUrl){
         this.storageUrl = storageUrl;
-        this.downloadUrl = downloadUrl;
     }
 
     public void fetchDownloadUrl(){
@@ -37,9 +36,13 @@ public class Resource {
 
     }
 
-    private void fetchDownloadUrl(OnCompleteListener listener) {
-        Task<Uri> task = FirebaseStorage.getInstance().getReferenceFromUrl(storageUrl).getDownloadUrl();
-        task.addOnCompleteListener(listener);
+    public void fetchDownloadUrl(OnCompleteListener listener) {
+        try{
+            Task<Uri> task = FirebaseStorage.getInstance().getReferenceFromUrl(storageUrl).getDownloadUrl();
+            task.addOnCompleteListener(listener);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     public String getStorageUrl() {
