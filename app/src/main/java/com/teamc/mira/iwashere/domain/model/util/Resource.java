@@ -24,7 +24,7 @@ public class Resource {
         this.storageUrl = storageUrl;
     }
 
-    public void fetchDownloadUrl(){
+    private void fetchDownloadUrl(){
         OnCompleteListener listener = new OnCompleteListener() {
             @Override
             public void onComplete(@NonNull Task task) {

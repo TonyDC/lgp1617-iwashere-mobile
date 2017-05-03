@@ -8,7 +8,7 @@ import android.widget.GridView;
 public class ExpandableHeightGridView extends GridView
 {
 
-    boolean expanded = true;
+    boolean expanded = false;
 
     public ExpandableHeightGridView(Context context)
     {
