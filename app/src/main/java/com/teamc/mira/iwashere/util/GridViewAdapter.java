@@ -2,6 +2,7 @@ package com.teamc.mira.iwashere.util;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +18,7 @@ import com.teamc.mira.iwashere.domain.model.util.Resource;
 import java.util.ArrayList;
 
 public class GridViewAdapter extends BaseAdapter {
+    private static final String TAG = GridViewAdapter.class.getSimpleName();
     int mTemplateImageId = R.mipmap.default_thumbnail;
     Context mContext;
     String[] mGridViewString;
@@ -67,12 +69,13 @@ public class GridViewAdapter extends BaseAdapter {
             resource.fetchDownloadUrl(new OnCompleteListener() {
                 @Override
                 public void onComplete(@NonNull Task task) {
-                    Picasso.with(mContext).load(task.getResult().toString())
+                    String imageUrl = task.getResult().toString();
+
+                    Log.d(TAG,"GridViewAdapter image "+i+":"+imageUrl);
+                    Picasso.with(mContext).load(imageUrl)
                         .into(imageView);
                 }
             });
-
-
         } else {
             gridViewAndroid = (View) convertView;
         }

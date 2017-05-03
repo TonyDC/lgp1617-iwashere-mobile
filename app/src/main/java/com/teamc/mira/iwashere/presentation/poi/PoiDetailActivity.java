@@ -300,7 +300,6 @@ public class PoiDetailActivity extends AppCompatActivity {
         contentIdList = new ArrayList<>();
         contentResourceList = new ArrayList<>();
 
-
         for (ContentModel content : contentList){
             contentIdList.add(content.getId());
             contentResourceList.add(content.getResource());
