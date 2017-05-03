@@ -57,6 +57,8 @@ public class GridViewAdapter extends BaseAdapter {
 
             imageView.setImageResource(mTemplateImageId);
 
+
+            GridView
             Picasso.with(this.mContext).load(mGridViewImageUrl[i])
                     .into(imageView);
 
