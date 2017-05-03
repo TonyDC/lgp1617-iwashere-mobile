@@ -1,5 +1,7 @@
 package com.teamc.mira.iwashere.presentation.poi;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -168,10 +170,26 @@ public class PoiDetailActivity extends AppCompatActivity {
 
         setPoiMediaSlider(poi);
         setPoiDescriptionText(poi);
+
+        setPoiAddress(poi);
         setPoiRatingBars(poi);
         setPoiContentGrid(poi.getContent(),moreContent);
         getSupportActionBar().setTitle(poi.getName());
 
+    }
+
+    private void setPoiAddress(final PoiModel poi) {
+        TextView address = (TextView) findViewById(R.id.address);
+        address.setText(poi.getAddress());
+
+        address.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String uri = "geo:" + poi.getLatitude() + "," + poi.getLongitude() + "?q=" + poi.getAddress();
+                Intent intent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(uri));
+                startActivity(Intent.createChooser(intent, "Select an application"));
+            }
+        });
     }
 
     private void fetchPoiInfo(String poiId) {

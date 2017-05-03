@@ -142,6 +142,7 @@ public class PoiRepositoryImpl extends AbstractPoiRepository implements PoiRepos
             if(!response.has("rating")){
                 poi.setUserRating(0);
 //                throw new BasicRemoteException("no-content");
+                return true;
             }
             poi.setUserRating((float) response.getDouble("rating"));
             return true;
