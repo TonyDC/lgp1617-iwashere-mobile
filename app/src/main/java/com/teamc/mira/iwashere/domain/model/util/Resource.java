@@ -15,18 +15,31 @@ public class Resource {
 
     Resource(String storageUrl){
         this.storageUrl = storageUrl;
-        Task<Uri> task = FirebaseStorage.getInstance().getReferenceFromUrl(storageUrl).getDownloadUrl();
-        task.addOnCompleteListener(new OnCompleteListener<Uri>() {
-            @Override
-            public void onComplete(@NonNull Task<Uri> task) {
-                downloadUrl = task.getResult().toString();
-            }
-        });
+//        fetchDownloadUrl();
+        this.downloadUrl = FirebaseStorage.getInstance().getReferenceFromUrl(storageUrl).getDownloadUrl().getResult().toString();
     }
+
 
     Resource(String storageUrl, String downloadUrl){
         this.storageUrl = storageUrl;
         this.downloadUrl = downloadUrl;
+    }
+
+    public void fetchDownloadUrl(){
+        OnCompleteListener listener = new OnCompleteListener() {
+            @Override
+            public void onComplete(@NonNull Task task) {
+                downloadUrl = task.getResult().toString();
+            }
+        };
+
+        fetchDownloadUrl(listener);
+
+    }
+
+    private void fetchDownloadUrl(OnCompleteListener listener) {
+        Task<Uri> task = FirebaseStorage.getInstance().getReferenceFromUrl(storageUrl).getDownloadUrl();
+        task.addOnCompleteListener(listener);
     }
 
     public String getStorageUrl() {
@@ -38,11 +51,6 @@ public class Resource {
     }
 
     public String getDownloadUrl(){
-        if(downloadUrl == null){
-            Task<Uri> task = FirebaseStorage.getInstance().getReferenceFromUrl(storageUrl).getDownloadUrl();
-            downloadUrl = task.getResult().toString();
-        }
-
         return downloadUrl;
     }
 }
