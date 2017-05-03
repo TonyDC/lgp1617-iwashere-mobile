@@ -16,6 +16,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -34,15 +36,10 @@ import com.teamc.mira.iwashere.domain.repository.Repository;
 import com.teamc.mira.iwashere.domain.repository.UserRepository;
 import com.teamc.mira.iwashere.presentation.auth.AuthenticateActivity;
 import com.teamc.mira.iwashere.presentation.camera.CameraInit;
-import com.teamc.mira.iwashere.presentation.camera.Photo_video;
-import com.teamc.mira.iwashere.presentation.misc.AboutActivity;
-import com.teamc.mira.iwashere.presentation.poi.PoiDetailActivity;
-import com.teamc.mira.iwashere.threading.MainThreadImpl;
-
-import java.util.ArrayList;
 
 
 public class CameraFragment extends Fragment implements View.OnClickListener {
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

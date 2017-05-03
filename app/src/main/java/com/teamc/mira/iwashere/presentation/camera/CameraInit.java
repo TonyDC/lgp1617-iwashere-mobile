@@ -118,11 +118,9 @@ public class CameraInit extends Activity {
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
-        if(data == null){
-            Intent intent = new Intent(CameraInit.this, MainActivity.class);
+        if(resultCode != Activity.RESULT_OK){Intent intent = new Intent(CameraInit.this, MainActivity.class);
             startActivity(intent);
-            finish();
-        }
+            finish();}
 
         if (requestCode == CAMERA_REQUEST && resultCode == Activity.RESULT_OK) {
             Bitmap photo = getBitmap(imageToUploadUri);
@@ -150,8 +148,8 @@ public class CameraInit extends Activity {
             cursor.close();
             videoView.setVisibility(View.GONE);
             imageView.setVisibility(View.VISIBLE);
-            imageView.setImageBitmap(BitmapFactory.decodeFile(picturePath));
-
+            Bitmap photo = BitmapFactory.decodeFile(picturePath);
+            imageView.setImageBitmap(scaleBitmap(photo));
         }
 
     }

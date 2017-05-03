@@ -14,27 +14,27 @@
         <VideoView
             android:id="@+id/videodisplay"
             android:layout_width="match_parent"
-            android:layout_height="305dp"
+            android:layout_height="350dp"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
-            android:layout_gravity="center_horizontal"
+            android:layout_gravity="center_vertical"
             android:background="@drawable/border_image"
             android:cropToPadding="true"
             android:padding="10dp"
-            android:scaleType="centerCrop"
+            android:scaleType="fitCenter"
             android:textColor="@color/textColorSecundary" />
 
         <ImageView
             android:id="@+id/picturedisplay"
             android:layout_width="match_parent"
-            android:layout_height="305dp"
+            android:layout_height="350dp"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
-            android:layout_gravity=""
+            android:adjustViewBounds="true"
             android:background="@drawable/border_image"
             android:cropToPadding="true"
             android:padding="10dp"
-            android:scaleType="centerCrop"
+            android:scaleType="fitCenter"
             android:textColor="@color/textColorSecundary" />
 
     </LinearLayout>
