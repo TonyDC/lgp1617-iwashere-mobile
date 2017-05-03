@@ -27,4 +27,11 @@ public abstract class AbstractUserRepository extends AbstractRepository implemen
         params.put("confirmPassword", confirmPassword);
         return params;
     }
+
+    @NonNull
+    protected HashMap<String, String> getSigninParamsHashMap(String userId) {
+        HashMap<String, String> params = new HashMap<String, String>();
+        params.put("uid", userId);
+        return params;
+    }
 }

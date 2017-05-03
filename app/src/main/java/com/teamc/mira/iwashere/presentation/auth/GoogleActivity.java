@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.facebook.login.LoginResult;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -23,7 +24,15 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.teamc.mira.iwashere.R;
+import com.teamc.mira.iwashere.data.source.remote.UserRepositoryImpl;
+import com.teamc.mira.iwashere.domain.executor.Executor;
+import com.teamc.mira.iwashere.domain.executor.MainThread;
+import com.teamc.mira.iwashere.domain.executor.impl.ThreadExecutor;
+import com.teamc.mira.iwashere.domain.interactors.AuthInteractor;
+import com.teamc.mira.iwashere.domain.interactors.impl.SignupInteractorImpl;
+import com.teamc.mira.iwashere.domain.repository.UserRepository;
 import com.teamc.mira.iwashere.presentation.main.MainActivity;
+import com.teamc.mira.iwashere.threading.MainThreadImpl;
 
 public class GoogleActivity extends AppCompatActivity implements
         GoogleApiClient.OnConnectionFailedListener {
@@ -107,6 +116,7 @@ public class GoogleActivity extends AppCompatActivity implements
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
         if (requestCode == RC_SIGN_IN) {
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+            Log.d(TAG, "onActivityResult:" + result);
             if (result.isSuccess()) {
                 // Google Sign In was successful, authenticate with Firebase
                 GoogleSignInAccount account = result.getSignInAccount();
@@ -143,12 +153,9 @@ public class GoogleActivity extends AppCompatActivity implements
                                     Toast.LENGTH_SHORT).show();
                             startActivity(new Intent(GoogleActivity.this, AuthenticateActivity.class));
                             finish();
+                        } else {
+                            registerUserByProvider();
                         }
-                        // [START_EXCLUDE]
-                        hideProgressDialog();
-                        startActivity(new Intent(GoogleActivity.this, MainActivity.class));
-                        finish();
-                        // [END_EXCLUDE]
                     }
                 });
     }
@@ -166,7 +173,7 @@ public class GoogleActivity extends AppCompatActivity implements
         // An unresolvable error has occurred and Google APIs (including Sign-In) will not
         // be available.
         Log.d(TAG, "onConnectionFailed:" + connectionResult);
-        Toast.makeText(this, "Google Play Services error.", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Error connecting to Google Play Services.", Toast.LENGTH_SHORT).show();
     }
 
     @VisibleForTesting
@@ -185,5 +192,38 @@ public class GoogleActivity extends AppCompatActivity implements
         if (mProgressDialog != null && mProgressDialog.isShowing()) {
             mProgressDialog.dismiss();
         }
+    }
+
+    private void registerUserByProvider() {
+        //create user
+        MainThread mainThread = MainThreadImpl.getInstance();
+        Executor executor = ThreadExecutor.getInstance();
+        UserRepository userRepository = new UserRepositoryImpl(this);
+        AuthInteractor.Callback callback = new AuthInteractor.Callback() {
+            @Override
+            public void onSuccess() {
+                Log.d(TAG, "Register-by-provider successful.");
+
+                // [START_EXCLUDE]
+                hideProgressDialog();
+                startActivity(new Intent(GoogleActivity.this, MainActivity.class));
+                finish();
+                // [END_EXCLUDE]
+            }
+
+            @Override
+            public void onFail(String code, String message) {
+                Toast.makeText(getApplicationContext(), "Failed to sign in.", Toast.LENGTH_SHORT).show();
+                Log.d(TAG, "Failed to sign in.");
+            }
+        };
+        AuthInteractor signupInteractor = new SignupInteractorImpl(
+                executor,
+                mainThread,
+                callback,
+                userRepository,
+                mAuth.getCurrentUser().getUid());
+
+        signupInteractor.execute();
     }
 }

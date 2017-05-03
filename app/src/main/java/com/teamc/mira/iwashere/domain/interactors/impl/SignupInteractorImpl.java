@@ -7,20 +7,16 @@ import com.teamc.mira.iwashere.domain.interactors.base.AbstractInteractor;
 import com.teamc.mira.iwashere.domain.interactors.AuthInteractor;
 import com.teamc.mira.iwashere.domain.repository.UserRepository;
 
-/**
- * Created by Duart on 02/04/2017.
- */
-
 public class SignupInteractorImpl extends AbstractInteractor implements AuthInteractor {
 
     MainThread mainThread;
     AuthInteractor.Callback callback;
     UserRepository repository;
-    private final String email;
-    private final String username;
-    private final String pswd;
-    private final String confPswd;
-
+    private String userId ="";
+    private String email = "";
+    private String username = "";
+    private String pswd = "";
+    private String confPswd = "";
 
     public SignupInteractorImpl(Executor threadExecutor,
                                 MainThread mainThread,
@@ -36,12 +32,26 @@ public class SignupInteractorImpl extends AbstractInteractor implements AuthInte
         this.confPswd = confPswd;
     }
 
+    public SignupInteractorImpl(Executor threadExecutor,
+                                MainThread mainThread,
+                                AuthInteractor.Callback callback, UserRepository repository,
+                                String userId) {
+        super(threadExecutor, mainThread);
+
+        this.callback = callback;
+        this.repository = repository;
+        this.userId = userId;
+    }
+
     @Override
     public void run() {
-        // retrieve the message
         boolean result = false;
         try {
-            result = repository.signup(email,username,pswd,confPswd);
+            if (!userId.isEmpty()) {
+                result = repository.signup(userId);
+            } else {
+                result = repository.signup(email, username, pswd, confPswd);
+            }
         } catch (RemoteDataException e) {
             notifyError(e.getCode(),e.getErrorMessage());
         }

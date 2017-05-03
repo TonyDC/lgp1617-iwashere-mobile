@@ -2,10 +2,6 @@ package com.teamc.mira.iwashere.data.source.remote;
 
 import java.util.concurrent.TimeUnit;
 
-/**
- * Created by Duart on 21/04/2017.
- */
-
 public class ServerUrl {
 
     static final String DOMAIN = "192.168.1.78";
@@ -20,6 +16,11 @@ public class ServerUrl {
 
     //PATHS
     static final String API = "/api";
+
+    static final String USER = "/user";
+    static final String UNAUTH = "/unauth";
+    static final String REGISTER = "register";
+    static final String REGISTER_BY_PROVIDER = "register-by-provider";
 
     static final String POI = "/poi";
     static final String RANGE = "/range";

@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.VisibleForTesting;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
 import com.facebook.AccessToken;
@@ -24,7 +25,15 @@ import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.teamc.mira.iwashere.R;
+import com.teamc.mira.iwashere.data.source.remote.UserRepositoryImpl;
+import com.teamc.mira.iwashere.domain.executor.Executor;
+import com.teamc.mira.iwashere.domain.executor.MainThread;
+import com.teamc.mira.iwashere.domain.executor.impl.ThreadExecutor;
+import com.teamc.mira.iwashere.domain.interactors.AuthInteractor;
+import com.teamc.mira.iwashere.domain.interactors.impl.SignupInteractorImpl;
+import com.teamc.mira.iwashere.domain.repository.UserRepository;
 import com.teamc.mira.iwashere.presentation.main.MainActivity;
+import com.teamc.mira.iwashere.threading.MainThreadImpl;
 
 import java.util.Arrays;
 
@@ -79,7 +88,7 @@ public class FacebookActivity extends AppCompatActivity {
             @Override
             public void onSuccess(LoginResult loginResult) {
                 Log.d(TAG, "facebook:onSuccess:" + loginResult);
-                handleFacebookAccessToken(loginResult.getAccessToken());
+                registerUserByProvider(loginResult);
             }
 
             @Override
@@ -179,5 +188,34 @@ public class FacebookActivity extends AppCompatActivity {
         if (mProgressDialog != null && mProgressDialog.isShowing()) {
             mProgressDialog.dismiss();
         }
+    }
+
+    private void registerUserByProvider(final LoginResult loginResult) {
+        //create user
+        MainThread mainThread = MainThreadImpl.getInstance();
+        Executor executor = ThreadExecutor.getInstance();
+        UserRepository userRepository = new UserRepositoryImpl(this);
+        AuthInteractor.Callback callback = new AuthInteractor.Callback() {
+            @Override
+            public void onSuccess() {
+                Log.d(TAG, "Register-by-provider successful.");
+                handleFacebookAccessToken(loginResult.getAccessToken());
+            }
+
+            @Override
+            public void onFail(String code, String message) {
+                Toast.makeText(getApplicationContext(), "Failed to sign in.", Toast.LENGTH_SHORT).show();
+                Log.d(TAG, "Failed to sign in.");
+            }
+        };
+
+        AuthInteractor signupInteractor = new SignupInteractorImpl(
+                executor,
+                mainThread,
+                callback,
+                userRepository,
+                mAuth.getCurrentUser().getUid());
+
+        signupInteractor.execute();
     }
 }

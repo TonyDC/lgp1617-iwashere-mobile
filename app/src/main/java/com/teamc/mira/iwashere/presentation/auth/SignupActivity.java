@@ -115,8 +115,8 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
 
                 @Override
                 public void onFail(String code, String message) {
-                    Toast.makeText(getApplicationContext(), "Fail", Toast.LENGTH_SHORT).show();
-                    Log.d(TAG, "Failed to signup");
+                    Toast.makeText(getApplicationContext(), "Failed to sign up.", Toast.LENGTH_SHORT).show();
+                    Log.d(TAG, "Failed to signup: " + message);
                     progressBar.setVisibility(View.GONE);
                 }
             };
@@ -125,7 +125,7 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
                     mainThread,
                     callback,
                     userRepository,
-                        email,username,password, confirmPassword);
+                    email, username, password, confirmPassword);
 
             signupInteractor.execute();
 
