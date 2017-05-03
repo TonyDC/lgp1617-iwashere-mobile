@@ -5,7 +5,7 @@ import android.support.annotation.NonNull;
 
 import com.android.volley.RequestQueue;
 import com.teamc.mira.iwashere.data.source.remote.base.AbstractRepository;
-import com.teamc.mira.iwashere.domain.repository.UserRepository;
+import com.teamc.mira.iwashere.domain.repository.remote.UserRepository;
 
 import java.util.HashMap;
 

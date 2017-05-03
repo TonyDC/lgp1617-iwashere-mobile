@@ -1,12 +1,14 @@
 package com.teamc.mira.iwashere.data.source.remote.base;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.android.volley.NetworkResponse;
 import com.android.volley.RequestQueue;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
+import com.teamc.mira.iwashere.data.source.local.UserRepository;
 import com.teamc.mira.iwashere.data.source.remote.impl.PoiRepositoryImpl;
 import com.teamc.mira.iwashere.data.source.remote.exceptions.BasicRemoteException;
 import com.teamc.mira.iwashere.data.source.remote.exceptions.RemoteDataException;
@@ -14,6 +16,7 @@ import com.teamc.mira.iwashere.data.source.remote.exceptions.RemoteDataException
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.HashMap;
 import java.util.concurrent.TimeoutException;
 
 import static com.teamc.mira.iwashere.data.source.remote.base.ErrorCodes.NETWORK_FAIL;
@@ -63,5 +66,15 @@ public class AbstractRepository {
         if (e instanceof JSONException) {
             throw new BasicRemoteException(ErrorCodes.JSON_PARSING_ERROR);
         }
+    }
+
+    @NonNull
+    protected HashMap<String, String> getHeaders() {
+        String token = UserRepository.getInstance().getToken();
+        HashMap<String, String> params = new HashMap<>();
+        params.put("Authorization", "Bearer " + token);
+        params.put("Content-Type", "application/json;charset=UTF-8");
+        params.put("Accept", "application/json");
+        return params;
     }
 }

@@ -1,4 +1,4 @@
-package com.teamc.mira.iwashere.domain.repository;
+package com.teamc.mira.iwashere.domain.repository.remote;
 
 /**
  * Created by Duart on 01/05/2017.

@@ -131,7 +131,7 @@ public class MapFragment extends Fragment implements
         });
 
         // Set flag so that it that the map starts on the current location
-//        mFirstZoomFlag = false;
+        mFirstZoomFlag = true;
         
         
         mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(PORTO_LAT_LNG, ZOOM));

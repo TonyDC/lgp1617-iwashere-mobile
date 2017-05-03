@@ -4,7 +4,7 @@ import android.content.Context;
 
 import com.android.volley.RequestQueue;
 import com.teamc.mira.iwashere.data.source.remote.base.AbstractRepository;
-import com.teamc.mira.iwashere.domain.repository.PostRepository;
+import com.teamc.mira.iwashere.domain.repository.remote.PostRepository;
 
 /**
  * Created by Duart on 01/05/2017.

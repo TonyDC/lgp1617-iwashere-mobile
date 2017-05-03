@@ -12,7 +12,7 @@ import com.teamc.mira.iwashere.data.source.remote.AbstractUserRepository;
 import com.teamc.mira.iwashere.data.source.remote.base.ServerUrl;
 import com.teamc.mira.iwashere.data.source.remote.exceptions.RemoteDataException;
 import com.teamc.mira.iwashere.domain.model.UserModel;
-import com.teamc.mira.iwashere.domain.repository.UserRepository;
+import com.teamc.mira.iwashere.domain.repository.remote.UserRepository;
 
 import org.json.JSONObject;
 

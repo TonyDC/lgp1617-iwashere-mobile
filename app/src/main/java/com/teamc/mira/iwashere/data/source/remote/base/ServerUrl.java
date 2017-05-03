@@ -8,11 +8,12 @@ import java.util.concurrent.TimeUnit;
 
 public class ServerUrl {
 
-    public static final String DOMAIN = "192.168.1.78";
+    public static final String DOMAIN = "172.30.5.114";
     public static final String PORT = "8080";
 
     public static final long TIMEOUT = 3;
     public static final TimeUnit TIMEOUT_TIME_UNIT = TimeUnit.SECONDS;
+    public static final String AUTH = "/auth";
 
     public static String getUrl(){
         return "http://"+DOMAIN+":"+PORT;

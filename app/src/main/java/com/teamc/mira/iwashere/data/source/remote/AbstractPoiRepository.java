@@ -4,9 +4,10 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 
 import com.android.volley.RequestQueue;
+import com.teamc.mira.iwashere.data.source.local.UserRepository;
 import com.teamc.mira.iwashere.data.source.remote.base.AbstractRepository;
 import com.teamc.mira.iwashere.domain.model.ContentModel;
-import com.teamc.mira.iwashere.domain.repository.PoiRepository;
+import com.teamc.mira.iwashere.domain.repository.remote.PoiRepository;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -31,7 +32,6 @@ public abstract class AbstractPoiRepository extends AbstractRepository implement
     protected HashMap<String, Object> getPostRatingParams(String poiId, String userId, int newPoiRating) {
         HashMap<String, Object> params = new HashMap<>();
         params.put("poiID",poiId);
-        params.put("userID", userId);
         params.put("rating", newPoiRating);
         return params;
     }

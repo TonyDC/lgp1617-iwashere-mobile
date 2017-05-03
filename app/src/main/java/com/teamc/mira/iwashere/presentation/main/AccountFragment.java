@@ -21,10 +21,9 @@ import com.teamc.mira.iwashere.data.source.remote.impl.UserRepositoryImpl;
 import com.teamc.mira.iwashere.domain.executor.impl.ThreadExecutor;
 import com.teamc.mira.iwashere.domain.interactors.AuthInteractor;
 import com.teamc.mira.iwashere.domain.interactors.impl.SignoutInteractorImpl;
-import com.teamc.mira.iwashere.domain.repository.UserRepository;
+import com.teamc.mira.iwashere.domain.repository.remote.UserRepository;
 import com.teamc.mira.iwashere.presentation.auth.AuthenticateActivity;
 import com.teamc.mira.iwashere.presentation.misc.AboutActivity;
-import com.teamc.mira.iwashere.presentation.poi.PoiDetailActivity;
 import com.teamc.mira.iwashere.threading.MainThreadImpl;
 
 
