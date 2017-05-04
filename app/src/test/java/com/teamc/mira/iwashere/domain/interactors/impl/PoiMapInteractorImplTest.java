@@ -1,11 +1,9 @@
 package com.teamc.mira.iwashere.domain.interactors.impl;
 
 import com.android.volley.toolbox.RequestFuture;
-import com.teamc.mira.iwashere.data.source.remote.PoiRepositoryImpl;
+import com.teamc.mira.iwashere.data.source.remote.impl.PoiRepositoryImpl;
 import com.teamc.mira.iwashere.domain.interactors.PoiMapInteractor;
-import com.teamc.mira.iwashere.domain.model.PoiModel;
-import com.teamc.mira.iwashere.domain.repository.PoiRepository;
-import com.teamc.mira.iwashere.domain.repository.Repository;
+import com.teamc.mira.iwashere.domain.repository.remote.PoiRepository;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -13,7 +11,6 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 
-import static org.junit.Assert.*;
 import static org.mockito.Mockito.when;
 
 public class PoiMapInteractorImplTest extends InteractorTest {

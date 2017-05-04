@@ -8,9 +8,8 @@ import com.teamc.mira.iwashere.domain.executor.MainThread;
 import com.teamc.mira.iwashere.domain.interactors.PoiMapInteractor;
 import com.teamc.mira.iwashere.domain.interactors.base.AbstractInteractor;
 import com.teamc.mira.iwashere.domain.model.PoiModel;
-import com.teamc.mira.iwashere.domain.repository.PoiRepository;
+import com.teamc.mira.iwashere.domain.repository.remote.PoiRepository;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class PoiMapInteractorImpl extends AbstractInteractor implements PoiMapInteractor {
