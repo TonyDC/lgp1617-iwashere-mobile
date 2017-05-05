@@ -1,18 +1,11 @@
 package com.teamc.mira.iwashere.domain.interactors.impl;
 
-import android.content.Context;
-
-import com.teamc.mira.iwashere.domain.executor.Executor;
-import com.teamc.mira.iwashere.domain.executor.MainThread;
 import com.teamc.mira.iwashere.domain.interactors.AuthInteractor;
-import com.teamc.mira.iwashere.domain.repository.UserRepository;
-import com.teamc.mira.iwashere.threading.TestMainThread;
+import com.teamc.mira.iwashere.domain.repository.remote.UserRepository;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 
 import static org.mockito.Mockito.when;
 

@@ -4,7 +4,7 @@ import com.teamc.mira.iwashere.domain.executor.Executor;
 import com.teamc.mira.iwashere.domain.executor.MainThread;
 import com.teamc.mira.iwashere.domain.interactors.base.AbstractInteractor;
 import com.teamc.mira.iwashere.domain.interactors.AuthInteractor;
-import com.teamc.mira.iwashere.domain.repository.UserRepository;
+import com.teamc.mira.iwashere.domain.repository.remote.UserRepository;
 
 /**
  * Created by Duart on 07/04/2017.

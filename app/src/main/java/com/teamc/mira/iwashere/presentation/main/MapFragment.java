@@ -41,8 +41,8 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.teamc.mira.iwashere.R;
-import com.teamc.mira.iwashere.data.source.remote.PoiRepositoryImpl;
-import com.teamc.mira.iwashere.data.source.remote.SearchRepositoryImpl;
+import com.teamc.mira.iwashere.data.source.remote.impl.PoiRepositoryImpl;
+import com.teamc.mira.iwashere.data.source.remote.impl.SearchRepositoryImpl;
 import com.teamc.mira.iwashere.domain.executor.impl.ThreadExecutor;
 import com.teamc.mira.iwashere.domain.interactors.PoiMapInteractor;
 import com.teamc.mira.iwashere.domain.interactors.SearchInteractor;
@@ -69,13 +69,15 @@ public class MapFragment extends Fragment implements
 //        GoogleMap.OnCameraMoveCanceledListener,
 //        GoogleMap.OnCameraIdleListener,
         OnMapReadyCallback,
-        GoogleApiClient.OnConnectionFailedListener, OnSearchViewListener {
+        GoogleApiClient.OnConnectionFailedListener,
+        OnSearchViewListener {
 
 
     private static final String TAG = MapFragment.class.getSimpleName();
     private static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
     private static final String INTENT_NEW_LOCATION = "New Location";
     public static final float ZOOM = 14.0f;
+    private static final LatLng PORTO_LAT_LNG = new LatLng(41.1485647, -8.6119707);
 
     private MapView mMapView;
     private GoogleMap mGoogleMap;
@@ -96,6 +98,7 @@ public class MapFragment extends Fragment implements
     private ExpandableListView mSearchList;
     private ArrayList<ParentRow> mCategoriesList = new ArrayList<>();
     private View mRootView;
+    private Context mContext;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -131,6 +134,8 @@ public class MapFragment extends Fragment implements
             e.printStackTrace();
         }
 
+        mContext = getContext();
+
         mMapView.getMapAsync(this);
         return mRootView;
     }
@@ -142,7 +147,7 @@ public class MapFragment extends Fragment implements
 
         //Initialize Google Play Services
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION)
+            if (ContextCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION)
                     == PackageManager.PERMISSION_GRANTED) {
                 mGoogleMap.setMyLocationEnabled(true);
             } else {
@@ -167,7 +172,11 @@ public class MapFragment extends Fragment implements
         });
 
         // Set flag so that it that the map starts on the current location
-        mFirstZoomFlag = false;
+        mFirstZoomFlag = true;
+
+
+        mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(PORTO_LAT_LNG, ZOOM));
+        fetchPoisOnCameraMove(mGoogleMap.getProjection().getVisibleRegion().latLngBounds);
     }
 
     @Override
@@ -301,14 +310,14 @@ public class MapFragment extends Fragment implements
             public void onFail(String message) {
                 if (isAdded()) {
                     if(message == null || message.length() == 0) message = getResources().getString(R.string.error_fetch);
-                    Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(mContext, message, Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onNetworkError() {
                 if (isAdded()) {
-                    Toast.makeText(getContext(), R.string.error_connection, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(mContext, R.string.error_connection, Toast.LENGTH_SHORT).show();
                 }
             }
         };
@@ -317,7 +326,7 @@ public class MapFragment extends Fragment implements
                 ThreadExecutor.getInstance(),
                 MainThreadImpl.getInstance(),
                 callBack,
-                new PoiRepositoryImpl(getContext()),
+                new PoiRepositoryImpl(mContext),
                 minLat, maxLat, minLng, maxLng
         );
         poiMapInteractor.execute();
@@ -330,7 +339,6 @@ public class MapFragment extends Fragment implements
         for (int i = 0; i < poiModels.size(); i++) {
             model = poiModels.get(i);
 
-            // TODO: 21/04/2017 Added markers in other way to avoid adding existing markers
             MarkerOptions markerOptions = new MarkerOptions();
             markerOptions.position(new LatLng(Double.valueOf(model.getLatitude()), Double.valueOf(model.getLongitude())));
             markerOptions.title(model.getName());
@@ -338,7 +346,6 @@ public class MapFragment extends Fragment implements
             markerOptions.icon(BitmapDescriptorFactory.fromResource(R.mipmap.marker_primary));
 
             Marker marker = mGoogleMap.addMarker(markerOptions);
-
             poiHashMap.put(marker, model);
 
             Log.d(TAG, "POI MARKER: " + model.getName());

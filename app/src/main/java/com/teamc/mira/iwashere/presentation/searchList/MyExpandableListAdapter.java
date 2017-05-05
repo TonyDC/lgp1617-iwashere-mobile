@@ -101,7 +101,6 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter {
         childText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(finalConvertView.getContext(), childText.getText(), Toast.LENGTH_SHORT).show();
                 if (childRow.getBasicModel() instanceof PoiModel) {
                     Intent intent = new Intent(context, PoiDetailActivity.class);
                     intent.putExtra("poi", (PoiModel) childRow.getBasicModel());
