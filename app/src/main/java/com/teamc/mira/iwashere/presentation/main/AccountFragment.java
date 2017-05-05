@@ -2,7 +2,6 @@ package com.teamc.mira.iwashere.presentation.main;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Camera;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -14,33 +13,18 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
-import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.teamc.mira.iwashere.R;
-import com.teamc.mira.iwashere.data.source.remote.PoiRepositoryImpl;
 import com.teamc.mira.iwashere.data.source.remote.UserRepositoryImpl;
-import com.teamc.mira.iwashere.domain.executor.Executor;
 import com.teamc.mira.iwashere.domain.executor.impl.ThreadExecutor;
 import com.teamc.mira.iwashere.domain.interactors.AuthInteractor;
-import com.teamc.mira.iwashere.domain.interactors.PoiMapInteractor;
-import com.teamc.mira.iwashere.domain.interactors.impl.PoiMapInteractorImpl;
 import com.teamc.mira.iwashere.domain.interactors.impl.SignoutInteractorImpl;
-import com.teamc.mira.iwashere.domain.model.PoiModel;
-import com.teamc.mira.iwashere.domain.repository.PoiRepository;
-import com.teamc.mira.iwashere.domain.repository.Repository;
 import com.teamc.mira.iwashere.domain.repository.UserRepository;
 import com.teamc.mira.iwashere.presentation.auth.AuthenticateActivity;
-import com.teamc.mira.iwashere.presentation.camera.CameraInit;
-import com.teamc.mira.iwashere.presentation.camera.Photo_video;
 import com.teamc.mira.iwashere.presentation.misc.AboutActivity;
-import com.teamc.mira.iwashere.presentation.poi.PoiDetailActivity;
 import com.teamc.mira.iwashere.threading.MainThreadImpl;
-
-import java.util.ArrayList;
-
 
 
 class AccountFragment extends Fragment implements View.OnClickListener{
@@ -141,7 +125,7 @@ class AccountFragment extends Fragment implements View.OnClickListener{
 
         int i = v.getId();
         if (i == R.id.poi_test) {
-            startActivity(new Intent(this.getContext(), Photo_video.class));
+            startActivity(new Intent(this.getContext(), MainActivity.class));
         }
     }
 }

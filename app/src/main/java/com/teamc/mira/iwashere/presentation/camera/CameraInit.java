@@ -126,7 +126,9 @@ public class CameraInit extends Activity {
             Bitmap photo = getBitmap(imageToUploadUri);
             videoView.setVisibility(View.GONE);
             imageView.setImageBitmap(photo);
-            //imageView.setImageURI(imageToUploadUri);
+
+
+
         }
         if (requestCode == REQUEST_VIDEO_CAPTURE && resultCode == RESULT_OK) {
             imageView.setVisibility(View.GONE);

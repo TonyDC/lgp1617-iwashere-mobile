@@ -56,5 +56,11 @@
         android:textColor="@color/white"
         android:textStyle="bold" />
 
-
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:background="@color/colorAccentSecundary"
+        android:gravity="left|center"
+        android:textColor="@color/white"
+        android:textStyle="bold" />
 </LinearLayout>
