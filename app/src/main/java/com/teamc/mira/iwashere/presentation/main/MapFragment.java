@@ -98,6 +98,7 @@ public class MapFragment extends Fragment implements
     private ExpandableListView mSearchList;
     private ArrayList<ParentRow> mCategoriesList = new ArrayList<>();
     private View mRootView;
+    private Context mContext;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -133,6 +134,8 @@ public class MapFragment extends Fragment implements
             e.printStackTrace();
         }
 
+        mContext = getContext();
+
         mMapView.getMapAsync(this);
         return mRootView;
     }
@@ -144,7 +147,7 @@ public class MapFragment extends Fragment implements
 
         //Initialize Google Play Services
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION)
+            if (ContextCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION)
                     == PackageManager.PERMISSION_GRANTED) {
                 mGoogleMap.setMyLocationEnabled(true);
             } else {
@@ -307,14 +310,14 @@ public class MapFragment extends Fragment implements
             public void onFail(String message) {
                 if (isAdded()) {
                     if(message == null || message.length() == 0) message = getResources().getString(R.string.error_fetch);
-                    Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(mContext, message, Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onNetworkError() {
                 if (isAdded()) {
-                    Toast.makeText(getContext(), R.string.error_connection, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(mContext, R.string.error_connection, Toast.LENGTH_SHORT).show();
                 }
             }
         };
@@ -323,7 +326,7 @@ public class MapFragment extends Fragment implements
                 ThreadExecutor.getInstance(),
                 MainThreadImpl.getInstance(),
                 callBack,
-                new PoiRepositoryImpl(getContext()),
+                new PoiRepositoryImpl(mContext),
                 minLat, maxLat, minLng, maxLng
         );
         poiMapInteractor.execute();
