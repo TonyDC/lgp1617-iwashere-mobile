@@ -1,29 +1,37 @@
 package com.teamc.mira.iwashere.util;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.squareup.picasso.Picasso;
 import com.teamc.mira.iwashere.R;
+import com.teamc.mira.iwashere.domain.model.util.Resource;
+
+import java.util.ArrayList;
 
 public class GridViewAdapter extends BaseAdapter {
+    private static final String TAG = GridViewAdapter.class.getSimpleName();
     int mTemplateImageId = R.mipmap.default_thumbnail;
     Context mContext;
     String[] mGridViewString;
-    String[] mGridViewImageUrl;
+    ArrayList<Resource> mResources;
 
-    public GridViewAdapter(Context context, String[] gridViewString, String[] gridViewImageUrl) {
+    public GridViewAdapter(Context context, String[] gridViewString, ArrayList<Resource> resources) {
         mContext = context;
-        this.mGridViewImageUrl = gridViewImageUrl;
+        this.mResources = resources;
         this.mGridViewString = gridViewString;
     }
 
-    public GridViewAdapter(Context context, String[] gridViewString, String[] gridViewImageUrl, int mTemplateImageId) {
-        this(context,gridViewString, gridViewImageUrl);
+    public GridViewAdapter(Context context, String[] gridViewString, ArrayList<Resource> resources, int mTemplateImageId) {
+        this(context,gridViewString, resources);
         this.mTemplateImageId = mTemplateImageId;
 
 
@@ -45,7 +53,7 @@ public class GridViewAdapter extends BaseAdapter {
     }
 
     @Override
-    public View getView(int i, View convertView, ViewGroup parent) {
+    public View getView(final int i, View convertView, ViewGroup parent) {
         View gridViewAndroid;
         LayoutInflater inflater = (LayoutInflater) mContext
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -53,13 +61,21 @@ public class GridViewAdapter extends BaseAdapter {
         if (convertView == null) {
 
             gridViewAndroid = inflater.inflate(R.layout.activity_poi_grid_item, null);
-            ImageView imageView = (ImageView) gridViewAndroid.findViewById(R.id.android_gridview_image);
+            final ImageView imageView = (ImageView) gridViewAndroid.findViewById(R.id.android_gridview_image);
 
             imageView.setImageResource(mTemplateImageId);
 
-            Picasso.with(this.mContext).load(mGridViewImageUrl[i])
-                    .into(imageView);
+            Resource resource = mResources.get(i);
+            resource.fetchDownloadUrl(new OnCompleteListener() {
+                @Override
+                public void onComplete(@NonNull Task task) {
+                    String imageUrl = task.getResult().toString();
 
+                    Log.d(TAG,"GridViewAdapter image "+i+":"+imageUrl);
+                    Picasso.with(mContext).load(imageUrl)
+                        .into(imageView);
+                }
+            });
         } else {
             gridViewAndroid = (View) convertView;
         }

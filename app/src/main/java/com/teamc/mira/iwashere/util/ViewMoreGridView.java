@@ -12,6 +12,9 @@ import android.widget.ListAdapter;
 
 import com.squareup.picasso.Picasso;
 import com.teamc.mira.iwashere.R;
+import com.teamc.mira.iwashere.domain.model.util.Resource;
+
+import java.util.ArrayList;
 
 public class ViewMoreGridView extends ExpandableHeightGridView {
     OnItemClickListener mOnItemClickListener;
@@ -22,15 +25,15 @@ public class ViewMoreGridView extends ExpandableHeightGridView {
         static final String VIEW_MORE_ITEM_ID = "viewMore";
         static final String VIEW_MORE_ITEM_URL = "viewMoreUrl";
 
-        public ViewMoreGridViewAdapter(Context context, String[] gridViewString, String[] gridViewImageUrl, boolean hasMoreContent) {
-            super(context, gridViewString, gridViewImageUrl);
+        public ViewMoreGridViewAdapter(Context context, String[] gridViewString, ArrayList<Resource> resources, boolean hasMoreContent) {
+            super(context, gridViewString, resources);
             if (hasMoreContent) {
                 add(VIEW_MORE_ITEM_ID, VIEW_MORE_ITEM_URL);
             }
         }
 
-        public ViewMoreGridViewAdapter(Context context, String[] gridViewString, String[] gridViewImageUrl, int mTemplateImageId, boolean hasMoreContent) {
-            super(context, gridViewString, gridViewImageUrl, mTemplateImageId);
+        public ViewMoreGridViewAdapter(Context context, String[] gridViewString, ArrayList<Resource> resources, int mTemplateImageId, boolean hasMoreContent) {
+            super(context, gridViewString, resources, mTemplateImageId);
             if (hasMoreContent) {
                 add(VIEW_MORE_ITEM_ID, VIEW_MORE_ITEM_URL);
             }
@@ -41,11 +44,6 @@ public class ViewMoreGridView extends ExpandableHeightGridView {
             System.arraycopy(mGridViewString,0,newGridViewString, 0, mGridViewString.length);
             newGridViewString[mGridViewString.length] = id;
             mGridViewString = newGridViewString;
-
-            String[] newGridViewUrl = new String[mGridViewImageUrl.length+1];
-            System.arraycopy(mGridViewImageUrl, 0, newGridViewUrl, 0, mGridViewImageUrl.length);
-            newGridViewUrl[mGridViewImageUrl.length] = url;
-            mGridViewImageUrl = newGridViewUrl;
         }
 
         @Override

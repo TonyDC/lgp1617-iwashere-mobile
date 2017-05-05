@@ -3,11 +3,11 @@ package com.teamc.mira.iwashere.data.source.remote;
 import android.content.Context;
 
 import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.RequestFuture;
 import com.teamc.mira.iwashere.data.source.remote.exceptions.RemoteDataException;
+import com.teamc.mira.iwashere.data.source.remote.impl.MySingletonImpl;
+import com.teamc.mira.iwashere.data.source.remote.impl.PoiRepositoryImpl;
 import com.teamc.mira.iwashere.domain.model.PoiModel;
-import com.teamc.mira.iwashere.domain.repository.PoiRepository;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -29,7 +29,8 @@ import static org.mockito.Mockito.when;
 public class PoiRepositoryImplTest {
     @Mock Context mContext = mock(Context.class);
     @Mock RequestFuture<JSONArray> mFuture = mock(RequestFuture.class);
-    @Mock MySingletonImpl mySingleton = mock(MySingletonImpl.class);
+    @Mock
+    MySingletonImpl mySingleton = mock(MySingletonImpl.class);
     @Mock RequestQueue requestQueue;
 
     final JSONArray successArray = new JSONArray("[\n" +
@@ -70,7 +71,7 @@ public class PoiRepositoryImplTest {
 
         PoiRepositoryImpl poiRepository = new PoiRepositoryImpl(requestQueue);
 
-        ArrayList<PoiModel> poiModels = poiRepository.getPoiModelsFromRequest(mFuture);
+        ArrayList<PoiModel> poiModels = poiRepository.fetchPoisInArea(43,4.4,4.3,4.4);
         Mockito.verify(mFuture).get(any(int.class), any(TimeUnit.class));
         Mockito.verifyNoMoreInteractions(mFuture);
         assertTrue("museu soares dos reis".equals(poiModels.get(0).getName()));

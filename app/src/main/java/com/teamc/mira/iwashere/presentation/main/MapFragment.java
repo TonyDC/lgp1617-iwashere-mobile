@@ -41,7 +41,7 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.teamc.mira.iwashere.R;
-import com.teamc.mira.iwashere.data.source.remote.PoiRepositoryImpl;
+import com.teamc.mira.iwashere.data.source.remote.impl.PoiRepositoryImpl;
 import com.teamc.mira.iwashere.data.source.remote.SearchRepositoryImpl;
 import com.teamc.mira.iwashere.domain.executor.impl.ThreadExecutor;
 import com.teamc.mira.iwashere.domain.interactors.PoiMapInteractor;
@@ -69,13 +69,15 @@ public class MapFragment extends Fragment implements
 //        GoogleMap.OnCameraMoveCanceledListener,
 //        GoogleMap.OnCameraIdleListener,
         OnMapReadyCallback,
-        GoogleApiClient.OnConnectionFailedListener, OnSearchViewListener {
+        GoogleApiClient.OnConnectionFailedListener,
+        OnSearchViewListener {
 
 
     private static final String TAG = MapFragment.class.getSimpleName();
     private static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
     private static final String INTENT_NEW_LOCATION = "New Location";
     public static final float ZOOM = 14.0f;
+    private static final LatLng PORTO_LAT_LNG = new LatLng(41.1485647, -8.6119707);
 
     private MapView mMapView;
     private GoogleMap mGoogleMap;
@@ -167,7 +169,11 @@ public class MapFragment extends Fragment implements
         });
 
         // Set flag so that it that the map starts on the current location
-        mFirstZoomFlag = false;
+        mFirstZoomFlag = true;
+
+
+        mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(PORTO_LAT_LNG, ZOOM));
+        fetchPoisOnCameraMove(mGoogleMap.getProjection().getVisibleRegion().latLngBounds);
     }
 
     @Override
