@@ -16,8 +16,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:versionCode="@string/versionCode"
-        android:versionName= "@string/versionName"
-        >
+        android:versionName="@string/versionName">
 
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
@@ -25,7 +24,10 @@
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyBZmrnuImjti0VsMecT8ytNoz7F0UTOZDQ"/>
+            android:value="AIzaSyBZmrnuImjti0VsMecT8ytNoz7F0UTOZDQ" />
+
+        <meta-data android:name="android.app.searchable"
+            android:resource="@xml/searchable"/>
 
         <activity
             android:name=".IWasHereActivity"
@@ -44,7 +46,17 @@
         <activity
             android:name=".presentation.main.MainActivity"
             android:label="@string/title_activity_profile"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH" />
+            </intent-filter>
+            <meta-data
+                android:name="android.app.searchable"
+                android:resource="@xml/searchable" />
+
+            <meta-data android:name="android.app.default_searchable"
+                android:value=".presentation.main.MainActivity" />
+        </activity>
         <activity
             android:name=".presentation.auth.AuthenticateActivity"
             android:label="@string/title_activity_profile"
@@ -57,16 +69,16 @@
             android:name=".presentation.auth.LoginActivity"
             android:label="@string/title_activity_login"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".presentation.poi.PoiDetailActivity"
+        <activity
+            android:name=".presentation.poi.PoiDetailActivity"
             android:label="@string/title_activity_poi_detail"
-            android:theme="@style/AppTheme.NoActionBar"
             android:parentActivityName=".presentation.main.MainActivity"
-            />
-        <activity android:name=".presentation.misc.AboutActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".presentation.misc.AboutActivity"
             android:label="@string/title_activity_about"
-            android:theme="@style/AppTheme.NoActionBar"
             android:parentActivityName=".presentation.main.MainActivity"
-            />
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".presentation.auth.GoogleActivity"
             android:label="@string/title_activity_google"
@@ -91,7 +103,10 @@
             android:name=".presentation.auth.FacebookActivity"
             android:label="@string/title_activity_facebook"
             android:theme="@style/AppTheme.NoActionBar" />
-        <service android:enabled="true" android:name=".domain.services.LocationService" />
+
+        <service
+            android:name=".domain.services.LocationService"
+            android:enabled="true" />
     </application>
 
 </manifest>

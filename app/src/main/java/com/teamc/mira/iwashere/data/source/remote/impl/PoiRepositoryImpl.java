@@ -2,6 +2,7 @@ package com.teamc.mira.iwashere.data.source.remote.impl;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.android.volley.Request;
@@ -28,6 +29,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import static com.teamc.mira.iwashere.data.source.remote.base.ServerUrl.TIMEOUT;
@@ -36,7 +38,7 @@ import static com.teamc.mira.iwashere.data.source.remote.base.ServerUrl.TIMEOUT_
 // TODO: 19/04/2017 Implement functions, test those already implemented
 public class PoiRepositoryImpl extends AbstractPoiRepository implements PoiRepository {
 
-    public static final String TAG = UserRepositoryImpl.class.getSimpleName();
+    public static final String TAG = PoiRepositoryImpl.class.getSimpleName();
     private static final String API_POI_URL = ServerUrl.getUrl() + ServerUrl.API + ServerUrl.POI;
     private static final String API_POI_GET_RATING_URL = ServerUrl.getUrl() + ServerUrl.API + ServerUrl.POI + ServerUrl.RATING;
     private static final String API_POI_POST_RATING_URL = ServerUrl.getUrl() + ServerUrl.API + ServerUrl.POI + ServerUrl.AUTH + ServerUrl.RATING;
@@ -47,7 +49,7 @@ public class PoiRepositoryImpl extends AbstractPoiRepository implements PoiRepos
         super(mContext);
     }
 
-    public PoiRepositoryImpl(RequestQueue requestQueue){
+    public PoiRepositoryImpl(RequestQueue requestQueue) {
         super(requestQueue);
     }
 
@@ -155,35 +157,33 @@ public class PoiRepositoryImpl extends AbstractPoiRepository implements PoiRepos
 
     @Override
     public boolean setPoiUserRating(PoiModel poi, String userId, int newPoiRating) throws RemoteDataException {
-            // Instantiate the RequestQueue.
-            RequestQueue queue = mRequestQueue;
+        // Instantiate the RequestQueue.
+        RequestQueue queue = mRequestQueue;
 
-            final HashMap<String, Object> params = getPostRatingParams(poi.getId(), userId, newPoiRating);
+        final HashMap<String, Object> params = getPostRatingParams(poi.getId(), userId, newPoiRating);
 
-            RequestFuture<JSONObject> future = RequestFuture.newFuture();
-            JsonObjectRequest request = new JsonObjectRequest(
-                    Request.Method.POST,
-                    API_POI_POST_RATING_URL,
-                    new JSONObject(params),
-                    future, future){
-                @Override
-                public HashMap<String, String> getHeaders() {
-                    return PoiRepositoryImpl.this.getHeaders();
-                }
-            };
-
-            queue.add(request);
-
-            try {
-                future.get(TIMEOUT, TIMEOUT_TIME_UNIT); // this will block
-
-                poi.setUserRating(newPoiRating);
-
-                return fetchPoiRating(poi);
-            } catch (InterruptedException | ExecutionException | TimeoutException e) {
-                handleError(e);
-                return false;
+        RequestFuture<JSONObject> future = RequestFuture.newFuture();
+        JsonObjectRequest request = new JsonObjectRequest(
+                Request.Method.POST,
+                API_POI_POST_RATING_URL,
+                new JSONObject(params),
+                future, future){
+            @Override
+            public HashMap<String, String> getHeaders() {
+                return PoiRepositoryImpl.this.getHeaders();
             }
+        };
+
+        queue.add(request);
+
+        try {
+            future.get(TIMEOUT, TIMEOUT_TIME_UNIT); // this will block
+        	poi.setUserRating(newPoiRating);
+            return fetchPoiRating(poi);
+        } catch (InterruptedException | ExecutionException | TimeoutException e) {
+            handleError(e);
+            return false;
+        }
     }
 
     @Override
@@ -227,7 +227,7 @@ public class PoiRepositoryImpl extends AbstractPoiRepository implements PoiRepos
         RequestQueue queue = mRequestQueue;
         String url = ServerUrl.getUrl()+ServerUrl.API+ServerUrl.POI+ServerUrl.RANGE;
 
-        url = url.concat("/"+minLat+"/"+maxLat+"/"+minLong+"/"+maxLong);
+        url = url.concat("/" + minLat + "/" + maxLat + "/" + minLong + "/" + maxLong);
         Log.d(TAG, url);
         RequestFuture<JSONArray> future = RequestFuture.newFuture();
         JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, url, null, future, future);
@@ -255,8 +255,45 @@ public class PoiRepositoryImpl extends AbstractPoiRepository implements PoiRepos
     }
 
     @Override
-    public ArrayList<PoiModel> searchPois(String searchQuery) {
-        throw new UnsupportedOperationException();
+    public ArrayList<PoiModel> searchPois(String searchQuery, double lat, double lng) throws RemoteDataException {
+        // Instantiate the RequestQueue.
+        RequestQueue queue = mRequestQueue;
+
+        String url = ServerUrl.getUrl() + ServerUrl.API + ServerUrl.POI + ServerUrl.SEARCH + "?query=";
+
+        url = url.concat(searchQuery + "&" + lat + "&" + lng);
+        Log.d(TAG, url);
+        RequestFuture<JSONObject> future = RequestFuture.newFuture();
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null, future, future);
+        queue.add(request);
+
+        return getPoiSearchModelsFromRequest(future);
+    }
+
+    @Nullable
+    ArrayList<PoiModel> getPoiSearchModelsFromRequest(RequestFuture<JSONObject> future) throws RemoteDataException {
+        try {
+            JSONObject response = future.get(3000, TimeUnit.MILLISECONDS); // this will block
+            System.out.println(TAG + ": " + String.valueOf(response));
+
+            ArrayList<PoiModel> poiModels = new ArrayList<PoiModel>();
+            PoiModel poiModel;
+            JSONObject object;
+
+            JSONArray results = response.getJSONArray("results");
+            System.out.println(TAG + ": " + String.valueOf(results));
+
+            for (int i = 0; i < results.length(); i++) {
+                object = results.getJSONObject(i);
+                poiModel = new PoiModel(object);
+                poiModels.add(poiModel);
+            }
+
+            return poiModels;
+        } catch (InterruptedException | ExecutionException | JSONException | TimeoutException e) {
+            handleError(e);
+            return null;
+        }
     }
 
 }

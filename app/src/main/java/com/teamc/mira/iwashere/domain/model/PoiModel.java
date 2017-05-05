@@ -5,16 +5,11 @@ import com.teamc.mira.iwashere.domain.model.util.Resource;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.Serializable;
 import java.net.URL;
 import java.util.ArrayList;
 
-public class PoiModel implements Serializable{
-    private String id;
-    private String name;
+public class PoiModel extends BasicModel implements Serializable {
     private String description;
     private String address;
     private String longitude;
@@ -30,7 +25,9 @@ public class PoiModel implements Serializable{
 
     private boolean reminder;
 
-    public PoiModel() {}
+    public PoiModel() {
+        super();
+    }
 
     public PoiModel(String id,
                     String name,
@@ -41,8 +38,7 @@ public class PoiModel implements Serializable{
                     ArrayList<Resource> photos,
                     ArrayList<ContentModel> content,
                     ArrayList<PoiModel> relatedContent) {
-        this.id = id;
-        this.name = name;
+        super(id, name);
         this.description = description;
         this.address = address;
         this.longitude = longitude;
@@ -59,7 +55,6 @@ public class PoiModel implements Serializable{
         if(poi.has("address")) this.address = poi.getString("address");
         if(poi.has("longitude")) this.longitude = poi.getString("longitude");
         if(poi.has("latitude")) this.latitude = poi.getString("latitude");
-
     }
 
     public PoiModel(String id, String name, String description, String address, String longitude, String latitude) {

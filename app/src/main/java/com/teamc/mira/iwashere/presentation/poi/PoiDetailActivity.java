@@ -79,6 +79,7 @@ public class PoiDetailActivity extends AppCompatActivity {
 
         setToolBar();
         poi = (PoiModel) getIntent().getSerializableExtra(POI);
+        Log.d(TAG, poi.getName() + " " + poi.getId() + " " + poi.getAddress());
         setPoiInfo();
         setDynamicDescriptionSize();
 
