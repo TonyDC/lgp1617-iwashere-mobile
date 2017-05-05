@@ -1,10 +1,8 @@
 package com.teamc.mira.iwashere.domain.model;
 
-/**
- * Created by Duart on 12/04/2017.
- */
+import java.io.Serializable;
 
-public class BasicModel {
+public class BasicModel implements Serializable{
     protected String id;
     protected String name;
 

@@ -42,7 +42,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.teamc.mira.iwashere.R;
 import com.teamc.mira.iwashere.data.source.remote.impl.PoiRepositoryImpl;
-import com.teamc.mira.iwashere.data.source.remote.SearchRepositoryImpl;
+import com.teamc.mira.iwashere.data.source.remote.impl.SearchRepositoryImpl;
 import com.teamc.mira.iwashere.domain.executor.impl.ThreadExecutor;
 import com.teamc.mira.iwashere.domain.interactors.PoiMapInteractor;
 import com.teamc.mira.iwashere.domain.interactors.SearchInteractor;
@@ -336,7 +336,6 @@ public class MapFragment extends Fragment implements
         for (int i = 0; i < poiModels.size(); i++) {
             model = poiModels.get(i);
 
-            // TODO: 21/04/2017 Added markers in other way to avoid adding existing markers
             MarkerOptions markerOptions = new MarkerOptions();
             markerOptions.position(new LatLng(Double.valueOf(model.getLatitude()), Double.valueOf(model.getLongitude())));
             markerOptions.title(model.getName());
@@ -344,7 +343,6 @@ public class MapFragment extends Fragment implements
             markerOptions.icon(BitmapDescriptorFactory.fromResource(R.mipmap.marker_primary));
 
             Marker marker = mGoogleMap.addMarker(markerOptions);
-
             poiHashMap.put(marker, model);
 
             Log.d(TAG, "POI MARKER: " + model.getName());

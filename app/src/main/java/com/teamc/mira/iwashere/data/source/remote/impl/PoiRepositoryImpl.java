@@ -2,6 +2,7 @@ package com.teamc.mira.iwashere.data.source.remote.impl;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.android.volley.Request;
@@ -37,7 +38,7 @@ import static com.teamc.mira.iwashere.data.source.remote.base.ServerUrl.TIMEOUT_
 // TODO: 19/04/2017 Implement functions, test those already implemented
 public class PoiRepositoryImpl extends AbstractPoiRepository implements PoiRepository {
 
-    public static final String TAG = UserRepositoryImpl.class.getSimpleName();
+    public static final String TAG = PoiRepositoryImpl.class.getSimpleName();
     private static final String API_POI_URL = ServerUrl.getUrl() + ServerUrl.API + ServerUrl.POI;
     private static final String API_POI_GET_RATING_URL = ServerUrl.getUrl() + ServerUrl.API + ServerUrl.POI + ServerUrl.RATING;
     private static final String API_POI_POST_RATING_URL = ServerUrl.getUrl() + ServerUrl.API + ServerUrl.POI + ServerUrl.AUTH + ServerUrl.RATING;
@@ -253,12 +254,12 @@ public class PoiRepositoryImpl extends AbstractPoiRepository implements PoiRepos
         }
     }
 
-@Override
+    @Override
     public ArrayList<PoiModel> searchPois(String searchQuery, double lat, double lng) throws RemoteDataException {
         // Instantiate the RequestQueue.
         RequestQueue queue = mRequestQueue;
 
-        String url = ServerUrl.getUrl() + ServerUrl.API + ServerUrl.POI + ServerUrl.SEARCH;
+        String url = ServerUrl.getUrl() + ServerUrl.API + ServerUrl.POI + ServerUrl.SEARCH + "?query=";
 
         url = url.concat(searchQuery + "&" + lat + "&" + lng);
         Log.d(TAG, url);
@@ -289,37 +290,10 @@ public class PoiRepositoryImpl extends AbstractPoiRepository implements PoiRepos
             }
 
             return poiModels;
-        } catch (InterruptedException | ExecutionException e) {
-            //check to see if the throwable in an instance of the volley error
-            if (e.getCause() instanceof VolleyError) {
-                //grab the volley error from the throwable and cast it back
-                VolleyError volleyError = (VolleyError) e.getCause();
-                //now just grab the network response like normal
-                NetworkResponse networkResponse = volleyError.networkResponse;
-                try {
-                    Log.d(TAG, "raw data: " + new String(networkResponse.data));
-                    JSONObject data = new JSONObject(new String(networkResponse.data));
-                    Log.d(TAG, data.toString());
-
-                    String code = data.getString("code");
-
-                    throw (RemoteDataException) new BasicRemoteException(code);
-                } catch (JSONException e1) {
-                    e1.printStackTrace();
-                    throw (RemoteDataException) new BasicRemoteException("unknown-error");
-                }
-            }
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw (RemoteDataException) new BasicRemoteException("unknown-error");
+        } catch (InterruptedException | ExecutionException | JSONException | TimeoutException e) {
+            handleError(e);
+            return null;
         }
-        return null;
-    }
-    
-    @Override
-    public ArrayList<PoiModel> searchPois(String searchQuery) {
-        throw new UnsupportedOperationException();
     }
 
 }
