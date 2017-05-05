@@ -13,11 +13,9 @@
 
         <VideoView
             android:id="@+id/videodisplay"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="350dp"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:layout_gravity="center_vertical"
+            android:layout_centerInParent="true"
             android:background="@drawable/border_image"
             android:cropToPadding="true"
             android:padding="10dp"
