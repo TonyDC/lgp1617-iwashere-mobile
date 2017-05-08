@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -8,132 +8,172 @@
         android:id="@+id/include"
         layout="@layout/toolbar"></include>
 
-    <android.support.v4.widget.NestedScrollView
+    <android.support.v4.widget.SwipeRefreshLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/include">
+        android:id="@+id/swipeContainer"
+        >
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center_horizontal"
-            android:orientation="vertical">
+        <android.support.v4.widget.NestedScrollView
+                                               android:layout_width="match_parent"
+                                               android:layout_height="match_parent"
+                                               android:layout_alignParentStart="true"
+                                               android:layout_below="@+id/include">
 
-            <com.daimajia.slider.library.SliderLayout
-                android:id="@+id/slider"
-                android:layout_width="match_parent"
-                android:layout_height="250dp" /> <!--TODO change this in the future to accomodate more sizes-->
-            <TextView
-                android:id="@+id/description"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:padding="25dp" />
+                                               <LinearLayout
+                                               android:layout_width="match_parent"
+                                               android:layout_height="match_parent"
+                                               android:gravity="center_horizontal"
+                                               android:orientation="vertical">
 
-            <RelativeLayout
-                android:id="@+id/ratings"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:padding="25dp">
+                                               <com.daimajia.slider.library.SliderLayout
+                                               android:id="@+id/slider"
+                                               android:layout_width="match_parent"
+                                               android:layout_height="250dp" /> <!--TODO change this in the future to accomodate more sizes-->
 
-                <RatingBar
-                    android:id="@+id/poiRatingBar"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:numStars="5"
-                    android:stepSize="1.0" />
+                                               <LinearLayout
+                                               android:layout_width="match_parent"
+                                               android:layout_height="match_parent"
+                                               android:id="@+id/description_box"
+                                               android:orientation="vertical"
+                                               android:padding="25dp">
 
-                <TextView
-                    android:id="@+id/poiRatingText"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_toRightOf="@+id/poiRatingBar"
-                    android:textSize="20dp" />
+                                               <TextView
+                                               android:id="@+id/description"
+                                               android:layout_width="match_parent"
+                                               android:layout_height="match_parent"
+                                               android:ellipsize="end"
+                                               />
+                                               <TextView
+                                               android:layout_width="match_parent"
+                                               android:layout_height="wrap_content"
+                                               android:maxLines="1"
+                                               android:id="@+id/moreInformation"
+                                               android:text="@string/more_info"
+                                               android:gravity="right"
+                                               android:textColor="@color/colorAccentPrimary"
+                                               />
+                                               </LinearLayout>
 
+                                               <LinearLayout
+                                               android:layout_width="match_parent"
+                                               android:layout_height="match_parent"
+                                               android:orientation="vertical"
+                                               android:background="@color/colorAccentSecundary"
+                                               >
 
-                <RatingBar
-                    android:id="@+id/userRatingBar"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_below="@+id/poiRatingBar"
-                    android:numStars="5"
-                    android:stepSize="1.0" />
-            </RelativeLayout>
+                                               <LinearLayout
+                                               android:layout_width="match_parent"
+                                               android:layout_height="wrap_content"
+                                               android:orientation="horizontal"
+                                               android:gravity="center_vertical"
+                                               android:padding="15dp"
+                                               >
 
-            <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:id="@+id/addressPinPoint"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal">
+                                               <ImageView
+                                               android:layout_width="36dp"
+                                               android:layout_height="36dp"
+                                               android:src="@drawable/ic_star_black_36dp"
+                                               />
+                                               <TextView
+                                               android:id="@+id/poiRating"
+                                               android:layout_width="wrap_content"
+                                               android:layout_height="wrap_content"
+                                               android:padding="10dp"
+                                               android:text="@string/default_pontuation_poi"
+                                               />
+                                               </LinearLayout>
 
-                <ImageView
-                    android:id="@+id/ic_location"
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:color="@color/colorAccentPrimary"
-                    android:src="@drawable/ic_location_on_black_32dp" />
+                                               <RatingBar
+                                               android:id="@+id/userRatingBar"
+                                               android:layout_width="wrap_content"
+                                               android:layout_height="match_parent"
+                                               android:layout_gravity="center_horizontal"
+                                               android:numStars="5"
+                                               android:stepSize="1.0" />
 
-                <LinearLayout
-                    android:id="@+id/addressBox"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:padding="10dp">
+                                               <LinearLayout
+                                               android:id="@+id/addressPinPoint"
+                                               android:layout_width="match_parent"
+                                               android:layout_height="match_parent"
+                                               android:orientation="horizontal"
+                                               android:gravity="center_vertical"
+                                               android:padding="15dp"
+                                               >
 
-                    <TextView
-                        android:id="@+id/addressLabel"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:paddingRight="10dp"
-                        android:text="@string/address"
-                        android:textColor="@color/white"/>
+                                               <ImageView
+                                               android:id="@+id/ic_location"
+                                               android:layout_width="36dp"
+                                               android:layout_height="36dp"
+                                               android:src="@drawable/ic_location_on_black_32dp" />
 
-                    <TextView
-                        android:id="@+id/address"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:textColor="#000000"
-                        android:layout_toRightOf="@+id/addressLabel"
-                        android:layout_weight="1"
-                        />
-                </LinearLayout>
+                                               <LinearLayout
+                                               android:id="@+id/addressBox"
+                                               android:layout_width="wrap_content"
+                                               android:layout_height="wrap_content"
+                                               android:orientation="horizontal"
+                                               android:padding="10dp">
 
+                                               <TextView
+                                               android:id="@+id/addressLabel"
+                                               android:layout_width="wrap_content"
+                                               android:layout_height="match_parent"
+                                               android:paddingRight="10dp"
+                                               android:text="@string/address"
+                                               />
 
-                <LinearLayout
-                    android:id="@+id/hours"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:visibility="gone"
-                    android:padding="10dp">
-
-                    <TextView
-                        android:id="@+id/hoursT"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="0"
-                        android:paddingRight="20dp" />
-
-                    <TextView
-                        android:id="@+id/hoursF"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_toRightOf="@+id/hoursT"
-                        android:layout_weight="0"/>
-                </LinearLayout>
-            </LinearLayout>
-            <GridView
-                android:id="@+id/grid_view_image_text"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:columnWidth="110dp"
-                android:gravity="center"
-                android:numColumns="auto_fit" />
-
-        </LinearLayout>
+                                               <TextView
+                                               android:id="@+id/address"
+                                               android:layout_width="wrap_content"
+                                               android:layout_height="match_parent"
+                                               android:layout_toRightOf="@+id/addressLabel"
+                                               />
+                                               </LinearLayout>
 
 
-    </android.support.v4.widget.NestedScrollView>
-</RelativeLayout>
+                                               <LinearLayout
+                                               android:id="@+id/hours"
+                                               android:layout_width="wrap_content"
+                                               android:layout_height="wrap_content"
+                                               android:orientation="horizontal"
+                                               android:visibility="gone"
+                                               android:padding="10dp">
+
+                                               <TextView
+                                               android:id="@+id/hoursT"
+                                               android:layout_width="wrap_content"
+                                               android:layout_height="wrap_content"
+                                               android:layout_weight="0"
+                                               android:paddingRight="20dp" />
+
+                                               <TextView
+                                               android:id="@+id/hoursF"
+                                               android:layout_width="wrap_content"
+                                               android:layout_height="wrap_content"
+                                               android:layout_toRightOf="@+id/hoursT"
+                                               android:layout_weight="0"/>
+                                               </LinearLayout>
+                                               </LinearLayout>
+                                               </LinearLayout>
+
+                                               <com.teamc.mira.iwashere.util.ViewMoreGridView
+                                               android:id="@+id/grid_view_image_text"
+                                               android:layout_width="match_parent"
+                                               android:layout_height="match_parent"
+                                               android:numColumns="3"
+                                               android:gravity="center"
+                                               android:horizontalSpacing="2dp"
+                                               android:isScrollContainer="false"
+                                               android:stretchMode="columnWidth"
+                                               android:verticalSpacing="20dp"
+                                               />
+                                               </LinearLayout>
+
+
+                                               </android.support.v4.widget.NestedScrollView>
+
+    </android.support.v4.widget.SwipeRefreshLayout>
+
+</LinearLayout>
+
+

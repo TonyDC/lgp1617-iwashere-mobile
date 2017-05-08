@@ -1,7 +1,6 @@
 package com.teamc.mira.iwashere.domain.model;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.teamc.mira.iwashere.domain.model.util.Resource;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -10,9 +9,7 @@ import java.io.Serializable;
 import java.net.URL;
 import java.util.ArrayList;
 
-public class PoiModel implements Serializable{
-    private String id;
-    private String name;
+public class PoiModel extends BasicModel implements Serializable {
     private String description;
     private String address;
     private String longitude;
@@ -21,14 +18,16 @@ public class PoiModel implements Serializable{
     private int ratingCount;
     private float userRating;
 
-    private ArrayList<URL> photos = new ArrayList<>();
+    private ArrayList<Resource> photos = new ArrayList<>();
     private ArrayList<ContentModel> content = new ArrayList<>();
 
     private ArrayList<PoiModel> relatedPois = new ArrayList<>();
 
     private boolean reminder;
 
-    public PoiModel() {}
+    public PoiModel() {
+        super();
+    }
 
     public PoiModel(String id,
                     String name,
@@ -36,11 +35,10 @@ public class PoiModel implements Serializable{
                     String address,
                     String longitude,
                     String latitude,
-                    ArrayList<URL> photos,
+                    ArrayList<Resource> photos,
                     ArrayList<ContentModel> content,
                     ArrayList<PoiModel> relatedContent) {
-        this.id = id;
-        this.name = name;
+        super(id, name);
         this.description = description;
         this.address = address;
         this.longitude = longitude;
@@ -51,12 +49,21 @@ public class PoiModel implements Serializable{
     }
 
     public PoiModel(JSONObject poi) throws JSONException {
-        this.id = poi.getString("poi_id");
-        this.name = poi.getString("name");
-        this.description = poi.getString("description");
-        this.address = poi.getString("address");
-        this.longitude = poi.getString("longitude");
-        this.latitude = poi.getString("latitude");
+        if(poi.has("poiId")) this.id = poi.getString("poiId");
+        if(poi.has("name")) this.name = poi.getString("name");
+        if(poi.has("description")) this.description = poi.getString("description");
+        if(poi.has("address")) this.address = poi.getString("address");
+        if(poi.has("longitude")) this.longitude = poi.getString("longitude");
+        if(poi.has("latitude")) this.latitude = poi.getString("latitude");
+    }
+
+    public PoiModel(String id, String name, String description, String address, String longitude, String latitude) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.address = address;
+        this.longitude = longitude;
+        this.latitude = latitude;
     }
 
     public String getId() {
@@ -107,11 +114,11 @@ public class PoiModel implements Serializable{
         this.latitude = latitude;
     }
 
-    public ArrayList<URL> getPhotos() {
+    public ArrayList<Resource> getPhotos() {
         return photos;
     }
 
-    public void setPhotos(ArrayList<URL> photos) {
+    public void setPhotos(ArrayList<Resource> photos) {
         this.photos = photos;
     }
 
