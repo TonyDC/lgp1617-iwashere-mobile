@@ -7,6 +7,8 @@
     <color name="windowBackground">#FFFFFF</color>
     <color name="textColorPrimary">#000000</color>
     <color name="textColorSecundary">#FFFFFF</color>
+    <color name="colorStartButton">#E5402A</color>
+    <color name="colorEndButton">#AF2A18</color>
     C5CAE9
     <color name="bg_login">#3F51B5</color>
     <color name="bg_register">#2e3237</color>
