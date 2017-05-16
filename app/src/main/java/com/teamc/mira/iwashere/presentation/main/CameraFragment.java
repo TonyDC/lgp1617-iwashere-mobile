@@ -22,19 +22,7 @@ import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.teamc.mira.iwashere.R;
-import com.teamc.mira.iwashere.data.source.remote.PoiRepositoryImpl;
-import com.teamc.mira.iwashere.data.source.remote.UserRepositoryImpl;
-import com.teamc.mira.iwashere.domain.executor.Executor;
-import com.teamc.mira.iwashere.domain.executor.impl.ThreadExecutor;
-import com.teamc.mira.iwashere.domain.interactors.AuthInteractor;
-import com.teamc.mira.iwashere.domain.interactors.PoiMapInteractor;
-import com.teamc.mira.iwashere.domain.interactors.impl.PoiMapInteractorImpl;
-import com.teamc.mira.iwashere.domain.interactors.impl.SignoutInteractorImpl;
-import com.teamc.mira.iwashere.domain.model.PoiModel;
-import com.teamc.mira.iwashere.domain.repository.PoiRepository;
-import com.teamc.mira.iwashere.domain.repository.Repository;
-import com.teamc.mira.iwashere.domain.repository.UserRepository;
-import com.teamc.mira.iwashere.presentation.auth.AuthenticateActivity;
+
 import com.teamc.mira.iwashere.presentation.camera.CameraInit;
 
 
