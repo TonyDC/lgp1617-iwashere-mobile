@@ -12,8 +12,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.util.Log;
-import android.view.Display;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -21,8 +19,17 @@ import android.widget.ImageView;
 import android.widget.Toast;
 import android.widget.VideoView;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.teamc.mira.iwashere.R;
+import com.teamc.mira.iwashere.data.source.remote.impl.PostRepositoryImpl;
+import com.teamc.mira.iwashere.domain.executor.Executor;
+import com.teamc.mira.iwashere.domain.executor.MainThread;
+import com.teamc.mira.iwashere.domain.executor.impl.ThreadExecutor;
+import com.teamc.mira.iwashere.domain.interactors.PostInteractor;
+import com.teamc.mira.iwashere.domain.model.PostModel;
+import com.teamc.mira.iwashere.domain.repository.remote.PostRepository;
 import com.teamc.mira.iwashere.presentation.main.MainActivity;
+import com.teamc.mira.iwashere.threading.MainThreadImpl;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -31,16 +38,19 @@ import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import static android.widget.Toast.LENGTH_SHORT;
+
 public class CameraInit extends Activity {
     private static final int CAMERA_REQUEST = 1888;
     private static final int REQUEST_VIDEO_CAPTURE = 1;
     private static final int RESULT_LOAD_IMAGE = 1;
 
-
+    private PostModel post;
+    FirebaseAuth auth;
     private ImageView imageView;
     private VideoView videoView;
     private Button postButton;
-    private Uri imageToUploadUri;
+    private Uri resourceToUploadUri;
     private EditText description_text, poi_text;
     String key = "";
 
@@ -55,6 +65,7 @@ public class CameraInit extends Activity {
         if(b != null)
             key = b.getString("key");
 
+        auth = FirebaseAuth.getInstance();
 
         imageView = (ImageView) this.findViewById(R.id.picturedisplay);
         videoView = (VideoView) this.findViewById(R.id.videodisplay);
@@ -64,13 +75,6 @@ public class CameraInit extends Activity {
 
         callCamera();
 
-        postButton.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(CameraInit.this, key, Toast.LENGTH_SHORT).show();
-            }
-        });
     }
 
     public void callCamera(){
@@ -90,14 +94,14 @@ public class CameraInit extends Activity {
             cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
             File f = new File(Environment.getExternalStorageDirectory(), imageFileName + ".jpg");
             cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(f));
-            imageToUploadUri = Uri.fromFile(f);
+            resourceToUploadUri = Uri.fromFile(f);
             startActivityForResult(cameraIntent, CAMERA_REQUEST);
         }
         else if(key.equals("video")) {
             cameraIntent = new Intent(android.provider.MediaStore.ACTION_VIDEO_CAPTURE);
             File f = new File(Environment.getExternalStorageDirectory(), imageFileName + ".mp4");
             cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(f));
-            imageToUploadUri = Uri.fromFile(f);
+            resourceToUploadUri = Uri.fromFile(f);
             startActivityForResult(cameraIntent, REQUEST_VIDEO_CAPTURE);
         }
         else if(key.equals("gallery")) {
@@ -123,16 +127,13 @@ public class CameraInit extends Activity {
             finish();}
 
         if (requestCode == CAMERA_REQUEST && resultCode == Activity.RESULT_OK) {
-            Bitmap photo = getBitmap(imageToUploadUri);
+            Bitmap photo = getBitmap(resourceToUploadUri);
             videoView.setVisibility(View.GONE);
             imageView.setImageBitmap(photo);
-
-
-
         }
         if (requestCode == REQUEST_VIDEO_CAPTURE && resultCode == RESULT_OK) {
             imageView.setVisibility(View.GONE);
-            videoView.setVideoURI(imageToUploadUri);
+            videoView.setVideoURI(resourceToUploadUri);
             videoView.setZOrderOnTop(true);
             videoView.start();
         }
@@ -197,6 +198,37 @@ public class CameraInit extends Activity {
         int nh = (int) ( myBitmap.getHeight() * (512.0 / myBitmap.getWidth()) );
         Bitmap scaled = Bitmap.createScaledBitmap(myBitmap, 512, nh, true);
         return scaled;
+    }
+
+    public void onClick(View v) {
+
+        int i = v.getId();
+
+        if(i == R.id.postBtn){
+            Toast.makeText(CameraInit.this, key, Toast.LENGTH_SHORT).show();
+
+            MainThread mainThread = MainThreadImpl.getInstance();
+            Executor executor = ThreadExecutor.getInstance();
+            PostRepository postRepository = new PostRepositoryImpl(getApplicationContext());
+            PostInteractor.CallBack callback = new PostInteractor.CallBack() {
+
+                @Override
+                public void onNetworkFail() {
+                    Toast.makeText(getApplicationContext(), R.string.error_connection, LENGTH_SHORT).show();
+                }
+
+                @Override
+                public void onError(String code, String message) {
+                    Toast.makeText(getApplicationContext(), R.string.error_request, LENGTH_SHORT).show();
+                }
+
+                @Override
+                public void onSuccess(PostModel newPost) {
+                }
+            };
+
+        }
+
     }
 
 }

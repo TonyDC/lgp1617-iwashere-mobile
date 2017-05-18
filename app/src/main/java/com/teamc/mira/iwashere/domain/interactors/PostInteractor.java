@@ -1,20 +1,22 @@
 package com.teamc.mira.iwashere.domain.interactors;
 
-
 import com.teamc.mira.iwashere.domain.interactors.base.Interactor;
-import com.teamc.mira.iwashere.domain.model.PoiModel;
+import com.teamc.mira.iwashere.domain.model.PostModel;
 
 public interface PostInteractor extends Interactor {
 
-    interface Callback {
+    interface CallBack {
+
         void onNetworkFail();
 
         void onError(String code, String message);
 
-        void onSuccess(PoiModel poi, boolean moreResults);
+        void onSuccess(PostModel poi);
     }
 
-    void notifyError(final String code, final String message);
+    void notifyError(String code, String message);
 
-    void notifySuccess();
+    void notifyError(String code);
+
+    void notifySuccess(PostModel poi);
 }
