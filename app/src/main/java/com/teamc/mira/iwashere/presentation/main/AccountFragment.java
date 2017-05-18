@@ -29,7 +29,7 @@ import com.teamc.mira.iwashere.presentation.misc.AboutActivity;
 import com.teamc.mira.iwashere.threading.MainThreadImpl;
 
 
-class AccountFragment extends Fragment implements View.OnClickListener{
+public class AccountFragment extends Fragment implements View.OnClickListener{
 
 
     View v;
