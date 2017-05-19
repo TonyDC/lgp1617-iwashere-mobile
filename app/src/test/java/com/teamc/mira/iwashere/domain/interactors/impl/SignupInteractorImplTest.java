@@ -1,18 +1,11 @@
 package com.teamc.mira.iwashere.domain.interactors.impl;
 
-import android.content.Context;
-
-import com.teamc.mira.iwashere.domain.executor.Executor;
-import com.teamc.mira.iwashere.domain.executor.MainThread;
 import com.teamc.mira.iwashere.domain.interactors.AuthInteractor;
 import com.teamc.mira.iwashere.domain.repository.UserRepository;
-import com.teamc.mira.iwashere.threading.TestMainThread;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 
 import static org.mockito.Mockito.when;
 
@@ -29,7 +22,7 @@ public class SignupInteractorImplTest extends InteractorTest {
     @Test
     public void testOnSuccess() throws Exception {
 
-        when(mUserRepository.signup(email, username, password, confirmPassword))
+        when(mUserRepository.signUp(email, username, password, confirmPassword))
                 .thenReturn(true);
 
 
@@ -42,7 +35,7 @@ public class SignupInteractorImplTest extends InteractorTest {
         );
         interactor.run();
 
-        Mockito.verify(mUserRepository).signup(email,username,password,confirmPassword);
+        Mockito.verify(mUserRepository).signUp(email,username,password,confirmPassword);
         Mockito.verifyNoMoreInteractions(mUserRepository);
         Mockito.verify(mMockedCallback).onSuccess();
     }

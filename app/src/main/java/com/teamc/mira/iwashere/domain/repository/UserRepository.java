@@ -7,9 +7,9 @@ public interface UserRepository {
 
     boolean isValidUsername(String username);
 
-    boolean signup(String email, String username, String pswd, String confPswd) throws RemoteDataException;
+    boolean signUp(String email, String username, String pswd, String confPswd) throws RemoteDataException;
 
-    boolean signup(String userId) throws RemoteDataException;
+    boolean signUp(String userId) throws RemoteDataException;
 
     boolean signin(String email, String pswd);
 

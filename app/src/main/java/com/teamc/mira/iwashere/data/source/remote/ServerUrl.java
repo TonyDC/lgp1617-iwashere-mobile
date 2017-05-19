@@ -19,7 +19,7 @@ public class ServerUrl {
 
     static final String USER = "/user";
     static final String UNAUTH = "/unauth";
-    static final String REGISTER = "register";
+    static final String REGISTER = "/register";
     static final String REGISTER_BY_PROVIDER = "/register-by-provider";
 
     static final String POI = "/poi";

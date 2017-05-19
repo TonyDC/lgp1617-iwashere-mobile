@@ -20,6 +20,7 @@ import com.teamc.mira.iwashere.domain.executor.impl.ThreadExecutor;
 import com.teamc.mira.iwashere.domain.interactors.AuthInteractor;
 import com.teamc.mira.iwashere.domain.interactors.impl.SignupInteractorImpl;
 import com.teamc.mira.iwashere.domain.repository.UserRepository;
+import com.teamc.mira.iwashere.presentation.main.MainActivity;
 import com.teamc.mira.iwashere.threading.MainThreadImpl;
 
 /**
@@ -47,7 +48,7 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
         auth = FirebaseAuth.getInstance();
 
         inputEmail = (EditText) findViewById(R.id.email);
-        inputUsername = (EditText) findViewById(R.id.confirm_password);
+        inputUsername = (EditText) findViewById(R.id.username);
         inputPassword = (EditText) findViewById(R.id.password);
         inputConfirmPassword = (EditText) findViewById(R.id.confirm_password);
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
@@ -111,12 +112,14 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
                     Toast.makeText(getApplicationContext(), "Success", Toast.LENGTH_SHORT).show();
                     Log.d(TAG, "Register Successful");
                     progressBar.setVisibility(View.GONE);
+                    startActivity(new Intent(SignupActivity.this, MainActivity.class));
+                    finish();
                 }
 
                 @Override
                 public void onFail(String code, String message) {
                     Toast.makeText(getApplicationContext(), "Failed to sign up.", Toast.LENGTH_SHORT).show();
-                    Log.d(TAG, "Failed to signup: " + message);
+                    Log.d(TAG, "Failed to signUp: " + message);
                     progressBar.setVisibility(View.GONE);
                 }
             };

@@ -48,9 +48,9 @@ public class SignupInteractorImpl extends AbstractInteractor implements AuthInte
         boolean result = false;
         try {
             if (!userId.isEmpty()) {
-                result = repository.signup(userId);
+                result = repository.signUp(userId);
             } else {
-                result = repository.signup(email, username, pswd, confPswd);
+                result = repository.signUp(email, username, pswd, confPswd);
             }
         } catch (RemoteDataException e) {
             notifyError(e.getCode(),e.getErrorMessage());

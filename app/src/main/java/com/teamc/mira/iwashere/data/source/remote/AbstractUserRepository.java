@@ -22,7 +22,7 @@ public abstract class AbstractUserRepository extends AbstractRepository implemen
     protected HashMap<String, String> getRegisterParamsHashMap(String email, String username, String password, String confirmPassword) {
         HashMap<String, String> params = new HashMap<String, String>();
         params.put("email",email);
-        params.put("name", username);
+        params.put("username", username);
         params.put("password", password);
         params.put("confirmPassword", confirmPassword);
         return params;
