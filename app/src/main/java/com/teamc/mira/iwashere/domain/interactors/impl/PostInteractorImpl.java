@@ -36,7 +36,8 @@ public class PostInteractorImpl extends AbstractInteractor implements PostIntera
                               String userId,
                               String poiId,
                               String description,
-                              Resource resource) {
+                              Resource resource,
+                              ArrayList<String> tags) {
         super(threadExecutor, mainThread);
 
         this.callBack = callBack;

@@ -26,7 +26,9 @@ import com.teamc.mira.iwashere.domain.executor.Executor;
 import com.teamc.mira.iwashere.domain.executor.MainThread;
 import com.teamc.mira.iwashere.domain.executor.impl.ThreadExecutor;
 import com.teamc.mira.iwashere.domain.interactors.PostInteractor;
+import com.teamc.mira.iwashere.domain.interactors.impl.PostInteractorImpl;
 import com.teamc.mira.iwashere.domain.model.PostModel;
+import com.teamc.mira.iwashere.domain.model.util.Resource;
 import com.teamc.mira.iwashere.domain.repository.remote.PostRepository;
 import com.teamc.mira.iwashere.presentation.main.MainActivity;
 import com.teamc.mira.iwashere.threading.MainThreadImpl;
@@ -36,6 +38,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 import static android.widget.Toast.LENGTH_SHORT;
@@ -53,6 +56,8 @@ public class CameraInit extends Activity {
     private Uri resourceToUploadUri;
     private EditText description_text, poi_text;
     String key = "";
+    ArrayList<String> tags = null;
+    String poiId = null;
 
 
 
@@ -226,6 +231,21 @@ public class CameraInit extends Activity {
                 public void onSuccess(PostModel newPost) {
                 }
             };
+
+            PostInteractor postInteractor = new PostInteractorImpl(
+                    executor,
+                    mainThread,
+                    callback,
+                    postRepository,
+                    post,
+                    auth.getCurrentUser().getUid(),
+                    poiId,
+                    description_text.getText().toString(),
+                    new Resource(resourceToUploadUri.toString()),
+                    tags
+                    );
+
+            postInteractor.execute();
 
         }
 
