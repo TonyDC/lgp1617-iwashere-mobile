@@ -80,6 +80,13 @@ public class CameraInit extends Activity {
 
         callCamera();
 
+        postButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendPost();
+            }
+        });
+
     }
 
     public void callCamera(){
@@ -120,8 +127,6 @@ public class CameraInit extends Activity {
             Toast.makeText(CameraInit.this, key, Toast.LENGTH_SHORT).show();
             return;
         }
-
-
 
     }
 
@@ -205,55 +210,42 @@ public class CameraInit extends Activity {
         return scaled;
     }
 
-    public void onClick(View v) {
 
-        int i = v.getId();
+    public void sendPost(){ Toast.makeText(CameraInit.this, key, Toast.LENGTH_SHORT).show();
 
-        if(i == R.id.postBtn){
-            Toast.makeText(CameraInit.this, key, Toast.LENGTH_SHORT).show();
+        MainThread mainThread = MainThreadImpl.getInstance();
+        Executor executor = ThreadExecutor.getInstance();
+        PostRepository postRepository = new PostRepositoryImpl(getApplicationContext());
+        PostInteractor.CallBack callback = new PostInteractor.CallBack() {
 
-            MainThread mainThread = MainThreadImpl.getInstance();
-            Executor executor = ThreadExecutor.getInstance();
-            PostRepository postRepository = new PostRepositoryImpl(getApplicationContext());
-            PostInteractor.CallBack callback = new PostInteractor.CallBack() {
+            @Override
+            public void onNetworkFail() {
+                Toast.makeText(getApplicationContext(), R.string.error_connection, LENGTH_SHORT).show();
+            }
 
-                @Override
-                public void onNetworkFail() {
-                    Toast.makeText(getApplicationContext(), R.string.error_connection, LENGTH_SHORT).show();
-                }
+            @Override
+            public void onError(String code, String message) {
+                Toast.makeText(getApplicationContext(), R.string.error_request, LENGTH_SHORT).show();
+            }
 
-                @Override
-                public void onError(String code, String message) {
-                    Toast.makeText(getApplicationContext(), R.string.error_request, LENGTH_SHORT).show();
-                }
+            @Override
+            public void onSuccess(PostModel newPost) {
+                System.out.println("POST DONE");
+            }
+        };
 
-                @Override
-                public void onSuccess(PostModel newPost) {
-                    post.setDescription(newPost.getDescription());
-                    post.setResource(newPost.getResource());
-                    post.setUserId(newPost.getUserId());
-                    post.setDescription(newPost.getPoiId());
-                    post.setTags(newPost.getTags());
-                }
-            };
+        PostInteractor postInteractor = new PostInteractorImpl(
+                executor,
+                mainThread,
+                callback,
+                postRepository,
+                post,
+                poiId,
+                description_text.getText().toString(),
+                tags,
+                new Resource(resourceToUploadUri.toString())
+        );
 
-            PostInteractor postInteractor = new PostInteractorImpl(
-                    executor,
-                    mainThread,
-                    callback,
-                    postRepository,
-                    post,
-                    auth.getCurrentUser().getUid(),
-                    poiId,
-                    description_text.getText().toString(),
-                    tags,
-                    new Resource(resourceToUploadUri.toString())
-                    );
-
-            postInteractor.execute();
-
-        }
-
-    }
+        postInteractor.execute();}
 
 }

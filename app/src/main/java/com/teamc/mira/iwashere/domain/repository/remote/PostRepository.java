@@ -16,5 +16,5 @@ public interface PostRepository {
 
     boolean fetch(String poiId, int offset, int limit);
 
-    boolean post(String userId, String poiId, String description, ArrayList<String> tags, Resource resource);
+    boolean post(String poiId, String description, ArrayList<String> tags, Resource resource);
 }

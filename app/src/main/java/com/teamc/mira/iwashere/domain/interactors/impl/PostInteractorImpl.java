@@ -21,7 +21,6 @@ public class PostInteractorImpl extends AbstractInteractor implements PostIntera
     PostRepository repository;
     CallBack callBack;
     String poiId;
-    String userId;
     String description;
     ArrayList<String> tags;
     PostModel post;
@@ -33,7 +32,6 @@ public class PostInteractorImpl extends AbstractInteractor implements PostIntera
                               CallBack callBack,
                               PostRepository postRepository,
                               PostModel post,
-                              String userId,
                               String poiId,
                               String description,
                               ArrayList<String> tags,
@@ -43,7 +41,6 @@ public class PostInteractorImpl extends AbstractInteractor implements PostIntera
         this.callBack = callBack;
         repository = postRepository;
         this.poiId = poiId;
-        this.userId = userId;
         this.description = description;
         this.resource = resource;
         this.tags = tags;
@@ -81,7 +78,7 @@ public class PostInteractorImpl extends AbstractInteractor implements PostIntera
 
     @Override
     public void run() {
-        repository.post(userId, poiId, description, tags, resource);
+        repository.post(poiId, description, tags, resource);
         notifySuccess(post);
     }
 }

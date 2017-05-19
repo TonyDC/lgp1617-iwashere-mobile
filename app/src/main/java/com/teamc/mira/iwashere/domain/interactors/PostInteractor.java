@@ -18,5 +18,5 @@ public interface PostInteractor extends Interactor {
 
     void notifyError(String code);
 
-    void notifySuccess(PostModel poi);
+    void notifySuccess(PostModel post);
 }
