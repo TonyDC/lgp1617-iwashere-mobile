@@ -103,7 +103,7 @@ public class MapFragment extends Fragment implements
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        mRootView = inflater.inflate(R.layout.fragment_map, container, false);
+        mRootView = inflater.inflate(R.layout.fragment_main_map, container, false);
 
         Toolbar myToolbar = (Toolbar) mRootView.findViewById(R.id.toolbar);
         ((AppCompatActivity) getActivity()).setSupportActionBar(myToolbar);

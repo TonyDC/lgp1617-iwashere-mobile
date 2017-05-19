@@ -38,6 +38,7 @@ import com.teamc.mira.iwashere.domain.model.ContentModel;
 import com.teamc.mira.iwashere.domain.model.PoiModel;
 import com.teamc.mira.iwashere.domain.model.util.Resource;
 import com.teamc.mira.iwashere.domain.repository.remote.PoiRepository;
+import com.teamc.mira.iwashere.presentation.misc.ViewMore;
 import com.teamc.mira.iwashere.threading.MainThreadImpl;
 import com.teamc.mira.iwashere.util.ExpandableHeightGridView;
 import com.teamc.mira.iwashere.util.ViewMoreGridView;
@@ -50,7 +51,6 @@ import static android.widget.Toast.LENGTH_SHORT;
 public class PoiDetailActivity extends AppCompatActivity {
 
     public static final String TAG = PoiDetailActivity.class.getSimpleName();
-    public static final int MAX_LINES = 8;
     public static final int CONTENT_LIMIT = 8;
     public static final String POI = "poi";
 
@@ -69,6 +69,7 @@ public class PoiDetailActivity extends AppCompatActivity {
     private ArrayList<String> contentIdList;
     private ArrayList<Resource> contentResourceList;
     private SwipeRefreshLayout mSwipeContainer;
+    private ViewMore mDescriptionViewMore;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -77,11 +78,13 @@ public class PoiDetailActivity extends AppCompatActivity {
 
         auth = FirebaseAuth.getInstance();
 
+        View viewDescriptionViewMore = (View) findViewById(R.id.descriptionBox);
+        mDescriptionViewMore = new ViewMore(viewDescriptionViewMore, getApplicationContext());
+        mDescriptionViewMore.apply();
+
         setToolBar();
         poi = (PoiModel) getIntent().getSerializableExtra(POI);
-        Log.d(TAG, poi.getName() + " " + poi.getId() + " " + poi.getAddress());
         setPoiInfo();
-        setDynamicDescriptionSize();
 
         // GridView size changes with number of components
         ExpandableHeightGridView mAppsGrid = (ExpandableHeightGridView) findViewById(R.id.grid_view_image_text);
@@ -149,26 +152,7 @@ public class PoiDetailActivity extends AppCompatActivity {
         fetchPoiInfo(poi.getId());
     }
 
-    private void setDynamicDescriptionSize() {
-        final TextView descriptionText = (TextView) findViewById(R.id.description);
-        descriptionText.setMaxLines(MAX_LINES);
 
-        final TextView readMore = (TextView) findViewById(R.id.moreInformation);
-
-        readMore.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (descriptionText.getMaxLines() != Integer.MAX_VALUE) {
-                    descriptionText.setMaxLines(Integer.MAX_VALUE);
-                    readMore.setText(Html.fromHtml(getString(R.string.less_info)));
-
-                } else {
-                    descriptionText.setMaxLines(MAX_LINES);
-                    readMore.setText(Html.fromHtml(getString(R.string.more_info)));
-                }
-            }
-        });
-    }
 
     private void setPoiInfo() {
 
@@ -337,8 +321,7 @@ public class PoiDetailActivity extends AppCompatActivity {
      * Create POI description field with the description associated to the POI model.
      */
     private void setPoiDescriptionText(PoiModel poi) {
-        TextView textDescription = (TextView) findViewById(R.id.description);
-        textDescription.setText(poi.getDescription());
+        mDescriptionViewMore.setText(poi.getDescription());
     }
 
     /**
