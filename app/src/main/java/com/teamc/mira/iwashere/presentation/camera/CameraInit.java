@@ -229,6 +229,11 @@ public class CameraInit extends Activity {
 
                 @Override
                 public void onSuccess(PostModel newPost) {
+                    post.setDescription(newPost.getDescription());
+                    post.setResource(newPost.getResource());
+                    post.setUserId(newPost.getUserId());
+                    post.setDescription(newPost.getPoiId());
+                    post.setTags(newPost.getTags());
                 }
             };
 
@@ -241,8 +246,8 @@ public class CameraInit extends Activity {
                     auth.getCurrentUser().getUid(),
                     poiId,
                     description_text.getText().toString(),
-                    new Resource(resourceToUploadUri.toString()),
-                    tags
+                    tags,
+                    new Resource(resourceToUploadUri.toString())
                     );
 
             postInteractor.execute();

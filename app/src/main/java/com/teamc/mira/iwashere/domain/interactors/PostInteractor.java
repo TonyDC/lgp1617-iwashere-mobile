@@ -11,7 +11,7 @@ public interface PostInteractor extends Interactor {
 
         void onError(String code, String message);
 
-        void onSuccess(PostModel poi);
+        void onSuccess(PostModel post);
     }
 
     void notifyError(String code, String message);

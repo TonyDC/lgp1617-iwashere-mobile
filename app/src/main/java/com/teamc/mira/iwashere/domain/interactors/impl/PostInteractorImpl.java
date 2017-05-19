@@ -36,8 +36,8 @@ public class PostInteractorImpl extends AbstractInteractor implements PostIntera
                               String userId,
                               String poiId,
                               String description,
-                              Resource resource,
-                              ArrayList<String> tags) {
+                              ArrayList<String> tags,
+                              Resource resource) {
         super(threadExecutor, mainThread);
 
         this.callBack = callBack;
@@ -46,6 +46,7 @@ public class PostInteractorImpl extends AbstractInteractor implements PostIntera
         this.userId = userId;
         this.description = description;
         this.resource = resource;
+        this.tags = tags;
     }
 
     @Override

@@ -3,6 +3,7 @@ package com.teamc.mira.iwashere.domain.model;
 import com.teamc.mira.iwashere.domain.model.util.Resource;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 /**
  * Created by Estrada on 17/05/2017.
@@ -14,6 +15,7 @@ public class PostModel extends BasicModel implements Serializable {
     Resource resource;
     String poiId;
     String userId;
+    ArrayList<String> tags;
 
     public PostModel(){
         super();
@@ -25,13 +27,15 @@ public class PostModel extends BasicModel implements Serializable {
             String userId,
             String description,
             String poiId,
-            Resource resource
+            Resource resource,
+            ArrayList<String> tags
     ){
         super(id, name);
         this.userId = userId;
         this.description = description;
         this.resource = resource;
         this.poiId = poiId;
+        this.tags = tags;
 
     }
 
@@ -66,5 +70,13 @@ public class PostModel extends BasicModel implements Serializable {
 
     public void setUserId(String userId){
         this.userId = userId;
+    }
+
+    public ArrayList<String> getTags(){
+        return this.tags;
+    }
+
+    public void setTags(ArrayList<String> tags){
+        this.tags = tags;
     }
 }
