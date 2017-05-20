@@ -10,10 +10,11 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.RequestFuture;
 import com.android.volley.toolbox.StringRequest;
 import com.google.firebase.auth.FirebaseAuth;
+import com.teamc.mira.iwashere.domain.repository.remote.UserRepository;
+import com.teamc.mira.iwashere.data.source.remote.base.ServerUrl;
 import com.teamc.mira.iwashere.data.source.remote.exceptions.BasicRemoteException;
 import com.teamc.mira.iwashere.data.source.remote.exceptions.RemoteDataException;
 import com.teamc.mira.iwashere.domain.model.UserModel;
-import com.teamc.mira.iwashere.domain.repository.UserRepository;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -23,8 +24,8 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 import static com.android.volley.Request.Method.POST;
-import static com.teamc.mira.iwashere.data.source.remote.ServerUrl.TIMEOUT;
-import static com.teamc.mira.iwashere.data.source.remote.ServerUrl.TIMEOUT_TIME_UNIT;
+import static com.teamc.mira.iwashere.data.source.remote.base.ServerUrl.TIMEOUT;
+import static com.teamc.mira.iwashere.data.source.remote.base.ServerUrl.TIMEOUT_TIME_UNIT;
 
 public class UserRepositoryImpl extends AbstractUserRepository implements UserRepository {
 
@@ -172,7 +173,7 @@ public class UserRepositoryImpl extends AbstractUserRepository implements UserRe
         throw new UnsupportedOperationException();
     }
 
-    private void handleError(Exception e) throws RemoteDataException {
+    protected void handleError(Exception e) throws RemoteDataException {
         // check to see if the throwable is an instance of the volley error
         if (e.getCause() instanceof VolleyError) {
             // grab the volley error from the throwable and cast it back

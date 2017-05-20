@@ -4,6 +4,6 @@ import android.content.Context;
 
 import com.android.volley.RequestQueue;
 
-interface MySingleton {
+public interface MySingleton {
     RequestQueue getRequestQueue();
 }

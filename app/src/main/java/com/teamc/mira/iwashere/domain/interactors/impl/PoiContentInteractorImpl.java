@@ -4,10 +4,9 @@ import com.teamc.mira.iwashere.data.source.remote.exceptions.RemoteDataException
 import com.teamc.mira.iwashere.domain.executor.Executor;
 import com.teamc.mira.iwashere.domain.executor.MainThread;
 import com.teamc.mira.iwashere.domain.interactors.PoiContentInteractor;
-import com.teamc.mira.iwashere.domain.interactors.PoiDetailInteractor;
 import com.teamc.mira.iwashere.domain.interactors.base.AbstractInteractor;
 import com.teamc.mira.iwashere.domain.model.PoiModel;
-import com.teamc.mira.iwashere.domain.repository.PoiRepository;
+import com.teamc.mira.iwashere.domain.repository.remote.PoiRepository;
 
 public class PoiContentInteractorImpl extends AbstractInteractor implements PoiContentInteractor {
     CallBack callBack;

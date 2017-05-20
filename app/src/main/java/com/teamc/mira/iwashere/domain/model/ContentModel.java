@@ -1,5 +1,7 @@
 package com.teamc.mira.iwashere.domain.model;
 
+import com.teamc.mira.iwashere.domain.model.util.Resource;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -15,11 +17,11 @@ public class ContentModel {
     private String description;
     private boolean likedByUser;
     private ArrayList<String> tags;
-    private URL url;
+    private Resource resource;
 
-    public ContentModel(String id, URL url) {
+    public ContentModel(String id, String url) {
         this.id = id;
-        this.url = url;
+        this.resource = new Resource(url);
     }
 
     public ContentModel(JSONObject content) throws JSONException {
@@ -43,8 +45,10 @@ public class ContentModel {
         // optional fields
         try {
             this.type = content.getString("type");
-            this.url = new URL(content.getString("url"));
-        } catch (MalformedURLException | JSONException e) { }
+            this.resource = new Resource(content.getString("url"));
+        } catch (JSONException e) {
+            e.getCause();
+        }
     }
 
     public String getId() {
@@ -95,11 +99,11 @@ public class ContentModel {
         this.tags = tags;
     }
 
-    public URL getUrl() {
-        return url;
+    public Resource getResource() {
+        return resource;
     }
 
-    public void setUrl(URL url) {
-        this.url = url;
+    public void setResource(Resource resource) {
+        this.resource = resource;
     }
 }

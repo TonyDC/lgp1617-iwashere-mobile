@@ -1,4 +1,4 @@
-package com.teamc.mira.iwashere.data.source.remote;
+package com.teamc.mira.iwashere.data.source.remote.impl;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -8,6 +8,7 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.Volley;
+import com.teamc.mira.iwashere.data.source.remote.MySingleton;
 
 public class MySingletonImpl implements MySingleton {
     private static MySingletonImpl mInstance;

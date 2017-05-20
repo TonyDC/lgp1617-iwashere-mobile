@@ -1,4 +1,4 @@
-package com.teamc.mira.iwashere.domain.repository;
+package com.teamc.mira.iwashere.domain.repository.remote;
 
 import com.teamc.mira.iwashere.data.source.remote.exceptions.RemoteDataException;
 import com.teamc.mira.iwashere.domain.model.UserModel;
