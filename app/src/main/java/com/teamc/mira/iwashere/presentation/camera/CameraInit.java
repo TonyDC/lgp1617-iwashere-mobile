@@ -1,12 +1,15 @@
 package com.teamc.mira.iwashere.presentation.camera;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.graphics.Point;
 import android.graphics.Rect;
+import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -46,7 +49,7 @@ import static android.widget.Toast.LENGTH_SHORT;
 public class CameraInit extends Activity {
     private static final int CAMERA_REQUEST = 1888;
     private static final int REQUEST_VIDEO_CAPTURE = 1;
-    private static final int RESULT_LOAD_IMAGE = 1;
+    private static final int RESULT_LOAD_IMAGE = 2;
 
     private PostModel post;
     FirebaseAuth auth;
@@ -137,7 +140,37 @@ public class CameraInit extends Activity {
             finish();}
 
         if (requestCode == CAMERA_REQUEST && resultCode == Activity.RESULT_OK) {
+            String filePath = resourceToUploadUri.getPath();
             Bitmap photo = getBitmap(resourceToUploadUri);
+            try {
+                ExifInterface ei = new ExifInterface(filePath);
+                int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION,
+                        ExifInterface.ORIENTATION_UNDEFINED);
+
+                switch(orientation) {
+
+                    case ExifInterface.ORIENTATION_ROTATE_90:
+                        photo = rotateImage(photo, 90);
+                        break;
+
+                    case ExifInterface.ORIENTATION_ROTATE_180:
+                        photo = rotateImage(photo, 180);
+                        break;
+
+                    case ExifInterface.ORIENTATION_ROTATE_270:
+                        photo =rotateImage(photo, 270);
+                        break;
+
+                    case ExifInterface.ORIENTATION_NORMAL:
+
+                    default:
+                        break;
+                }
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
             videoView.setVisibility(View.GONE);
             imageView.setImageBitmap(photo);
         }
@@ -165,6 +198,13 @@ public class CameraInit extends Activity {
             imageView.setImageBitmap(scaleBitmap(photo));
         }
 
+    }
+    
+    public static Bitmap rotateImage(Bitmap source, float angle) {
+        Matrix matrix = new Matrix();
+        matrix.postRotate(angle);
+        return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(),
+                matrix, true);
     }
 
     private Bitmap getBitmap(Uri uri) {
