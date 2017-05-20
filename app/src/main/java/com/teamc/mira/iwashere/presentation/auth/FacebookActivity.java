@@ -7,7 +7,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.VisibleForTesting;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.View;
 import android.widget.Toast;
 
 import com.facebook.AccessToken;
@@ -23,6 +22,7 @@ import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseUser;
 import com.teamc.mira.iwashere.R;
 import com.teamc.mira.iwashere.data.source.remote.UserRepositoryImpl;
@@ -41,13 +41,9 @@ public class FacebookActivity extends AppCompatActivity {
 
     private static final String TAG = "FacebookLogin";
 
-    // [START declare_auth]
     private FirebaseAuth mAuth;
-    // [END declare_auth]
 
-    // [START declare_auth_listener]
     private FirebaseAuth.AuthStateListener mAuthListener;
-    // [END declare_auth_listener]
 
     private CallbackManager mCallbackManager;
 
@@ -57,12 +53,8 @@ public class FacebookActivity extends AppCompatActivity {
         FacebookSdk.sdkInitialize(getApplicationContext());
         setContentView(R.layout.activity_facebook);
 
-        // [START initialize_auth]
-        // Initialize Firebase Auth
         mAuth = FirebaseAuth.getInstance();
-        // [END initialize_auth]
 
-        // [START auth_state_listener]
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
@@ -76,10 +68,7 @@ public class FacebookActivity extends AppCompatActivity {
                 }
             }
         };
-        // [END auth_state_listener]
 
-        // [START initialize_fblogin]
-        // Initialize Facebook Login button
         mCallbackManager = CallbackManager.Factory.create();
 
         LoginManager loginManager = LoginManager.getInstance();
@@ -88,31 +77,33 @@ public class FacebookActivity extends AppCompatActivity {
             @Override
             public void onSuccess(LoginResult loginResult) {
                 Log.d(TAG, "facebook:onSuccess:" + loginResult);
-                registerUserByProvider(loginResult);
+                handleFacebookAccessToken(loginResult.getAccessToken());
             }
 
             @Override
             public void onCancel() {
                 Log.d(TAG, "facebook:onCancel");
+                Toast.makeText(getApplicationContext(), "Facebook Sign in cancelled.", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(FacebookActivity.this, AuthenticateActivity.class));
+                finish();
             }
 
             @Override
             public void onError(FacebookException error) {
                 Log.d(TAG, "facebook:onError", error);
+                Toast.makeText(getApplicationContext(), "Facebook Sign in error.", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(FacebookActivity.this, AuthenticateActivity.class));
+                finish();
             }
         });
-        // [END initialize_fblogin]
     }
 
-    // [START on_start_add_listener]
     @Override
     public void onStart() {
         super.onStart();
         mAuth.addAuthStateListener(mAuthListener);
     }
-    // [END on_start_add_listener]
 
-    // [START on_stop_remove_listener]
     @Override
     public void onStop() {
         super.onStop();
@@ -120,25 +111,19 @@ public class FacebookActivity extends AppCompatActivity {
             mAuth.removeAuthStateListener(mAuthListener);
         }
     }
-    // [END on_stop_remove_listener]
 
 
-    // [START on_activity_result]
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
         // Pass the activity result back to the Facebook SDK
         mCallbackManager.onActivityResult(requestCode, resultCode, data);
     }
-    // [END on_activity_result]
 
-    // [START auth_with_facebook]
     private void handleFacebookAccessToken(AccessToken token) {
         Log.d(TAG, "handleFacebookAccessToken:" + token);
-        // [START_EXCLUDE silent]
+
         showProgressDialog();
-        // [END_EXCLUDE]
 
         AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
         mAuth.signInWithCredential(credential)
@@ -146,25 +131,26 @@ public class FacebookActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         Log.d(TAG, "signInWithCredential:onComplete:" + task.isSuccessful());
-
-                        // If sign in fails, display a message to the user. If sign in succeeds
-                        // the auth state listener will be notified and logic to handle the
-                        // signed in user can be handled in the listener.
                         if (!task.isSuccessful()) {
+                            try {
+                                throw task.getException();
+                            } catch (FirebaseAuthUserCollisionException e) {
+                                Toast.makeText(FacebookActivity.this, "Authentication failed - email already taken.",
+                                        Toast.LENGTH_SHORT).show();
+                            } catch (Exception e) {
+                                Log.e(TAG, e.getMessage());
+                                Toast.makeText(FacebookActivity.this, "Authentication failed.",
+                                        Toast.LENGTH_SHORT).show();
+                            }
                             Log.w(TAG, "signInWithCredential", task.getException());
-                            Toast.makeText(FacebookActivity.this, "Authentication failed.",
-                                    Toast.LENGTH_SHORT).show();
+                            startActivity(new Intent(FacebookActivity.this, AuthenticateActivity.class));
+                            finish();
+                        } else {
+                            registerUserByProvider();
                         }
-
-                        // [START_EXCLUDE]
-                        hideProgressDialog();
-                        startActivity(new Intent(FacebookActivity.this, MainActivity.class));
-                        finish();
-                        // [END_EXCLUDE]
                     }
                 });
     }
-    // [END auth_with_facebook]
 
     public void signOut() {
         mAuth.signOut();
@@ -190,7 +176,7 @@ public class FacebookActivity extends AppCompatActivity {
         }
     }
 
-    private void registerUserByProvider(final LoginResult loginResult) {
+    private void registerUserByProvider() {
         //create user
         MainThread mainThread = MainThreadImpl.getInstance();
         Executor executor = ThreadExecutor.getInstance();
@@ -199,7 +185,9 @@ public class FacebookActivity extends AppCompatActivity {
             @Override
             public void onSuccess() {
                 Log.d(TAG, "Register-by-provider successful.");
-                handleFacebookAccessToken(loginResult.getAccessToken());
+                hideProgressDialog();
+                startActivity(new Intent(FacebookActivity.this, MainActivity.class));
+                finish();
             }
 
             @Override

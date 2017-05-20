@@ -6,6 +6,7 @@ import android.util.Log;
 import com.android.volley.NetworkResponse;
 import com.android.volley.RequestQueue;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.RequestFuture;
 import com.android.volley.toolbox.StringRequest;
 import com.google.firebase.auth.FirebaseAuth;
@@ -46,22 +47,51 @@ public class UserRepositoryImpl extends AbstractUserRepository implements UserRe
     }
 
     @Override
-    public boolean signUp(String email, String username, String password, String confirmPassword) throws RemoteDataException {
+    public boolean signUp(String email, String username, String password, String confirmPassword) throws RemoteDataException, JSONException {
         RequestQueue queue = mRequestQueue;
 
         final HashMap<String, String> params = getRegisterParamsHashMap(email, username, password, confirmPassword);
 
-        RequestFuture<String> future = RequestFuture.newFuture();
-        StringRequest request = new StringRequest(POST, API_REGISTER_URL, future, future) {
-            @Override
-            protected Map<String, String> getParams() {
-                return params;
-            }
-        };
+        RequestFuture<JSONObject> future = RequestFuture.newFuture();
+        JsonObjectRequest request = new JsonObjectRequest (POST, API_REGISTER_URL, new JSONObject(params), future, future);
 
         queue.add(request);
 
-        return getSignUpByProviderResult(future);
+        return getSignUpResult(future);
+    }
+
+    private boolean getSignUpResult(RequestFuture<JSONObject> future) throws RemoteDataException {
+        try {
+            JSONObject response = future.get(TIMEOUT, TIMEOUT_TIME_UNIT); // this will block
+            Log.d(TAG, String.valueOf(response));
+            future.cancel(true);
+            return response.getBoolean("ok");
+        } catch (InterruptedException | ExecutionException e) {
+            //check to see if the throwable in an instance of the volley error
+            if (e.getCause() instanceof VolleyError) {
+                //grab the volley error from the throwable and cast it back
+                VolleyError volleyError = (VolleyError) e.getCause();
+                //now just grab the network response like normal
+                NetworkResponse networkResponse = volleyError.networkResponse;
+                try {
+                    Log.d(TAG, "raw data: " + new String(networkResponse.data));
+                    JSONObject data = new JSONObject(new String(networkResponse.data));
+                    Log.d(TAG, data.toString());
+
+                    JSONObject error = new JSONObject(data.getString("error"));
+
+                    throw new BasicRemoteException(error.getString("code"), error.getString("message"));
+                } catch (JSONException e1) {
+                    e1.printStackTrace();
+                    throw new BasicRemoteException("unknown-error", "Failed to establish a connection");
+                }
+            }
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new BasicRemoteException("unknown-error", "Failed to establish a connection");
+        }
+        return false;
     }
 
     @Override

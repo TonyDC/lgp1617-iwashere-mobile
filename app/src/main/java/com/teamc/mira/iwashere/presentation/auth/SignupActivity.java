@@ -2,6 +2,7 @@ package com.teamc.mira.iwashere.presentation.auth;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
@@ -10,7 +11,11 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.teamc.mira.iwashere.IWasHereActivity;
 import com.teamc.mira.iwashere.R;
 import com.teamc.mira.iwashere.data.source.remote.UserRepositoryImpl;
@@ -71,9 +76,9 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
     public void onClick(View v) {
         int i = v.getId();
         if (i == R.id.btn_sign_up) {
-            String email = inputEmail.getText().toString().trim();
+            final String email = inputEmail.getText().toString().trim();
             String username = inputUsername.getText().toString().trim();
-            String password = inputPassword.getText().toString().trim();
+            final String password = inputPassword.getText().toString().trim();
             String confirmPassword = inputConfirmPassword.getText().toString().trim();
 
             if (TextUtils.isEmpty(email)) {
@@ -91,7 +96,7 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
                 return;
             }
 
-            if (!TextUtils.equals(password,confirmPassword)) {
+            if (!TextUtils.equals(password, confirmPassword)) {
                 Toast.makeText(getApplicationContext(), "Passwords don't match!", Toast.LENGTH_SHORT).show();
                 return;
             }
@@ -109,16 +114,38 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
             AuthInteractor.Callback callback = new AuthInteractor.Callback() {
                 @Override
                 public void onSuccess() {
-                    Toast.makeText(getApplicationContext(), "Success", Toast.LENGTH_SHORT).show();
                     Log.d(TAG, "Register Successful");
                     progressBar.setVisibility(View.GONE);
-                    startActivity(new Intent(SignupActivity.this, MainActivity.class));
-                    finish();
+
+                    //authenticate user
+                    auth.signInWithEmailAndPassword(email, password).addOnCompleteListener(SignupActivity.this, new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            progressBar.setVisibility(View.GONE);
+                            if (!task.isSuccessful()) {
+                                try {
+                                    throw task.getException();
+                                } catch (FirebaseAuthUserCollisionException e) {
+                                    Toast.makeText(SignupActivity.this, "Authentication failed - email already taken.",
+                                            Toast.LENGTH_SHORT).show();
+                                } catch (Exception e) {
+                                    Log.e(TAG, e.getMessage());
+                                    Toast.makeText(SignupActivity.this, "Authentication failed.",
+                                            Toast.LENGTH_SHORT).show();
+                                }
+                                Log.w(TAG, "signInWithCredential", task.getException());
+                            } else {
+                                Intent intent = new Intent(SignupActivity.this, MainActivity.class);
+                                startActivity(intent);
+                                finish();
+                            }
+                        }
+                    });
                 }
 
                 @Override
                 public void onFail(String code, String message) {
-                    Toast.makeText(getApplicationContext(), "Failed to sign up.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
                     Log.d(TAG, "Failed to signUp: " + message);
                     progressBar.setVisibility(View.GONE);
                 }

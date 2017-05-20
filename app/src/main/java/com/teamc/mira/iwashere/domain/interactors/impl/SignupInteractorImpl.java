@@ -7,12 +7,14 @@ import com.teamc.mira.iwashere.domain.interactors.base.AbstractInteractor;
 import com.teamc.mira.iwashere.domain.interactors.AuthInteractor;
 import com.teamc.mira.iwashere.domain.repository.UserRepository;
 
+import org.json.JSONException;
+
 public class SignupInteractorImpl extends AbstractInteractor implements AuthInteractor {
 
     MainThread mainThread;
     AuthInteractor.Callback callback;
     UserRepository repository;
-    private String userId ="";
+    private String userId = "";
     private String email = "";
     private String username = "";
     private String pswd = "";
@@ -53,18 +55,18 @@ public class SignupInteractorImpl extends AbstractInteractor implements AuthInte
                 result = repository.signUp(email, username, pswd, confPswd);
             }
         } catch (RemoteDataException e) {
-            notifyError(e.getCode(),e.getErrorMessage());
-        }
-
-        // check if we have failed to retrieve our message
-        if (!result) {
-            // notify the failure on the main thread
-            notifyError("network-fail", "Failed to establish a connection");
+            notifyError(e.getCode(), e.getErrorMessage());
+            return;
+        } catch (JSONException e) {
+            notifyError("JSONException", e.getMessage());
             return;
         }
-
         // we have retrieved our message, notify the UI on the main thread
-        notifySuccess();
+        if (!result) {
+            notifyError("network-fail", "Failed to establish a connection");
+        } else {
+            notifySuccess();
+        }
     }
 
     @Override

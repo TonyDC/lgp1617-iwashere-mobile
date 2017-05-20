@@ -9,7 +9,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.facebook.login.LoginResult;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -124,7 +123,9 @@ public class GoogleActivity extends AppCompatActivity implements
             } else {
                 // Google Sign In failed, update UI appropriately
                 Log.d(TAG, "onActivityResult:" + result.isSuccess());
-                Toast.makeText(this, "Google Sign in error.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Google Sign in cancelled.", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(GoogleActivity.this, AuthenticateActivity.class));
+                finish();
             }
         }
     }
@@ -133,9 +134,8 @@ public class GoogleActivity extends AppCompatActivity implements
     // [START auth_with_google]
     private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
         Log.d(TAG, "firebaseAuthWithGoogle:" + acct.getId());
-        // [START_EXCLUDE silent]
+
         showProgressDialog();
-        // [END_EXCLUDE]
 
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
         mAuth.signInWithCredential(credential)
@@ -143,10 +143,6 @@ public class GoogleActivity extends AppCompatActivity implements
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         Log.d(TAG, "signInWithCredential:onComplete:" + task.isSuccessful());
-
-                        // If sign in fails, display a message to the user. If sign in succeeds
-                        // the auth state listener will be notified and logic to handle the
-                        // signed in user can be handled in the listener.
                         if (!task.isSuccessful()) {
                             Log.w(TAG, "signInWithCredential", task.getException());
                             Toast.makeText(GoogleActivity.this, "Authentication failed.",
