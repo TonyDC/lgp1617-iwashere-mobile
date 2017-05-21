@@ -1,9 +1,12 @@
 package com.teamc.mira.iwashere.domain.model;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.Serializable;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 
 /**
  * Created by LukášKonkoľ on 30.04.2017.
@@ -12,6 +15,7 @@ import java.io.Serializable;
 public class RouteModel extends BasicModel implements Serializable {
     private String description;
     private String text;
+    private ArrayList<PoiModel> pois = new ArrayList<>();
 
     public RouteModel() {
         super();
@@ -24,10 +28,22 @@ public class RouteModel extends BasicModel implements Serializable {
     }
 
     public RouteModel(JSONObject route) throws JSONException {
-        this.id = route.getString("routeId");
-        this.name = route.getString("name");
-        this.description = route.getString("description");
-        this.text = route.getString("text");
+        super(route.getString("routeId"), route.getString("name"));
+
+        if (route.has("description")) this.description = route.getString("description");
+        if (route.has("text")) this.text = route.getString("text");
+        if (route.has("pois")) {
+            JSONArray poisArray = route.getJSONArray("pois");
+            JSONObject poi;
+            for(int i = 0; i < poisArray.length(); i++){
+                try{
+                    poi = poisArray.getJSONObject(i);
+                    this.pois.add(new PoiModel(poi));
+                }catch (JSONException e){
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
     public String getId() {

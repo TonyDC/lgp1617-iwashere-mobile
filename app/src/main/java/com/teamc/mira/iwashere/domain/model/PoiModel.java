@@ -49,8 +49,8 @@ public class PoiModel extends BasicModel implements Serializable {
     }
 
     public PoiModel(JSONObject poi) throws JSONException {
-        if(poi.has("poiId")) this.id = poi.getString("poiId");
-        if(poi.has("name")) this.name = poi.getString("name");
+        super(poi.getString("poiId"), poi.getString("name"));
+
         if(poi.has("description")) this.description = poi.getString("description");
         if(poi.has("address")) this.address = poi.getString("address");
         if(poi.has("longitude")) this.longitude = poi.getString("longitude");
