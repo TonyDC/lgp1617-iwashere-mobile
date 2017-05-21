@@ -1,25 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <include layout="@layout/fragment_map"
-        android:layout_height="200dp"
-        android:layout_width="match_parent" /> <!-- TODO remove hardcoded height-->
-
-    <TextView
+    <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/descriptionLabel"
-        android:textSize="25sp"
-        android:layout_margin="15dp"
-        android:text="@string/description" />
+        android:layout_height="match_parent">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/description"
-        />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <include
+            layout="@layout/fragment_map"
+            android:layout_width="match_parent"
+            android:layout_height="200dp" /> <!-- TODO remove hardcoded height-->
+
+            <TextView
+                android:id="@+id/descriptionLabel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="15dp"
+                android:text="@string/description"
+                android:textSize="25sp" />
+
+            <include
+                android:id="@+id/routeDescription"
+                layout="@layout/fragment_view_more_text" />
+
+            <ListView
+                android:id="@+id/listOfPois"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
 
 
-</LinearLayout>
+            </ListView>
+        </LinearLayout>
+
+
+    </android.support.v4.widget.NestedScrollView>
+
+
+</android.support.v4.widget.SwipeRefreshLayout>

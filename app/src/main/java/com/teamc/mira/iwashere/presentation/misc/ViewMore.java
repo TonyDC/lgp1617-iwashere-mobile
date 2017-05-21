@@ -7,10 +7,7 @@ import android.widget.TextView;
 
 import com.teamc.mira.iwashere.R;
 
-/**
- * Created by Duart on 19/05/2017.
- */
-
+// TODO: 19/05/2017 Make this inherite from View and create a costum view
 public class ViewMore {
     public static final int MAX_LINES = 8;
 
