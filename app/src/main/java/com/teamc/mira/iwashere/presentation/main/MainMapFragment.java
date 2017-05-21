@@ -2,7 +2,6 @@ package com.teamc.mira.iwashere.presentation.main;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -80,7 +79,6 @@ public class MainMapFragment extends LocationBasedMapFragment implements
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
         mRootView = inflater.inflate(R.layout.fragment_main_map, container, false);
 
         Toolbar myToolbar = (Toolbar) mRootView.findViewById(R.id.toolbar);

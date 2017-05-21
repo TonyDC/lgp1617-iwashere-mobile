@@ -9,12 +9,14 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.Marker;
 import com.teamc.mira.iwashere.R;
@@ -29,16 +31,20 @@ import java.util.Map;
 
 import static android.R.id.list;
 import static com.teamc.mira.iwashere.presentation.poi.PoiDetailActivity.POI;
+import static com.teamc.mira.iwashere.presentation.route.RouteDetailActivity.EXTRA_ROUTE;
 
 public class RoutePreviewFragment extends MapFragment implements OnMapReadyCallback {
+    public static final String TAG = RoutePreviewFragment.class.getSimpleName();
+
     protected RouteModel route;
+    private Map<Marker, PoiModel> poiMap = new HashMap<>();
 
-
-    private MapView mMapView;
-    private GoogleMap mGoogleMap;
     private View mRootView;
     private Context mContext;
-    private Map<Marker, PoiModel> poiMap = new HashMap<>();
+
+    public RoutePreviewFragment(){
+        super();
+    }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
@@ -60,13 +66,32 @@ public class RoutePreviewFragment extends MapFragment implements OnMapReadyCallb
         mRootView = inflater.inflate(R.layout.fragment_map, container, false);
         mContext = getContext();
 
-        route = (RouteModel) getArguments().getSerializable(RouteDetailActivity.EXTRA_ROUTE);
+        mMapView = (MapView) mRootView.findViewById(R.id.map);
+        mMapView.onCreate(savedInstanceState);
+        mMapView.onResume();
 
         mMapView = (MapView) mRootView.findViewById(R.id.map);
         mMapView.onCreate(savedInstanceState);
         mMapView.onResume();
 
-        return super.onCreateView(inflater, container, savedInstanceState);
+
+        try {
+            MapsInitializer.initialize(mContext);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        mMapView.getMapAsync(this);
+
+        return mRootView;
     }
 
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        Bundle bundle = getArguments();
+        if (bundle != null) {
+            route = (RouteModel) bundle.getSerializable(EXTRA_ROUTE);
+        }
+    }
 }
