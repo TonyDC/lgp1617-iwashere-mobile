@@ -1,19 +1,10 @@
 package com.teamc.mira.iwashere.presentation.main;
 
-import android.Manifest;
-import android.app.AlertDialog;
-import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.PackageManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -34,7 +25,6 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
-import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
@@ -63,21 +53,15 @@ import java.util.HashMap;
 
 import static com.teamc.mira.iwashere.presentation.poi.PoiDetailActivity.POI;
 
-public class MainMapFragment extends MapFragment implements
-//        GoogleMap.OnCameraMoveStartedListener,
+public class MainMapFragment extends LocationBasedMapFragment implements
         GoogleMap.OnCameraMoveListener,
-//        GoogleMap.OnCameraMoveCanceledListener,
-//        GoogleMap.OnCameraIdleListener,
         GoogleApiClient.OnConnectionFailedListener,
         OnSearchViewListener {
 
     private static final String TAG = MainMapFragment.class.getSimpleName();
-    private static final String INTENT_NEW_LOCATION = "New Location";
     public static final float ZOOM = 14.0f;
     private static final LatLng PORTO_LAT_LNG = new LatLng(41.1485647, -8.6119707);
 
-    private static double mLatitude;
-    private static double mLongitude;
     private boolean mFirstZoomFlag = false;
 
     HashMap<Marker, PoiModel> poiHashMap = new HashMap<>();
@@ -111,12 +95,6 @@ public class MainMapFragment extends MapFragment implements
         displaySearchResults(mRootView);
         expandCategories();
 
-        // registering receivers for certain intents
-        IntentFilter intentNewLocation = new IntentFilter(INTENT_NEW_LOCATION);
-        getActivity().getApplicationContext().registerReceiver(mReceiver, intentNewLocation);
-
-        mLatitude = 0;
-        mLongitude = 0;
 
         mMapView = (MapView) mRootView.findViewById(R.id.map);
         mMapView.onCreate(savedInstanceState);
@@ -159,13 +137,12 @@ public class MainMapFragment extends MapFragment implements
         fetchPoisOnCameraMove(mGoogleMap.getProjection().getVisibleRegion().latLngBounds);
     }
 
-
-
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
     }
 
-    private void updateCurrentLocation(LatLng latLng) {
+    @Override
+    void updateCurrentLocation(LatLng latLng) {
         //move map camera
         if (!mFirstZoomFlag) {
             mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, ZOOM));
@@ -173,28 +150,7 @@ public class MainMapFragment extends MapFragment implements
         }
     }
 
-    // registering BroadcastReceiver for receiving intents from other components
-    private BroadcastReceiver mReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
 
-            String action = intent.getAction(); // getting action from intent
-
-            switch (action) {   // switch for an action
-                case "New Location":
-                    Bundle bundle = intent.getExtras();
-                    if (bundle != null) {
-                        Log.i(TAG, "Location Received.");
-                        String latitude = bundle.getString("latitude");
-                        String longitude = bundle.getString("longitude");
-                        mLatitude = Double.parseDouble(latitude);
-                        mLongitude = Double.parseDouble(longitude);
-                        updateCurrentLocation(new LatLng(mLatitude, mLongitude));
-                    }
-                    break;
-            }
-        }
-    };
 
     @Override
     public void onCameraMove() {
