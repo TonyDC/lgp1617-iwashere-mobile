@@ -31,7 +31,6 @@ import static android.R.id.list;
 import static com.teamc.mira.iwashere.presentation.poi.PoiDetailActivity.POI;
 
 public class RoutePreviewFragment extends MapFragment implements OnMapReadyCallback {
-    protected ArrayList<PoiModel> pois = new ArrayList<>();
     protected RouteModel route;
 
 
@@ -61,7 +60,7 @@ public class RoutePreviewFragment extends MapFragment implements OnMapReadyCallb
         mRootView = inflater.inflate(R.layout.fragment_map, container, false);
         mContext = getContext();
 
-        pois = (ArrayList<PoiModel>) getArguments().getSerializable(RouteDetailActivity.EXTRA_POIS);
+        route = (RouteModel) getArguments().getSerializable(RouteDetailActivity.EXTRA_ROUTE);
 
         mMapView = (MapView) mRootView.findViewById(R.id.map);
         mMapView.onCreate(savedInstanceState);

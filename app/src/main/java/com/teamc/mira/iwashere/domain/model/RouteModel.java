@@ -8,30 +8,23 @@ import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 
-/**
- * Created by LukášKonkoľ on 30.04.2017.
- */
-
-public class RouteModel extends BasicModel implements Serializable {
-    private String description;
-    private String text;
+public class RouteModel extends BasicModel {
+    private String description = "";
     private ArrayList<PoiModel> pois = new ArrayList<>();
 
     public RouteModel() {
         super();
     }
 
-    public RouteModel(String id, String name, String description, String text) {
+    public RouteModel(String id, String name, String description) {
         super(id, name);
         this.description = description;
-        this.text = text;
     }
 
     public RouteModel(JSONObject route) throws JSONException {
         super(route.getString("routeId"), route.getString("name"));
 
         if (route.has("description")) this.description = route.getString("description");
-        if (route.has("text")) this.text = route.getString("text");
         if (route.has("pois")) {
             JSONArray poisArray = route.getJSONArray("pois");
             JSONObject poi;
@@ -58,10 +51,6 @@ public class RouteModel extends BasicModel implements Serializable {
         return description;
     }
 
-    public String getText() {
-        return text;
-    }
-
     public void setId(String id) {
         this.id = id;
     }
@@ -74,7 +63,11 @@ public class RouteModel extends BasicModel implements Serializable {
         this.description = description;
     }
 
-    public void setText(String text) {
-        this.text = text;
+    public ArrayList<PoiModel> getPois() {
+        return pois;
+    }
+
+    public void setPois(ArrayList<PoiModel> pois) {
+        this.pois = pois;
     }
 }

@@ -30,7 +30,7 @@ public class RouteDetailActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-
+        route = (RouteModel) getIntent().getSerializableExtra(EXTRA_ROUTE);
 
         // Set description
         mDescription = (ViewMore) findViewById(R.id.routeDescritpion);

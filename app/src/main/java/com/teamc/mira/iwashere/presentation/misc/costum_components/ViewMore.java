@@ -8,7 +8,6 @@ import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -34,7 +33,7 @@ public class ViewMore extends LinearLayout{
 
         LayoutInflater inflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        mView = inflater.inflate(R.layout.fragment_view_more_text, this, true);
+        mView = inflater.inflate(R.layout.view_more_text, this, true);
 
         TypedArray a = context.obtainStyledAttributes(attrs,
                 R.styleable.ViewMore, 0, 0);
