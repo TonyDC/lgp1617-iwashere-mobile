@@ -43,7 +43,7 @@ import com.teamc.mira.iwashere.domain.model.RouteModel;
 import com.teamc.mira.iwashere.domain.model.SearchModel;
 import com.teamc.mira.iwashere.domain.model.TagModel;
 import com.teamc.mira.iwashere.presentation.searchList.ChildRow;
-import com.teamc.mira.iwashere.presentation.searchList.MyExpandableListAdapter;
+import com.teamc.mira.iwashere.presentation.searchList.SearchExpandableListAdapter;
 import com.teamc.mira.iwashere.presentation.searchList.ParentRow;
 import com.teamc.mira.iwashere.presentation.poi.PoiDetailActivity;
 import com.teamc.mira.iwashere.threading.MainThreadImpl;
@@ -72,7 +72,7 @@ public class MainMapFragment extends LocationBasedMapFragment implements
     private LatLngBounds mCurrentCameraBounds;
 
     private BaseMaterialSearchView mSearchView;
-    private MyExpandableListAdapter mSearchListAdapter;
+    private SearchExpandableListAdapter mSearchListAdapter;
     private ExpandableListView mSearchList;
     private ArrayList<ParentRow> mCategoriesList = new ArrayList<>();
     private View mRootView;
@@ -341,7 +341,7 @@ public class MainMapFragment extends LocationBasedMapFragment implements
 
     private void displaySearchResults(View rooView) {
         mSearchList = (ExpandableListView) rooView.findViewById(R.id.expandableListView_search);
-        mSearchListAdapter = new MyExpandableListAdapter(getActivity(), mCategoriesList);
+        mSearchListAdapter = new SearchExpandableListAdapter(getActivity(), mCategoriesList);
         mSearchList.setAdapter(mSearchListAdapter);
     }
 

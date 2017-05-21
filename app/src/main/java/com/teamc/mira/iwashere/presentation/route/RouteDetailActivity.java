@@ -1,9 +1,11 @@
 package com.teamc.mira.iwashere.presentation.route;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -16,7 +18,6 @@ import java.util.ArrayList;
 
 public class RouteDetailActivity extends AppCompatActivity {
 
-    public static final String EXTRA_POIS = "pois";
     public static final String EXTRA_ROUTE = "route";
 
     protected ArrayList<PoiModel> routePois = new ArrayList<>();
@@ -24,16 +25,21 @@ public class RouteDetailActivity extends AppCompatActivity {
 
     private ViewMore mDescription;
     private String[] mPoiNames;
-    private Context mContext;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_route_detail);
 
         route = (RouteModel) getIntent().getSerializableExtra(EXTRA_ROUTE);
+        setToolBar();
+
+
+        getSupportActionBar().setTitle(route.getName());
 
         // Set description
         mDescription = (ViewMore) findViewById(R.id.routeDescritpion);
+        mDescription.setText(route.getDescription());
 
         ListView listView = (ListView) findViewById(R.id.listOfPois);
         mPoiNames = new String[routePois.size()];
@@ -41,10 +47,15 @@ public class RouteDetailActivity extends AppCompatActivity {
             mPoiNames[i]=routePois.get(i).getName();
         }
 
-        final ArrayAdapter<String> adapter = new ArrayAdapter<String>(mContext,
+        final ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_list_item_1, mPoiNames);
         listView.setAdapter(adapter);
     }
 
-
+    private void setToolBar() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    }
 }
