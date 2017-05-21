@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<merge
+    class="com.teamc.mira.iwashere.presentation.misc.costum_components.ViewMore"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="25dp">
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
     <TextView
         android:id="@+id/viewMoreText"
@@ -19,4 +19,4 @@
         android:maxLines="1"
         android:text="@string/more_info"
         android:textColor="@color/colorAccentPrimary" />
-</LinearLayout>
+</merge>

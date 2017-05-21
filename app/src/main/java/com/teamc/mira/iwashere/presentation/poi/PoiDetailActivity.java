@@ -8,7 +8,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.Html;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,7 +37,7 @@ import com.teamc.mira.iwashere.domain.model.ContentModel;
 import com.teamc.mira.iwashere.domain.model.PoiModel;
 import com.teamc.mira.iwashere.domain.model.util.Resource;
 import com.teamc.mira.iwashere.domain.repository.remote.PoiRepository;
-import com.teamc.mira.iwashere.presentation.misc.ViewMore;
+import com.teamc.mira.iwashere.presentation.misc.costum_components.ViewMore;
 import com.teamc.mira.iwashere.threading.MainThreadImpl;
 import com.teamc.mira.iwashere.util.ExpandableHeightGridView;
 import com.teamc.mira.iwashere.util.ViewMoreGridView;
@@ -78,9 +77,7 @@ public class PoiDetailActivity extends AppCompatActivity {
 
         auth = FirebaseAuth.getInstance();
 
-        View viewDescriptionViewMore = (View) findViewById(R.id.descriptionBox);
-        mDescriptionViewMore = new ViewMore(viewDescriptionViewMore, getApplicationContext());
-        mDescriptionViewMore.apply();
+        mDescriptionViewMore = (ViewMore) findViewById(R.id.poiDescription);
 
         setToolBar();
         poi = (PoiModel) getIntent().getSerializableExtra(POI);

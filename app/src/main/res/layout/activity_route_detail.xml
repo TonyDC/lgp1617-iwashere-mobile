@@ -13,9 +13,9 @@
             android:orientation="vertical">
 
             <include
-            layout="@layout/fragment_map"
-            android:layout_width="match_parent"
-            android:layout_height="200dp" /> <!-- TODO remove hardcoded height-->
+                layout="@layout/fragment_map"
+                android:layout_width="match_parent"
+                android:layout_height="200dp" /> <!-- TODO remove hardcoded height-->
 
             <TextView
                 android:id="@+id/descriptionLabel"
@@ -25,9 +25,12 @@
                 android:text="@string/description"
                 android:textSize="25sp" />
 
-            <include
-                android:id="@+id/routeDescription"
-                layout="@layout/fragment_view_more_text" />
+            <com.teamc.mira.iwashere.presentation.misc.costum_components.ViewMore
+                android:id="@+id/routeDescritpion"
+                android:layout_width="match_parent"
+                android:layout_height="fill_parent">
+
+            </com.teamc.mira.iwashere.presentation.misc.costum_components.ViewMore>
 
             <ListView
                 android:id="@+id/listOfPois"

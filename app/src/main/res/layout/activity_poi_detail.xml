@@ -30,8 +30,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="250dp" /> <!--TODO change this in the future to accomodate more sizes-->
 
-            <include android:id="@+id/descriptionBox"
-                layout="@layout/fragment_view_more_text"/>
+            <com.teamc.mira.iwashere.presentation.misc.costum_components.ViewMore
+                android:id="@+id/poiDescription"
+                android:layout_width="match_parent"
+                android:layout_height="fill_parent"
+                android:padding="25dp">
+
+            </com.teamc.mira.iwashere.presentation.misc.costum_components.ViewMore>
+
 
             <LinearLayout
                 android:layout_width="match_parent"
