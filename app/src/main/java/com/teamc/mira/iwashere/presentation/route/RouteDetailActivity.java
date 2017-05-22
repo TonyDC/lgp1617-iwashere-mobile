@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -25,6 +26,7 @@ import com.teamc.mira.iwashere.presentation.misc.costum_components.ViewMore;
 import com.teamc.mira.iwashere.presentation.poi.PoiDetailActivity;
 import com.teamc.mira.iwashere.threading.MainThreadImpl;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class RouteDetailActivity extends AppCompatActivity {
@@ -32,7 +34,6 @@ public class RouteDetailActivity extends AppCompatActivity {
     public static final String EXTRA_ROUTE = "route";
     private static final String TAG = RouteDetailActivity.class.getSimpleName();
 
-    protected ArrayList<PoiModel> routePois = new ArrayList<>();
     protected RouteModel route;
 
     private ViewMore mDescription;
@@ -78,6 +79,7 @@ public class RouteDetailActivity extends AppCompatActivity {
         TemplateInteractor.CallBack callBack = new TemplateInteractor.CallBack<RouteModel>() {
             @Override
             public void onSuccess(RouteModel result) {
+                RouteDetailActivity.this.route = result;
                 setRouteInfo();
                 mSwipeContainer.setRefreshing(false);
             }
@@ -103,9 +105,13 @@ public class RouteDetailActivity extends AppCompatActivity {
 
     private void setPoiList() {
         ListView listView = (ListView) findViewById(R.id.listOfPois);
+
+        ArrayList<PoiModel> routePois = route.getPois();
         mPoiNames = new String[routePois.size()];
+
         for (int i = 0; i < routePois.size(); i++){
-            mPoiNames[i]=routePois.get(i).getName();
+            Log.d(TAG, "Adding to route's pois list: poiId-"+routePois.get(i).getId());
+            mPoiNames[i]= (i+1) + " - " + routePois.get(i).getName();
         }
 
         final ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
