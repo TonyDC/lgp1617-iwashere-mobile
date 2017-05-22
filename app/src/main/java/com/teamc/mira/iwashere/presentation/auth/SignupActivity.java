@@ -24,7 +24,7 @@ import com.teamc.mira.iwashere.domain.executor.MainThread;
 import com.teamc.mira.iwashere.domain.executor.impl.ThreadExecutor;
 import com.teamc.mira.iwashere.domain.interactors.AuthInteractor;
 import com.teamc.mira.iwashere.domain.interactors.impl.SignupInteractorImpl;
-import com.teamc.mira.iwashere.domain.repository.UserRepository;
+import com.teamc.mira.iwashere.domain.repository.remote.UserRepository;
 import com.teamc.mira.iwashere.presentation.main.MainActivity;
 import com.teamc.mira.iwashere.threading.MainThreadImpl;
 

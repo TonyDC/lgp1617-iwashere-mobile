@@ -29,7 +29,7 @@ import com.teamc.mira.iwashere.domain.executor.MainThread;
 import com.teamc.mira.iwashere.domain.executor.impl.ThreadExecutor;
 import com.teamc.mira.iwashere.domain.interactors.AuthInteractor;
 import com.teamc.mira.iwashere.domain.interactors.impl.SignupInteractorImpl;
-import com.teamc.mira.iwashere.domain.repository.UserRepository;
+import com.teamc.mira.iwashere.domain.repository.remote.UserRepository;
 import com.teamc.mira.iwashere.presentation.main.MainActivity;
 import com.teamc.mira.iwashere.threading.MainThreadImpl;
 
@@ -211,6 +211,8 @@ public class GoogleActivity extends AppCompatActivity implements
             public void onFail(String code, String message) {
                 Toast.makeText(getApplicationContext(), "Failed to sign in.", Toast.LENGTH_SHORT).show();
                 Log.d(TAG, "Failed to sign in.");
+                startActivity(new Intent(GoogleActivity.this, AuthenticateActivity.class));
+                finish();
             }
         };
         AuthInteractor signupInteractor = new SignupInteractorImpl(

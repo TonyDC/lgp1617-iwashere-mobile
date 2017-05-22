@@ -1,7 +1,7 @@
 package com.teamc.mira.iwashere.domain.interactors.impl;
 
 import com.teamc.mira.iwashere.domain.interactors.AuthInteractor;
-import com.teamc.mira.iwashere.domain.repository.UserRepository;
+import com.teamc.mira.iwashere.domain.repository.remote.UserRepository;
 
 import org.junit.Test;
 import org.mockito.Mock;
