@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
+
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -113,7 +114,6 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
             TemplateInteractor.CallBack callback = new TemplateInteractor.CallBack() {
                 @Override
                 public void onSuccess(Object result) {
-                    Toast.makeText(getApplicationContext(), "Success", Toast.LENGTH_SHORT).show();
                     Log.d(TAG, "Register Successful");
                     progressBar.setVisibility(View.GONE);
 
@@ -144,14 +144,14 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
                 }
 
                 @Override
-
                 public void onNetworkError() {
-
+                    progressBar.setVisibility(View.GONE);
+                    Toast.makeText(getApplicationContext(), getResources().getString(R.string.error_connection), Toast.LENGTH_SHORT).show();
                 }
 
                 @Override
                 public void onError(String code, String message) {
-                    Toast.makeText(getApplicationContext(), "Fail", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
                     Log.d(TAG, "Failed to signup");
                     progressBar.setVisibility(View.GONE);
                 }

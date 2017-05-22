@@ -26,16 +26,16 @@ import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseUser;
 import com.teamc.mira.iwashere.R;
 import com.teamc.mira.iwashere.data.source.remote.UserRepositoryImpl;
-import com.teamc.mira.iwashere.domain.executor.Executor;
-import com.teamc.mira.iwashere.domain.executor.MainThread;
 import com.teamc.mira.iwashere.domain.executor.impl.ThreadExecutor;
-import com.teamc.mira.iwashere.domain.interactors.AuthInteractor;
+import com.teamc.mira.iwashere.domain.interactors.base.TemplateInteractor;
 import com.teamc.mira.iwashere.domain.interactors.impl.SignupInteractorImpl;
-import com.teamc.mira.iwashere.domain.repository.remote.UserRepository;
+import com.teamc.mira.iwashere.domain.model.UserModel;
 import com.teamc.mira.iwashere.presentation.main.MainActivity;
 import com.teamc.mira.iwashere.threading.MainThreadImpl;
 
 import java.util.Arrays;
+
+import static android.widget.Toast.LENGTH_SHORT;
 
 public class FacebookActivity extends AppCompatActivity {
 
@@ -83,7 +83,7 @@ public class FacebookActivity extends AppCompatActivity {
             @Override
             public void onCancel() {
                 Log.d(TAG, "facebook:onCancel");
-                Toast.makeText(getApplicationContext(), "Facebook Sign in cancelled.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Facebook Sign in cancelled.", LENGTH_SHORT).show();
                 startActivity(new Intent(FacebookActivity.this, AuthenticateActivity.class));
                 finish();
             }
@@ -91,7 +91,7 @@ public class FacebookActivity extends AppCompatActivity {
             @Override
             public void onError(FacebookException error) {
                 Log.d(TAG, "facebook:onError", error);
-                Toast.makeText(getApplicationContext(), "Facebook Sign in error.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Facebook Sign in error.", LENGTH_SHORT).show();
                 startActivity(new Intent(FacebookActivity.this, AuthenticateActivity.class));
                 finish();
             }
@@ -136,11 +136,11 @@ public class FacebookActivity extends AppCompatActivity {
                                 throw task.getException();
                             } catch (FirebaseAuthUserCollisionException e) {
                                 Toast.makeText(FacebookActivity.this, "Authentication failed - email already taken.",
-                                        Toast.LENGTH_SHORT).show();
+                                        LENGTH_SHORT).show();
                             } catch (Exception e) {
                                 Log.e(TAG, e.getMessage());
                                 Toast.makeText(FacebookActivity.this, "Authentication failed.",
-                                        Toast.LENGTH_SHORT).show();
+                                        LENGTH_SHORT).show();
                             }
                             Log.w(TAG, "signInWithCredential", task.getException());
                             startActivity(new Intent(FacebookActivity.this, AuthenticateActivity.class));
@@ -177,13 +177,11 @@ public class FacebookActivity extends AppCompatActivity {
     }
 
     private void registerUserByProvider() {
-        //create user
-        MainThread mainThread = MainThreadImpl.getInstance();
-        Executor executor = ThreadExecutor.getInstance();
-        UserRepository userRepository = new UserRepositoryImpl(this);
-        AuthInteractor.Callback callback = new AuthInteractor.Callback() {
+
+        TemplateInteractor.CallBack callback = new TemplateInteractor.CallBack<UserModel>() {
+
             @Override
-            public void onSuccess() {
+            public void onSuccess(UserModel result) {
                 Log.d(TAG, "Register-by-provider successful.");
                 hideProgressDialog();
                 startActivity(new Intent(FacebookActivity.this, MainActivity.class));
@@ -191,19 +189,27 @@ public class FacebookActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFail(String code, String message) {
-                Toast.makeText(getApplicationContext(), "Failed to sign in.", Toast.LENGTH_SHORT).show();
+            public void onNetworkError() {
+                Log.d(TAG,"Network Error");
+                Toast.makeText(getApplicationContext(),R.string.error_connection, LENGTH_SHORT).show();
+                startActivity(new Intent(FacebookActivity.this, AuthenticateActivity.class));
+                finish();
+            }
+
+            @Override
+            public void onError(String code, String message) {
+                Toast.makeText(getApplicationContext(), "Failed to sign in.", LENGTH_SHORT).show();
                 Log.d(TAG, "Failed to sign in.");
                 startActivity(new Intent(FacebookActivity.this, AuthenticateActivity.class));
                 finish();
             }
         };
 
-        AuthInteractor signupInteractor = new SignupInteractorImpl(
-                executor,
-                mainThread,
+        SignupInteractorImpl signupInteractor = new SignupInteractorImpl(
+                ThreadExecutor.getInstance(),
+                MainThreadImpl.getInstance(),
                 callback,
-                userRepository,
+                new UserRepositoryImpl(this),
                 mAuth.getCurrentUser().getUid());
 
         signupInteractor.execute();

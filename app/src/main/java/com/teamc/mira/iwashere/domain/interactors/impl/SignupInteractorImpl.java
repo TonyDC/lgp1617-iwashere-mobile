@@ -3,7 +3,6 @@ package com.teamc.mira.iwashere.domain.interactors.impl;
 import com.teamc.mira.iwashere.data.source.remote.exceptions.RemoteDataException;
 import com.teamc.mira.iwashere.domain.executor.Executor;
 import com.teamc.mira.iwashere.domain.executor.MainThread;
-import com.teamc.mira.iwashere.domain.interactors.base.AbstractInteractor;
 import com.teamc.mira.iwashere.domain.interactors.base.AbstractTemplateInteractor;
 import com.teamc.mira.iwashere.domain.interactors.base.TemplateInteractor;
 import com.teamc.mira.iwashere.domain.repository.remote.UserRepository;
@@ -11,7 +10,7 @@ import com.teamc.mira.iwashere.domain.repository.remote.UserRepository;
 import org.json.JSONException;
 
 public class SignupInteractorImpl extends AbstractTemplateInteractor{
-
+    TemplateInteractor.CallBack callBack;
     UserRepository repository;
     private String userId = "";
     private String email = "";
@@ -34,18 +33,16 @@ public class SignupInteractorImpl extends AbstractTemplateInteractor{
 
     public SignupInteractorImpl(Executor threadExecutor,
                                 MainThread mainThread,
-                                AuthInteractor.Callback callback, UserRepository repository,
+                                TemplateInteractor.CallBack callBack, UserRepository repository,
                                 String userId) {
-        super(threadExecutor, mainThread);
-
-        this.callback = callback;
+        super(threadExecutor, mainThread, callBack);
         this.repository = repository;
         this.userId = userId;
     }
 
     @Override
     public void run() {
-        boolean result = false;
+        boolean result;
         try {
             if (!userId.isEmpty()) {
                 result = repository.signUp(userId);
@@ -63,10 +60,7 @@ public class SignupInteractorImpl extends AbstractTemplateInteractor{
         if (!result) {
             notifyError("network-fail", "Failed to establish a connection");
         } else {
-            notifySuccess();
+            notifySuccess(null);
         }
-        // we have retrieved our message, notify the UI on the main thread
-        notifySuccess(null);
     }
-
 }

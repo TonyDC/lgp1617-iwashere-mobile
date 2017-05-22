@@ -18,7 +18,6 @@ import android.widget.Toast;
 import com.google.firebase.auth.FirebaseAuth;
 import com.teamc.mira.iwashere.R;
 import com.teamc.mira.iwashere.data.source.remote.UserRepositoryImpl;
-import com.teamc.mira.iwashere.data.source.remote.impl.UserRepositoryImpl;
 import com.teamc.mira.iwashere.domain.executor.impl.ThreadExecutor;
 import com.teamc.mira.iwashere.domain.interactors.base.TemplateInteractor;
 import com.teamc.mira.iwashere.domain.interactors.impl.SignoutInteractorImpl;
