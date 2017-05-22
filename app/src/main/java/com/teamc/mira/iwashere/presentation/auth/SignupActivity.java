@@ -10,7 +10,6 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
-
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -22,7 +21,7 @@ import com.teamc.mira.iwashere.data.source.remote.UserRepositoryImpl;
 import com.teamc.mira.iwashere.domain.executor.Executor;
 import com.teamc.mira.iwashere.domain.executor.MainThread;
 import com.teamc.mira.iwashere.domain.executor.impl.ThreadExecutor;
-import com.teamc.mira.iwashere.domain.interactors.AuthInteractor;
+import com.teamc.mira.iwashere.domain.interactors.base.TemplateInteractor;
 import com.teamc.mira.iwashere.domain.interactors.impl.SignupInteractorImpl;
 import com.teamc.mira.iwashere.domain.repository.remote.UserRepository;
 import com.teamc.mira.iwashere.presentation.main.MainActivity;
@@ -111,9 +110,10 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
             MainThread mainThread = MainThreadImpl.getInstance();
             Executor executor = ThreadExecutor.getInstance();
             UserRepository userRepository = new UserRepositoryImpl(this);
-            AuthInteractor.Callback callback = new AuthInteractor.Callback() {
+            TemplateInteractor.CallBack callback = new TemplateInteractor.CallBack() {
                 @Override
-                public void onSuccess() {
+                public void onSuccess(Object result) {
+                    Toast.makeText(getApplicationContext(), "Success", Toast.LENGTH_SHORT).show();
                     Log.d(TAG, "Register Successful");
                     progressBar.setVisibility(View.GONE);
 
@@ -144,13 +144,19 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
                 }
 
                 @Override
-                public void onFail(String code, String message) {
-                    Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
-                    Log.d(TAG, "Failed to signUp: " + message);
+
+                public void onNetworkError() {
+
+                }
+
+                @Override
+                public void onError(String code, String message) {
+                    Toast.makeText(getApplicationContext(), "Fail", Toast.LENGTH_SHORT).show();
+                    Log.d(TAG, "Failed to signup");
                     progressBar.setVisibility(View.GONE);
                 }
             };
-            AuthInteractor signupInteractor = new SignupInteractorImpl(
+            SignupInteractorImpl signupInteractor = new SignupInteractorImpl(
                     executor,
                     mainThread,
                     callback,

@@ -4,12 +4,13 @@ import com.teamc.mira.iwashere.data.source.remote.exceptions.RemoteDataException
 import com.teamc.mira.iwashere.domain.executor.Executor;
 import com.teamc.mira.iwashere.domain.executor.MainThread;
 import com.teamc.mira.iwashere.domain.interactors.PoiContentInteractor;
-import com.teamc.mira.iwashere.domain.interactors.base.AbstractInteractor;
+import com.teamc.mira.iwashere.domain.interactors.base.AbstractBasicInteractor;
+import com.teamc.mira.iwashere.domain.interactors.base.AbstractTemplateInteractor;
+import com.teamc.mira.iwashere.domain.interactors.base.TemplateInteractor;
 import com.teamc.mira.iwashere.domain.model.PoiModel;
 import com.teamc.mira.iwashere.domain.repository.remote.PoiRepository;
 
-public class PoiContentInteractorImpl extends AbstractInteractor implements PoiContentInteractor {
-    CallBack callBack;
+public class PoiContentInteractorImpl extends AbstractBasicInteractor implements PoiContentInteractor {
     PoiRepository repository;
     PoiModel poi;
     String userId;
@@ -19,51 +20,20 @@ public class PoiContentInteractorImpl extends AbstractInteractor implements PoiC
 
     public PoiContentInteractorImpl(Executor threadExecutor,
                                     MainThread mainThread,
-                                    CallBack callBack,
+                                    PoiContentInteractor.CallBack callBack,
                                     PoiRepository poiRepository,
                                     PoiModel poi,
                                     String userId,
                                     int contentOffset,
                                     int contentLimit) {
-        super(threadExecutor, mainThread);
+        super(threadExecutor, mainThread, callBack);
 
-        this.callBack = callBack;
         this.repository = poiRepository;
         this.poi = poi;
         this.userId = userId;
         this.contentOffset = contentOffset;
         this.contentLimit = contentLimit;
         this.originalContentCount = poi.getContent().size();
-    }
-
-    @Override
-    public void notifyError(final String code, final String message) {
-        mMainThread.post(new Runnable() {
-            @Override
-            public void run() {
-                if (code.equals("network-fail")) {
-                    callBack.onNetworkFail();
-                }else {
-                    callBack.onError(code, message);
-                }
-            }
-        });
-    }
-
-    @Override
-    public void notifySuccess(final PoiModel poi) {
-        mMainThread.post(new Runnable() {
-            @Override
-            public void run() {
-                callBack.onSuccess(poi, poi.getContent().size() >= originalContentCount);
-            }
-        });
-
-    }
-
-    @Override
-    public void notifyError(String code) {
-        notifyError(code, "");
     }
 
     @Override
@@ -78,6 +48,17 @@ public class PoiContentInteractorImpl extends AbstractInteractor implements PoiC
             return;
         }
 
-        notifySuccess(poi);
+        // TODO: 22/05/2017 Remove hardcoded for hasMoreContent : boolean. Verify if has more content
+        notifySuccess(poi, true);
+    }
+
+    @Override
+    public void notifySuccess(final PoiModel poi, final boolean hasMoreContent) {
+        mMainThread.post(new Runnable() {
+            @Override
+            public void run() {
+                ((PoiContentInteractor.CallBack) mCallBack).onSuccess(poi, hasMoreContent);
+            }
+        });
     }
 }

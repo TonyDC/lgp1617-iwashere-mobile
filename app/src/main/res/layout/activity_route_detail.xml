@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <include layout="@layout/toolbar" />
+
+
+
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/swipeContainer">
+
+        <android.support.v4.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <fragment
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    android:id="@+id/map"
+                    android:name="com.teamc.mira.iwashere.presentation.route.RoutePreviewFragment"/>
+
+                <TextView
+                    android:id="@+id/descriptionLabel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="15dp"
+                    android:text="@string/description"
+                    android:textSize="25sp" />
+
+                <com.teamc.mira.iwashere.presentation.misc.costum_components.ViewMore
+                    android:id="@+id/routeDescritpion"
+                    android:layout_width="match_parent"
+                    android:layout_height="fill_parent">
+
+                </com.teamc.mira.iwashere.presentation.misc.costum_components.ViewMore>
+
+                <ListView
+                    android:id="@+id/listOfPois"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+
+                </ListView>
+            </LinearLayout>
+
+
+        </android.support.v4.widget.NestedScrollView>
+    </android.support.v4.widget.SwipeRefreshLayout>
+
+
+</LinearLayout>

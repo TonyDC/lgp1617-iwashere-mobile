@@ -2,13 +2,9 @@ package com.teamc.mira.iwashere.data.source.remote.base;
 
 import java.util.concurrent.TimeUnit;
 
-/**
- * Created by Duart on 21/04/2017.
- */
-
 public class ServerUrl {
 
-    public static final String DOMAIN = "192.168.1.69";
+    public static final String DOMAIN = "192.168.1.129";
     public static final String PORT = "8080";
 
     public static final long TIMEOUT = 3;
@@ -31,6 +27,8 @@ public class ServerUrl {
     public static final String RANGE = "/range";
     public static final String MEDIA = "/media";
     public static final String RATING = "/rating";
+    public static final String SEARCH = "/search";
     public static final String CONTENT = "/post";
     public static final String POI_CONTENT = "/poi_posts";
+    public static final String ROUTE = "/route";
 }
