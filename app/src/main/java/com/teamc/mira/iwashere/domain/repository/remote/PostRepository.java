@@ -24,6 +24,11 @@ public interface PostRepository {
      */
     PostModel fetchPost(String postId) throws RemoteDataException;
 
+    boolean addPostLike(PostModel post, String userId) throws RemoteDataException;
+
+    boolean getPostLike(PostModel post) throws RemoteDataException;
 
     boolean post(String poiId, String description, ArrayList<String> tags, Resource resource);
+
+    boolean updatePostLike(PostModel post, String userId, boolean liked) throws RemoteDataException;
 }

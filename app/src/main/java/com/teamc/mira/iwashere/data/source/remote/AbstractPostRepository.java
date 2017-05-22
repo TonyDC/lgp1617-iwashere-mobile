@@ -23,7 +23,7 @@ import java.util.HashMap;
  * Created by luiscosta on 5/22/17.
  */
 
-public class AbstractPostRepository extends AbstractRepository implements PostRepository {
+public abstract class AbstractPostRepository extends AbstractRepository implements PostRepository {
 
     public AbstractPostRepository(RequestQueue requestQueue) {
         super(requestQueue);
@@ -34,30 +34,9 @@ public class AbstractPostRepository extends AbstractRepository implements PostRe
     }
 
     @NonNull
-    protected HashMap<String, Object> getContentRatingParams(String postId, String userId, int newPostRating) {
+    protected HashMap<String, Object> getPostLikeParams(String postId, String userId) {
         HashMap<String, Object> params = new HashMap<>();
         params.put("postID",postId);
-        params.put("rating", newPostRating);
         return params;
-    }
-
-    @Override
-    public boolean like(String userId, String postId, boolean liked) {
-        return false;
-    }
-
-    @Override
-    public boolean fetch(String userId, String poiId, int offset, int limit) {
-        return false;
-    }
-
-    @Override
-    public boolean fetch(String poiId, int offset, int limit) {
-        return false;
-    }
-
-    @Override
-    public boolean post(String poiId, String description, ArrayList<String> tags, Resource resource) {
-        return false;
     }
 }

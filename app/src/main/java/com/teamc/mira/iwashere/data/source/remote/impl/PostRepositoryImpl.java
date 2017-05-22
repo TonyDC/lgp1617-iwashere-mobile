@@ -9,11 +9,13 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.RequestFuture;
 import com.teamc.mira.iwashere.data.source.remote.AbstractPostRepository;
 import com.teamc.mira.iwashere.data.source.remote.base.ServerUrl;
+import com.teamc.mira.iwashere.data.source.remote.exceptions.BasicRemoteException;
 import com.teamc.mira.iwashere.data.source.remote.exceptions.RemoteDataException;
 import com.teamc.mira.iwashere.domain.model.PoiModel;
 import com.teamc.mira.iwashere.domain.model.PostModel;
 import com.teamc.mira.iwashere.domain.model.util.Resource;
 import com.teamc.mira.iwashere.domain.repository.remote.PostRepository;
+import com.teamc.mira.iwashere.util.JsonObjectRequestWithNull;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -32,8 +34,10 @@ import static com.teamc.mira.iwashere.data.source.remote.base.ServerUrl.TIMEOUT_
  */
 
 public class PostRepositoryImpl extends AbstractPostRepository implements PostRepository {
+
    private static final  String API_POST_URL = ServerUrl.getUrl() + ServerUrl.API +  ServerUrl.CONTENT;
-   private static final  String API_CONTENT_POST_LIKE_URL = ServerUrl.getUrl() + ServerUrl.API + ServerUrl.CONTENT + ServerUrl.AUTH + ServerUrl.LIKE;
+    private static final String API_POST_GET_LIKE_URL = ServerUrl.getUrl() + ServerUrl.API + ServerUrl.CONTENT + ServerUrl.LIKE;
+    private static final  String API_POST_LIKE_URL = ServerUrl.getUrl() + ServerUrl.API + ServerUrl.CONTENT + ServerUrl.AUTH + ServerUrl.LIKE;
     private int response = -1;
 
     public PostRepositoryImpl(RequestQueue requestQueue) {
@@ -68,6 +72,64 @@ public class PostRepositoryImpl extends AbstractPostRepository implements PostRe
     }
 
     @Override
+    public boolean addPostLike(PostModel post, String userId) throws RemoteDataException {
+        // Instantiate the RequestQueue.
+        RequestQueue queue = mRequestQueue;
+
+        final HashMap<String, Object> params = getPostLikeParams(post.getId(), userId);
+
+        RequestFuture<JSONObject> future = RequestFuture.newFuture();
+        JsonObjectRequest request = new JsonObjectRequest(
+                Request.Method.POST,
+                API_POST_LIKE_URL,
+                new JSONObject(params),
+                future, future){
+            @Override
+            public HashMap<String, String> getHeaders() {
+                return PostRepositoryImpl.this.getHeaders();
+            }
+        };
+
+        queue.add(request);
+
+        try {
+            future.get(TIMEOUT, TIMEOUT_TIME_UNIT); // this will block
+            post.addPostLike(post.getId(), userId);
+            return getPostLike(post);
+        } catch (InterruptedException | ExecutionException | TimeoutException e) {
+            handleError(e);
+            return false;
+        }
+    }
+
+    @Override
+    public boolean getPostLike(PostModel post) throws RemoteDataException {
+        RequestQueue queue = mRequestQueue;
+
+        String url =  API_POST_GET_LIKE_URL + "/" + post.getId();
+        RequestFuture<JSONObject> future = RequestFuture.newFuture();
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null, future, future);
+        queue.add(request);
+
+        try {
+            JSONObject response = future.get(TIMEOUT, TIMEOUT_TIME_UNIT); // this will block
+
+            boolean currentLike = (boolean) response.getBoolean("post_id");
+            int currentRatingCount = response.getInt("ratings");
+            //poi.setRating(currentRating);
+            //poi.setRatingCount(currentRatingCount);
+
+            future.cancel(true);
+            return true;
+        } catch (InterruptedException | ExecutionException | JSONException | TimeoutException e) {
+            handleError(e);
+            return false;
+        }
+    }
+
+
+
+    @Override
     public boolean post(String poiId, String description, ArrayList<String> tags, Resource resource) {
 
         RequestQueue queue = mRequestQueue;
@@ -99,10 +161,41 @@ public class PostRepositoryImpl extends AbstractPostRepository implements PostRe
             e.printStackTrace();
             return false;
         }
-
-
-
     return true;
+    }
+
+    @Override
+    public boolean updatePostLike(PostModel post, String userId, boolean liked) throws RemoteDataException {
+
+        // Instantiate the RequestQueue.
+        RequestQueue queue = mRequestQueue;
+
+        final HashMap<String, Object> params = new HashMap<>();
+        params.put("postID", post.getId());
+
+        RequestFuture<JSONObject> future = RequestFuture.newFuture();
+        JsonObjectRequest request = new JsonObjectRequest(
+                Request.Method.POST,
+                API_POST_LIKE_URL,
+                new JSONObject(params),
+                future, future){
+            @Override
+            public HashMap<String, String> getHeaders() {
+                return PostRepositoryImpl.this.getHeaders();
+            }
+        };
+
+        queue.add(request);
+
+        try {
+            future.get(TIMEOUT, TIMEOUT_TIME_UNIT); // this will block
+            post.addPostLike(post.getId(), userId);
+            return getPostLike(post);
+        } catch (InterruptedException | ExecutionException | TimeoutException e) {
+            handleError(e);
+            return false;
+        }
+
     }
 
 }
