@@ -30,7 +30,7 @@ import com.teamc.mira.iwashere.domain.executor.Executor;
 import com.teamc.mira.iwashere.domain.executor.MainThread;
 import com.teamc.mira.iwashere.domain.executor.impl.ThreadExecutor;
 import com.teamc.mira.iwashere.domain.interactors.PoiContentInteractor;
-import com.teamc.mira.iwashere.domain.interactors.PoiDetailInteractor;
+import com.teamc.mira.iwashere.domain.interactors.base.TemplateInteractor;
 import com.teamc.mira.iwashere.domain.interactors.impl.PoiContentInteractorImpl;
 import com.teamc.mira.iwashere.domain.interactors.impl.PoiDetailInteractorImpl;
 import com.teamc.mira.iwashere.domain.interactors.impl.PoiRatingInteractorImpl;
@@ -111,10 +111,10 @@ public class PoiDetailActivity extends AppCompatActivity {
                 MainThread mainThread = MainThreadImpl.getInstance();
                 Executor executor = ThreadExecutor.getInstance();
                 PoiRepository poiRepository = new PoiRepositoryImpl(getApplicationContext());
-                PoiDetailInteractor.CallBack callback = new PoiDetailInteractor.CallBack() {
+                TemplateInteractor.CallBack callback = new TemplateInteractor.CallBack<PoiModel>() {
 
                     @Override
-                    public void onNetworkFail() {
+                    public void onNetworkError() {
                         Toast.makeText(getApplicationContext(), R.string.error_connection, LENGTH_SHORT).show();
                     }
 
@@ -132,7 +132,7 @@ public class PoiDetailActivity extends AppCompatActivity {
                     }
                 };
 
-                PoiDetailInteractor poiRatingInteractor = new PoiRatingInteractorImpl(
+                PoiRatingInteractorImpl poiRatingInteractor = new PoiRatingInteractorImpl(
                         executor,
                         mainThread,
                         callback,
@@ -179,10 +179,10 @@ public class PoiDetailActivity extends AppCompatActivity {
     }
 
     private void fetchPoiInfo(String poiId) {
-        PoiDetailInteractor.CallBack callback = new PoiDetailInteractor.CallBack() {
+        TemplateInteractor.CallBack callback = new TemplateInteractor.CallBack<PoiModel>() {
 
             @Override
-            public void onNetworkFail() {
+            public void onNetworkError() {
                 Log.d(TAG,"Network Error");
                 mSwipeContainer.setRefreshing(false);
                 Toast.makeText(getApplicationContext(),R.string.error_connection, LENGTH_SHORT).show();
@@ -210,7 +210,7 @@ public class PoiDetailActivity extends AppCompatActivity {
             userId = auth.getCurrentUser().getUid();
         }
 
-        PoiDetailInteractor poiDetailInteractor = new PoiDetailInteractorImpl(
+        PoiDetailInteractorImpl poiDetailInteractor = new PoiDetailInteractorImpl(
             ThreadExecutor.getInstance(),
             MainThreadImpl.getInstance(),
             callback,
@@ -233,13 +233,13 @@ public class PoiDetailActivity extends AppCompatActivity {
         PoiContentInteractor.CallBack callback = new PoiContentInteractor.CallBack() {
 
             @Override
-            public void onNetworkFail() {
-                onError(null, null);
+            public void onNetworkError() {
+                Toast.makeText(PoiDetailActivity.this, getResources().getString(R.string.error_connection), Toast.LENGTH_SHORT);
             }
 
             @Override
             public void onError(String code, String message) {
-                // TODO: redirect to previous display?
+                Toast.makeText(PoiDetailActivity.this, getResources().getString(R.string.error_request), Toast.LENGTH_SHORT);
             }
 
             @Override
@@ -256,7 +256,7 @@ public class PoiDetailActivity extends AppCompatActivity {
             userId = auth.getCurrentUser().getUid();
         }
 
-        PoiContentInteractor poiContentInteractor = new PoiContentInteractorImpl(
+        PoiContentInteractorImpl poiContentInteractor = new PoiContentInteractorImpl(
                 executor,
                 mainThread,
                 callback,

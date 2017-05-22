@@ -5,19 +5,18 @@ import android.util.Log;
 import com.teamc.mira.iwashere.data.source.remote.exceptions.RemoteDataException;
 import com.teamc.mira.iwashere.domain.executor.Executor;
 import com.teamc.mira.iwashere.domain.executor.MainThread;
-import com.teamc.mira.iwashere.domain.interactors.base.AbstractInteractor;
-import com.teamc.mira.iwashere.domain.interactors.PoiDetailInteractor;
+import com.teamc.mira.iwashere.domain.interactors.base.AbstractTemplateInteractor;
+import com.teamc.mira.iwashere.domain.interactors.base.TemplateInteractor;
 import com.teamc.mira.iwashere.domain.model.PoiModel;
 import com.teamc.mira.iwashere.domain.repository.remote.PoiRepository;
 import com.teamc.mira.iwashere.domain.repository.remote.PostRepository;
 
-public class PoiDetailInteractorImpl extends AbstractInteractor implements PoiDetailInteractor {
+public class PoiDetailInteractorImpl extends AbstractTemplateInteractor<PoiModel> {
     private static final String TAG = PoiDetailInteractorImpl.class.getSimpleName();
     final PostRepository mPostRepository;
     String poiId;
     String userId;
 
-    PoiDetailInteractor.CallBack mCallBack;
     PoiRepository mPoiRepository;
 
     /**
@@ -35,51 +34,18 @@ public class PoiDetailInteractorImpl extends AbstractInteractor implements PoiDe
      */
     public PoiDetailInteractorImpl(Executor threadExecutor,
                                    MainThread mainThread,
-                                   PoiDetailInteractor.CallBack callBack,
+                                   TemplateInteractor.CallBack callBack,
                                    PoiRepository poiRepository,
                                    PostRepository postRepository,
                                    String poiId,
                                    String userId) {
-        super(threadExecutor, mainThread);
+        super(threadExecutor, mainThread, callBack);
 
-        mCallBack = callBack;
         mPoiRepository = poiRepository;
         mPostRepository = postRepository;
         this.poiId = poiId;
         this.userId = userId;
 
-    }
-
-    @Override
-    public void notifyError(final String code, final String message) {
-        Log.d(TAG, "notifyError start");
-        mMainThread.post(new Runnable() {
-            @Override
-            public void run() {
-                // TODO: 12/04/2017 extract hardcoded fails
-                Log.d(TAG, "notifyError callback start");
-                if (code.equals("network-fail")) {
-                    mCallBack.onNetworkFail();
-                }else {
-                    mCallBack.onError(code, message);
-                }
-            }
-        });
-    }
-
-    @Override
-    public void notifySuccess(final PoiModel poi) {
-        mMainThread.post(new Runnable() {
-            @Override
-            public void run() {
-                mCallBack.onSuccess(poi);
-            }
-        });
-    }
-
-    @Override
-    public void notifyError(String code) {
-        notifyError(code, "");
     }
 
     @Override

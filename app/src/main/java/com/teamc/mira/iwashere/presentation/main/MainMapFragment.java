@@ -33,8 +33,7 @@ import com.teamc.mira.iwashere.R;
 import com.teamc.mira.iwashere.data.source.remote.impl.PoiRepositoryImpl;
 import com.teamc.mira.iwashere.data.source.remote.impl.SearchRepositoryImpl;
 import com.teamc.mira.iwashere.domain.executor.impl.ThreadExecutor;
-import com.teamc.mira.iwashere.domain.interactors.PoiMapInteractor;
-import com.teamc.mira.iwashere.domain.interactors.SearchInteractor;
+import com.teamc.mira.iwashere.domain.interactors.base.TemplateInteractor;
 import com.teamc.mira.iwashere.domain.interactors.impl.PoiMapInteractorImpl;
 import com.teamc.mira.iwashere.domain.interactors.impl.SearchInteractorImpl;
 import com.teamc.mira.iwashere.domain.model.PoiModel;
@@ -186,7 +185,7 @@ public class MainMapFragment extends LocationBasedMapFragment implements
         minLng = southwest.longitude;
         maxLng = northeast.longitude;
 
-        PoiMapInteractor.CallBack callBack = new PoiMapInteractor.CallBack() {
+        TemplateInteractor.CallBack callBack = new TemplateInteractor.CallBack<ArrayList<PoiModel>>() {
             @Override
             public void onSuccess(ArrayList<PoiModel> poiModels) {
                 Log.d(TAG, "PoiMapInteractor.CallBack onSuccess");
@@ -194,17 +193,18 @@ public class MainMapFragment extends LocationBasedMapFragment implements
             }
 
             @Override
-            public void onFail(String message) {
+            public void onNetworkError() {
                 if (isAdded()) {
-                    if(message == null || message.length() == 0) message = getResources().getString(R.string.error_fetch);
-                    Toast.makeText(mContext, message, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(mContext, R.string.error_connection, Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
-            public void onNetworkError() {
+            public void onError(String code, String message) {
+
                 if (isAdded()) {
-                    Toast.makeText(mContext, R.string.error_connection, Toast.LENGTH_SHORT).show();
+                    if(message == null || message.length() == 0) message = getResources().getString(R.string.error_fetch);
+                    Toast.makeText(mContext, message, Toast.LENGTH_SHORT).show();
                 }
             }
         };
@@ -250,7 +250,7 @@ public class MainMapFragment extends LocationBasedMapFragment implements
 
     private void searchForResults(String query) {
 
-        SearchInteractor.CallBack callBack = new SearchInteractor.CallBack() {
+        TemplateInteractor.CallBack callBack = new TemplateInteractor.CallBack<SearchModel>() {
             @Override
             public void onSuccess(SearchModel searchModel) {
                 Log.d(TAG, "PoiMapInteractor.CallBack SEARCH onSuccess");
@@ -258,16 +258,16 @@ public class MainMapFragment extends LocationBasedMapFragment implements
             }
 
             @Override
-            public void onFail(String message) {
+            public void onNetworkError() {
+                Toast.makeText(getActivity(), R.string.error_connection, Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onError(String code, String message) {
                 if (message == null || message.length() == 0)
                     message = getString(R.string.error_fetch);
 
                 Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onNetworkError() {
-                Toast.makeText(getActivity(), R.string.error_connection, Toast.LENGTH_SHORT).show();
             }
         };
 

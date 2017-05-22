@@ -5,17 +5,17 @@ import android.util.Log;
 import com.teamc.mira.iwashere.data.source.remote.exceptions.RemoteDataException;
 import com.teamc.mira.iwashere.domain.executor.Executor;
 import com.teamc.mira.iwashere.domain.executor.MainThread;
-import com.teamc.mira.iwashere.domain.interactors.PoiMapInteractor;
 import com.teamc.mira.iwashere.domain.interactors.base.AbstractInteractor;
+import com.teamc.mira.iwashere.domain.interactors.base.AbstractTemplateInteractor;
+import com.teamc.mira.iwashere.domain.interactors.base.TemplateInteractor;
 import com.teamc.mira.iwashere.domain.model.PoiModel;
 import com.teamc.mira.iwashere.domain.repository.remote.PoiRepository;
 
 import java.util.ArrayList;
 
-public class PoiSearchInteractorImpl extends AbstractInteractor implements PoiMapInteractor {
+public class PoiSearchInteractorImpl extends AbstractTemplateInteractor{
     public final static String TAG = PoiMapInteractorImpl.class.getSimpleName();
 
-    CallBack mCallBack;
     PoiRepository mRepository;
     String mSearchedQuery;
     double mLatitude;
@@ -23,36 +23,15 @@ public class PoiSearchInteractorImpl extends AbstractInteractor implements PoiMa
 
     public PoiSearchInteractorImpl(Executor threadExecutor,
                                    MainThread mainThread,
-                                   PoiMapInteractor.CallBack mCallBack,
+                                   TemplateInteractor.CallBack callBack,
                                    PoiRepository mRepository,
                                    String mSearchedQuery,
                                    double mLatitude, double mLongitude) {
-        super(threadExecutor, mainThread);
-        this.mCallBack = mCallBack;
+        super(threadExecutor, mainThread, callBack);
         this.mRepository = mRepository;
         this.mSearchedQuery = mSearchedQuery;
         this.mLatitude = mLatitude;
         this.mLongitude = mLongitude;
-    }
-
-    @Override
-    public void notifySuccess(final ArrayList<PoiModel> poiModels) {
-        mMainThread.post(new Runnable() {
-            @Override
-            public void run() {
-                mCallBack.onSuccess(poiModels);
-            }
-        });
-    }
-
-    @Override
-    public void notifyError(final String code, final String message) {
-        mMainThread.post(new Runnable() {
-            @Override
-            public void run() {
-                mCallBack.onFail(message);
-            }
-        });
     }
 
     @Override
