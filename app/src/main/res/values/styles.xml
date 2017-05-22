@@ -22,4 +22,11 @@
     <style name="SplashTheme" parent="Theme.AppCompat.NoActionBar">
         <item name="android:windowBackground">@drawable/background_splash</item>
     </style>
+
+    <declare-styleable name="ViewMore">
+        <attr name="text" format="string" localization="suggested" />
+        <attr name="textColor" format="color" />
+        <attr name="clickableTextColor" format="color" />
+        <attr name="maxLines" format="integer" />
+    </declare-styleable>
 </resources>

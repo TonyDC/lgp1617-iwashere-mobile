@@ -77,6 +77,11 @@
             android:parentActivityName=".presentation.main.MainActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
+            android:name=".presentation.route.RouteDetailActivity"
+            android:label="@string/title_activity_route_detail"
+            android:parentActivityName=".presentation.main.MainActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
             android:name=".presentation.misc.AboutActivity"
             android:label="@string/title_activity_about"
             android:parentActivityName=".presentation.main.MainActivity"
