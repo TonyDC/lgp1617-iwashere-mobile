@@ -28,7 +28,6 @@ import com.teamc.mira.iwashere.presentation.auth.AuthenticateActivity;
 import com.teamc.mira.iwashere.presentation.misc.AboutActivity;
 import com.teamc.mira.iwashere.threading.MainThreadImpl;
 
-
 public class AccountFragment extends Fragment {
 
     @Override
