@@ -58,6 +58,7 @@ public class RouteRepositoryImpl extends AbstractRepository implements RouteRepo
 
             return new RouteModel(response);
         } catch (InterruptedException | ExecutionException | JSONException | TimeoutException e) {
+            e.printStackTrace();
             handleError(e);
 
             return null;

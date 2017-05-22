@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -25,7 +26,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="200dp"
                     android:id="@+id/map"
-                    android:name="com.teamc.mira.iwashere.presentation.route.RoutePreviewFragment"/>
+                    android:name="com.teamc.mira.iwashere.presentation.route.RoutePreviewFragment"
+                    tools:layout="@layout/fragment_map" />
 
                 <TextView
                     android:id="@+id/descriptionLabel"
@@ -38,9 +40,9 @@
                 <com.teamc.mira.iwashere.presentation.misc.costum_components.ViewMore
                     android:id="@+id/routeDescritpion"
                     android:layout_width="match_parent"
-                    android:layout_height="fill_parent">
+                    android:layout_height="wrap_content"
+                    android:padding="25dp" />
 
-                </com.teamc.mira.iwashere.presentation.misc.costum_components.ViewMore>
 
                 <ListView
                     android:id="@+id/listOfPois"

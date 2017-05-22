@@ -13,7 +13,6 @@ import android.widget.TextView;
 
 import com.teamc.mira.iwashere.R;
 
-// TODO: 19/05/2017 Make this inherite from View and create a costum view
 public class ViewMore extends LinearLayout{
     public static final int MAX_LINES = 8;
     private final TextView viewMoreButton;
