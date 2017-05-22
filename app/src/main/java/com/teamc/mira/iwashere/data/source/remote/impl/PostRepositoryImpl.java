@@ -6,8 +6,9 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.RequestFuture;
-import com.teamc.mira.iwashere.data.source.remote.base.AbstractRepository;
+import com.teamc.mira.iwashere.data.source.remote.AbstractPostRepository;
 import com.teamc.mira.iwashere.data.source.remote.base.ServerUrl;
+import com.teamc.mira.iwashere.data.source.remote.exceptions.RemoteDataException;
 import com.teamc.mira.iwashere.domain.model.PostModel;
 import com.teamc.mira.iwashere.domain.model.util.Resource;
 import com.teamc.mira.iwashere.domain.repository.remote.PostRepository;
@@ -29,6 +30,7 @@ import static com.teamc.mira.iwashere.data.source.remote.base.ServerUrl.TIMEOUT_
 
 public class PostRepositoryImpl extends AbstractRepository implements PostRepository {
    private static final  String API_POST = ServerUrl.getUrl() + ServerUrl.API +  ServerUrl.CONTENT;
+   private static final  String API_CONTENT_POST_RATING_URL = ServerUrl.getUrl() + ServerUrl.API + ServerUrl.CONTENT + ServerUrl.AUTH + ServerUrl.RATING;
     private int response = -1;
 
     public PostRepositoryImpl(RequestQueue requestQueue) {
@@ -40,8 +42,34 @@ public class PostRepositoryImpl extends AbstractRepository implements PostReposi
     }
 
     @Override
-    public boolean like(String userId, String postId, boolean liked) {
-        throw new UnsupportedOperationException();
+    public boolean like(String userId, String postId, boolean liked) throws RemoteDataException {
+        /// Instantiate the RequestQueue.
+        RequestQueue queue = mRequestQueue;
+
+        final HashMap<String, Object> params = getContentRatingParams(poi.getId(), userId, newPoiRating);
+
+        RequestFuture<JSONObject> future = RequestFuture.newFuture();
+        JsonObjectRequest request = new JsonObjectRequest(
+                Request.Method.POST,
+                API_CONTENT_POST_RATING_URL,
+                new JSONObject(params),
+                future, future){
+            @Override
+            public HashMap<String, String> getHeaders() {
+                return PostRepositoryImpl.this.getHeaders();
+            }
+        };
+
+        queue.add(request);
+
+        try {
+            future.get(TIMEOUT, TIMEOUT_TIME_UNIT); // this will block
+            poi.setUserRating(newPoiRating);
+            return fetchPoiRating(poi);
+        } catch (InterruptedException | ExecutionException | TimeoutException e) {
+            handleError(e);
+            return false;
+        }
     }
 
     @Override
@@ -81,19 +109,15 @@ public class PostRepositoryImpl extends AbstractRepository implements PostReposi
         queue.add(request);
 
         try {
-            sendPost(future);
+            JSONObject response = future.get(ServerUrl.TIMEOUT, ServerUrl.TIMEOUT_TIME_UNIT); // this will block
         }catch (InterruptedException | ExecutionException | TimeoutException e){
             e.printStackTrace();
             return false;
         }
 
+
+
     return true;
     }
 
-    public int sendPost(RequestFuture<JSONObject> future) throws InterruptedException, ExecutionException, TimeoutException {
-        JSONObject response = future.get(ServerUrl.TIMEOUT, ServerUrl.TIMEOUT_TIME_UNIT); // this will block
-
-        PostModel responsePost = new PostModel();
-        return 0;
-    }
 }
