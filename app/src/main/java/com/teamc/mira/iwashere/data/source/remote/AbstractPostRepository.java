@@ -34,10 +34,10 @@ public class AbstractPostRepository extends AbstractRepository implements PostRe
     }
 
     @NonNull
-    protected HashMap<String, Object> getContentRatingParams(String poiId, String userId, int newPoiRating) {
+    protected HashMap<String, Object> getContentRatingParams(String postId, String userId, int newPostRating) {
         HashMap<String, Object> params = new HashMap<>();
-        params.put("poiID",poiId);
-        params.put("rating", newPoiRating);
+        params.put("postID",postId);
+        params.put("rating", newPostRating);
         return params;
     }
 

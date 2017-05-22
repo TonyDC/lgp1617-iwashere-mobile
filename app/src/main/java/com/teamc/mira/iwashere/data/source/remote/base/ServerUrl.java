@@ -24,5 +24,6 @@ public class ServerUrl {
     public static final String RATING = "/rating";
     public static final String SEARCH = "/search";
     public static final String CONTENT = "/post";
+    public static final String LIKE = "/like";
     public static final String POI_CONTENT = "/poi_posts";
 }

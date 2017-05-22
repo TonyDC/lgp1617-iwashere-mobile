@@ -61,7 +61,7 @@ public class PoiRepositoryImpl extends AbstractPoiRepository implements PoiRepos
         String url = API_POI_URL + "/" + poiId;
 
         RequestFuture<JSONObject> future = RequestFuture.newFuture();
-        Log.d(TAG,url);
+        Log.d(TAG,url);Log.d(TAG,url);
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null, future, future);
         queue.add(request);
 

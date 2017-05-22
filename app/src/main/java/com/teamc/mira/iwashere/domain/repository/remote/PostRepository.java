@@ -1,6 +1,11 @@
 package com.teamc.mira.iwashere.domain.repository.remote;
 
+import com.teamc.mira.iwashere.data.source.remote.exceptions.RemoteDataException;
+import com.teamc.mira.iwashere.domain.model.PostModel;
 import com.teamc.mira.iwashere.domain.model.util.Resource;
+
+
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -10,11 +15,15 @@ import java.util.ArrayList;
 
 public interface PostRepository {
 
-    boolean like(String userId, String postId, boolean liked);
+    /**
+     *
+     * @param postId the POST's id
+     * @return PostModel with information about the Post
+     * @throws RemoteDataException
+     * @see PostModel( JSONObject )
+     */
+    PostModel fetchPost(String postId) throws RemoteDataException;
 
-    boolean fetch(String userId, String poiId, int offset, int limit);
-
-    boolean fetch(String poiId, int offset, int limit);
 
     boolean post(String poiId, String description, ArrayList<String> tags, Resource resource);
 }

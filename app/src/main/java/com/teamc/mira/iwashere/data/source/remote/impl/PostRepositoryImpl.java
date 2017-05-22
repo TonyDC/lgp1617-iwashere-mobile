@@ -1,6 +1,7 @@
 package com.teamc.mira.iwashere.data.source.remote.impl;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -9,10 +10,12 @@ import com.android.volley.toolbox.RequestFuture;
 import com.teamc.mira.iwashere.data.source.remote.AbstractPostRepository;
 import com.teamc.mira.iwashere.data.source.remote.base.ServerUrl;
 import com.teamc.mira.iwashere.data.source.remote.exceptions.RemoteDataException;
+import com.teamc.mira.iwashere.domain.model.PoiModel;
 import com.teamc.mira.iwashere.domain.model.PostModel;
 import com.teamc.mira.iwashere.domain.model.util.Resource;
 import com.teamc.mira.iwashere.domain.repository.remote.PostRepository;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -28,9 +31,9 @@ import static com.teamc.mira.iwashere.data.source.remote.base.ServerUrl.TIMEOUT_
  * Created by Duart on 01/05/2017.
  */
 
-public class PostRepositoryImpl extends AbstractRepository implements PostRepository {
-   private static final  String API_POST = ServerUrl.getUrl() + ServerUrl.API +  ServerUrl.CONTENT;
-   private static final  String API_CONTENT_POST_RATING_URL = ServerUrl.getUrl() + ServerUrl.API + ServerUrl.CONTENT + ServerUrl.AUTH + ServerUrl.RATING;
+public class PostRepositoryImpl extends AbstractPostRepository implements PostRepository {
+   private static final  String API_POST_URL = ServerUrl.getUrl() + ServerUrl.API +  ServerUrl.CONTENT;
+   private static final  String API_CONTENT_POST_LIKE_URL = ServerUrl.getUrl() + ServerUrl.API + ServerUrl.CONTENT + ServerUrl.AUTH + ServerUrl.LIKE;
     private int response = -1;
 
     public PostRepositoryImpl(RequestQueue requestQueue) {
@@ -42,44 +45,26 @@ public class PostRepositoryImpl extends AbstractRepository implements PostReposi
     }
 
     @Override
-    public boolean like(String userId, String postId, boolean liked) throws RemoteDataException {
-        /// Instantiate the RequestQueue.
+    public PostModel fetchPost(String postId) throws RemoteDataException {
+        // Instantiate the RequestQueue.
         RequestQueue queue = mRequestQueue;
 
-        final HashMap<String, Object> params = getContentRatingParams(poi.getId(), userId, newPoiRating);
+        String url = API_POST_URL + "/" + postId;
 
         RequestFuture<JSONObject> future = RequestFuture.newFuture();
-        JsonObjectRequest request = new JsonObjectRequest(
-                Request.Method.POST,
-                API_CONTENT_POST_RATING_URL,
-                new JSONObject(params),
-                future, future){
-            @Override
-            public HashMap<String, String> getHeaders() {
-                return PostRepositoryImpl.this.getHeaders();
-            }
-        };
-
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null, future, future);
         queue.add(request);
 
         try {
-            future.get(TIMEOUT, TIMEOUT_TIME_UNIT); // this will block
-            poi.setUserRating(newPoiRating);
-            return fetchPoiRating(poi);
-        } catch (InterruptedException | ExecutionException | TimeoutException e) {
+            JSONObject response = future.get(TIMEOUT, TIMEOUT_TIME_UNIT); // this will block
+
+
+            future.cancel(true);
+            return new PostModel(response);
+        } catch (InterruptedException | ExecutionException | JSONException | TimeoutException e) {
             handleError(e);
-            return false;
+            return null;
         }
-    }
-
-    @Override
-    public boolean fetch(String userId, String poiId, int offset, int limit) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public boolean fetch(String poiId, int offset, int limit) {
-        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -97,7 +82,7 @@ public class PostRepositoryImpl extends AbstractRepository implements PostReposi
         RequestFuture<JSONObject> future = RequestFuture.newFuture();
         JsonObjectRequest request = new JsonObjectRequest(
                 Request.Method.POST,
-                API_POST,
+                API_POST_URL,
                 new JSONObject(params),
                 future, future) {
             @Override
