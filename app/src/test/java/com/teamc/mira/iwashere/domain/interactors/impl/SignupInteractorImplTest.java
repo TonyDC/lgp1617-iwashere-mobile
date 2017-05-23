@@ -21,7 +21,7 @@ public class SignupInteractorImplTest extends InteractorTest {
     @Test
     public void testOnSuccess() throws Exception {
 
-        when(mUserRepository.signup(email, username, password, confirmPassword))
+        when(mUserRepository.signUp(email, username, password, confirmPassword))
                 .thenReturn(true);
 
 
@@ -34,7 +34,7 @@ public class SignupInteractorImplTest extends InteractorTest {
         );
         interactor.run();
 
-        Mockito.verify(mUserRepository).signup(email,username,password,confirmPassword);
+        Mockito.verify(mUserRepository).signUp(email,username,password,confirmPassword);
         Mockito.verifyNoMoreInteractions(mUserRepository);
         Mockito.verify(mMockedCallback).onSuccess();
     }

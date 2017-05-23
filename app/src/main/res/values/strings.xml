@@ -6,7 +6,7 @@
 
     <string name="action_sign_in_short">Register</string>
     <string name="email">Email</string>
-    <string name="name">Name</string>
+    <string name="username">Username</string>
     <string name="minimum_password">Password too short, enter minimum 6 characters!</string>
     <string name="auth_failed">Authentication failed, check your email and password or sign up</string>
     <string name="change_email">Change Email</string>
@@ -72,6 +72,10 @@
     <string name="more_info">More info</string>
     <string name="less_info">Less info</string>
     <string name="error_request">Error sending request</string>
+    <string name="error_weak_password">Weak Password</string>
+    <string name="error_user_exists">Email is taken</string>
+    <string name="error_invalid_email">Invalid Email</string>
+    <string name="hello_world_account">Hello World: Account</string>
     <string name="description">Description</string>
     <string name="title_activity_route_detail">Route</string>
 </resources>

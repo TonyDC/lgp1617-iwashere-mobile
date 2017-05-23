@@ -29,8 +29,6 @@ public class AuthenticateActivity extends AppCompatActivity implements View.OnCl
             startActivity(new Intent(this, LoginActivity.class));
         } else if (i == R.id.main_sign_up_btn) {
             startActivity(new Intent(this, SignupActivity.class));
-        }else if (i == R.id.main_test_slider) {
-            startActivity(new Intent(this, PoiDetailActivity.class));
         }
         finish();
     }

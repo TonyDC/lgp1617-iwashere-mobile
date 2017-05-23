@@ -4,7 +4,7 @@ import java.util.concurrent.TimeUnit;
 
 public class ServerUrl {
 
-    public static final String DOMAIN = "192.168.1.129";
+    public static final String DOMAIN = "172.30.5.114";
     public static final String PORT = "8080";
 
     public static final long TIMEOUT = 3;
@@ -17,6 +17,11 @@ public class ServerUrl {
 
     //PATHS
     public static final String API = "/api";
+
+    public static final String USER = "/user";
+    public static final String UNAUTH = "/unauth";
+    public static final String REGISTER = "/register";
+    public static final String REGISTER_BY_PROVIDER = "/register-by-provider";
 
     public static final String POI = "/poi";
     public static final String RANGE = "/range";
