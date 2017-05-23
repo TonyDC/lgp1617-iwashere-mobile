@@ -1,14 +1,8 @@
-package com.teamc.mira.iwashere.presentation.main;
+package com.teamc.mira.iwashere.presentation.misc;
 
-import android.Manifest;
 import android.content.Context;
-import android.content.pm.PackageManager;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -16,10 +10,8 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.LatLng;
 
 public abstract class MapFragment extends SupportMapFragment implements OnMapReadyCallback {
     public static final String TAG = MapFragment.class.getSimpleName();
@@ -58,7 +50,7 @@ public abstract class MapFragment extends SupportMapFragment implements OnMapRea
     }
 
     public interface OnTouchListener {
-        public abstract void onTouch();
+        void onTouch();
     }
 
     public class TouchableWrapper extends FrameLayout {
@@ -69,14 +61,17 @@ public abstract class MapFragment extends SupportMapFragment implements OnMapRea
 
         @Override
         public boolean dispatchTouchEvent(MotionEvent event) {
-            switch (event.getAction()) {
-                case MotionEvent.ACTION_DOWN:
-                    mListener.onTouch();
-                    break;
-                case MotionEvent.ACTION_UP:
-                    mListener.onTouch();
-                    break;
+            if(mListener != null){
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        mListener.onTouch();
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        mListener.onTouch();
+                        break;
+                }
             }
+
             return super.dispatchTouchEvent(event);
         }
     }

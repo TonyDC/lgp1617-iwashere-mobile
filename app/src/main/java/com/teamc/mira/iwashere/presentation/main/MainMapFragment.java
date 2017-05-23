@@ -78,13 +78,6 @@ public class MainMapFragment extends Fragment implements OnSearchViewListener {
         mSearchView.setOnSearchViewListener(this);
 
         poiMapFragment = (PoiMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
-        if(poiMapFragment != null)
-            poiMapFragment.setListener(new MapFragment.OnTouchListener() {
-                @Override
-                public void onTouch() {
-
-                }
-            });
 
         setHasOptionsMenu(true);
         getActivity().setTitle(null);

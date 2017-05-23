@@ -1,18 +1,14 @@
 package com.teamc.mira.iwashere.presentation.main;
 
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
@@ -22,6 +18,7 @@ import com.teamc.mira.iwashere.domain.executor.impl.ThreadExecutor;
 import com.teamc.mira.iwashere.domain.interactors.base.TemplateInteractor;
 import com.teamc.mira.iwashere.domain.interactors.impl.PoiMapInteractorImpl;
 import com.teamc.mira.iwashere.domain.model.PoiModel;
+import com.teamc.mira.iwashere.presentation.misc.LocationBasedMapFragment;
 import com.teamc.mira.iwashere.presentation.misc.PoiMapMarker;
 import com.teamc.mira.iwashere.threading.MainThreadImpl;
 
@@ -60,7 +57,7 @@ public class PoiMapFragment extends LocationBasedMapFragment implements
     }
 
     @Override
-    void updateCurrentLocation(LatLng latLng) {
+    protected void updateCurrentLocation(LatLng latLng) {
         //move map camera
         if (!mFirstZoomFlag) {
             mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, ZOOM));
