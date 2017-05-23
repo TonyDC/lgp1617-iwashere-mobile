@@ -1,4 +1,4 @@
-package com.teamc.mira.iwashere.data.source.remote;
+package com.teamc.mira.iwashere.data.source.remote.impl;
 
 import android.content.Context;
 import android.util.Log;
@@ -10,6 +10,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.RequestFuture;
 import com.android.volley.toolbox.StringRequest;
 import com.google.firebase.auth.FirebaseAuth;
+import com.teamc.mira.iwashere.data.source.remote.AbstractUserRepository;
 import com.teamc.mira.iwashere.domain.repository.remote.UserRepository;
 import com.teamc.mira.iwashere.data.source.remote.base.ServerUrl;
 import com.teamc.mira.iwashere.data.source.remote.exceptions.BasicRemoteException;
@@ -173,26 +174,4 @@ public class UserRepositoryImpl extends AbstractUserRepository implements UserRe
         throw new UnsupportedOperationException();
     }
 
-    protected void handleError(Exception e) throws RemoteDataException {
-        // check to see if the throwable is an instance of the volley error
-        if (e.getCause() instanceof VolleyError) {
-            // grab the volley error from the throwable and cast it back
-            VolleyError volleyError = (VolleyError) e.getCause();
-            // now just grab the network response like normal
-            NetworkResponse networkResponse = volleyError.networkResponse;
-            try {
-                Log.d(TAG, "raw data: " + new String(networkResponse.data));
-                JSONObject data = new JSONObject(new String(networkResponse.data));
-                Log.d(TAG, data.toString());
-
-                String code = data.getString("code");
-
-                throw new BasicRemoteException(code);
-            } catch (JSONException e1) {
-                e1.printStackTrace();
-                return;
-            }
-        }
-        e.printStackTrace();
-    }
 }
