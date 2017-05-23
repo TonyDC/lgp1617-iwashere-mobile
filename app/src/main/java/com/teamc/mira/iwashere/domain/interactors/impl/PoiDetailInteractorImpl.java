@@ -8,8 +8,11 @@ import com.teamc.mira.iwashere.domain.executor.MainThread;
 import com.teamc.mira.iwashere.domain.interactors.base.AbstractTemplateInteractor;
 import com.teamc.mira.iwashere.domain.interactors.base.TemplateInteractor;
 import com.teamc.mira.iwashere.domain.model.PoiModel;
+import com.teamc.mira.iwashere.domain.model.PostModel;
 import com.teamc.mira.iwashere.domain.repository.remote.PoiRepository;
 import com.teamc.mira.iwashere.domain.repository.remote.PostRepository;
+
+import java.util.ArrayList;
 
 public class PoiDetailInteractorImpl extends AbstractTemplateInteractor<PoiModel> {
     private static final String TAG = PoiDetailInteractorImpl.class.getSimpleName();

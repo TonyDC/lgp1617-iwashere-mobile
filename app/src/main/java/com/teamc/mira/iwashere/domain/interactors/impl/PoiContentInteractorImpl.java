@@ -8,10 +8,15 @@ import com.teamc.mira.iwashere.domain.interactors.base.AbstractBasicInteractor;
 import com.teamc.mira.iwashere.domain.interactors.base.AbstractTemplateInteractor;
 import com.teamc.mira.iwashere.domain.interactors.base.TemplateInteractor;
 import com.teamc.mira.iwashere.domain.model.PoiModel;
+import com.teamc.mira.iwashere.domain.model.PostModel;
 import com.teamc.mira.iwashere.domain.repository.remote.PoiRepository;
+import com.teamc.mira.iwashere.domain.repository.remote.PostRepository;
+
+import java.util.ArrayList;
 
 public class PoiContentInteractorImpl extends AbstractBasicInteractor implements PoiContentInteractor {
     PoiRepository repository;
+    PostRepository postRepository;
     PoiModel poi;
     String userId;
     int contentLimit;
@@ -43,6 +48,10 @@ public class PoiContentInteractorImpl extends AbstractBasicInteractor implements
                 notifyError("520", "Error fetching POI content.");
                 return;
             }
+
+            ArrayList<PostModel> postmodels;
+            postmodels = postRepository.fetchPOIPosts(poi, contentOffset, contentLimit);
+
         } catch (RemoteDataException e) {
             notifyError(e.getCode(),e.getErrorMessage());
             return;

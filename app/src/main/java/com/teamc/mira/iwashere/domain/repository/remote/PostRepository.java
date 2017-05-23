@@ -25,7 +25,7 @@ public interface PostRepository {
      */
     PostModel fetchPost(String postId) throws RemoteDataException;
 
-    ArrayList<PostModel> fetchPOIPosts(PoiModel poi) throws RemoteDataException;
+    ArrayList<PostModel> fetchPOIPosts(PoiModel poi, int contentOffset, int contentLimit) throws RemoteDataException;
 
     boolean addPostLike(PostModel post, String userId) throws RemoteDataException;
 

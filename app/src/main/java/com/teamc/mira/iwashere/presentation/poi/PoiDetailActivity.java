@@ -36,6 +36,7 @@ import com.teamc.mira.iwashere.domain.interactors.impl.PoiDetailInteractorImpl;
 import com.teamc.mira.iwashere.domain.interactors.impl.PoiRatingInteractorImpl;
 import com.teamc.mira.iwashere.domain.model.ContentModel;
 import com.teamc.mira.iwashere.domain.model.PoiModel;
+import com.teamc.mira.iwashere.domain.model.PostModel;
 import com.teamc.mira.iwashere.domain.model.util.Resource;
 import com.teamc.mira.iwashere.domain.repository.remote.PoiRepository;
 import com.teamc.mira.iwashere.presentation.misc.costum_components.ViewMore;
@@ -61,6 +62,7 @@ public class PoiDetailActivity extends AppCompatActivity {
     /* View components */
     SliderLayout sliderShow;
     TextView poiRatingText;
+    TextView poiPosts;
     RatingBar userRatingBar;
     boolean moreContent = true;
 
@@ -151,7 +153,6 @@ public class PoiDetailActivity extends AppCompatActivity {
     }
 
 
-
     private void setPoiInfo() {
 
         setPoiMediaSlider(poi);
@@ -161,6 +162,7 @@ public class PoiDetailActivity extends AppCompatActivity {
         setPoiRatingBars(poi);
         setPoiContentGrid(poi.getContent(),moreContent);
         getSupportActionBar().setTitle(poi.getName());
+        //setPoiPosts(poi.getPosts());
 
     }
 
