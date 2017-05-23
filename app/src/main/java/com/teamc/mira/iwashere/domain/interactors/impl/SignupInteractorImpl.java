@@ -4,17 +4,16 @@ import com.teamc.mira.iwashere.data.source.remote.exceptions.RemoteDataException
 import com.teamc.mira.iwashere.domain.executor.Executor;
 import com.teamc.mira.iwashere.domain.executor.MainThread;
 import com.teamc.mira.iwashere.domain.interactors.base.AbstractInteractor;
-import com.teamc.mira.iwashere.domain.interactors.AuthInteractor;
+import com.teamc.mira.iwashere.domain.interactors.base.AbstractTemplateInteractor;
+import com.teamc.mira.iwashere.domain.interactors.base.TemplateInteractor;
 import com.teamc.mira.iwashere.domain.repository.remote.UserRepository;
 
 /**
  * Created by Duart on 02/04/2017.
  */
 
-public class SignupInteractorImpl extends AbstractInteractor implements AuthInteractor {
+public class SignupInteractorImpl extends AbstractTemplateInteractor{
 
-    MainThread mainThread;
-    AuthInteractor.Callback callback;
     UserRepository repository;
     private final String email;
     private final String username;
@@ -24,11 +23,10 @@ public class SignupInteractorImpl extends AbstractInteractor implements AuthInte
 
     public SignupInteractorImpl(Executor threadExecutor,
                                 MainThread mainThread,
-                                AuthInteractor.Callback callback, UserRepository repository,
+                                TemplateInteractor.CallBack callBack, UserRepository repository,
                                 String email, String username, String pswd, String confPswd) {
-        super(threadExecutor, mainThread);
+        super(threadExecutor, mainThread, callBack);
 
-        this.callback = callback;
         this.repository = repository;
         this.email = email;
         this.username = username;
@@ -54,27 +52,7 @@ public class SignupInteractorImpl extends AbstractInteractor implements AuthInte
         }
 
         // we have retrieved our message, notify the UI on the main thread
-        notifySuccess();
+        notifySuccess(null);
     }
 
-    @Override
-    public void notifyError(final String code, final String message) {
-        mMainThread.post(new Runnable() {
-            @Override
-            public void run() {
-                callback.onFail(code, message);
-            }
-        });
-    }
-
-    @Override
-    public void notifySuccess() {
-        mMainThread.post(new Runnable() {
-            @Override
-            public void run() {
-                callback.onSuccess();
-            }
-        });
-
-    }
 }

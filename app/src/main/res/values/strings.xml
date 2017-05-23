@@ -72,4 +72,6 @@
     <string name="more_info">More info</string>
     <string name="less_info">Less info</string>
     <string name="error_request">Error sending request</string>
+    <string name="description">Description</string>
+    <string name="title_activity_route_detail">Route</string>
 </resources>
