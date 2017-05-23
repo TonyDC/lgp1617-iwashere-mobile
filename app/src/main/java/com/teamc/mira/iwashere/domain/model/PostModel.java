@@ -35,7 +35,7 @@ public class PostModel extends BasicModel implements Serializable {
             Resource resource,
             ArrayList<String> tags
     ){
-        super(id, name);
+        super(id, userId);
         this.userId = userId;
         this.description = description;
         this.resource = resource;
@@ -46,12 +46,8 @@ public class PostModel extends BasicModel implements Serializable {
     }
 
     public PostModel(JSONObject post) throws JSONException {
-        if(post.has("postId")) this.id = post.getString("postId");
-        if(post.has("name")) this.name = post.getString("name");
+        super(post.getString("postId"), post.getString("userId"));
         if(post.has("description")) this.description = post.getString("description");
-        if(post.has("userId")) this.userId = post.getString("userId");
-        if(post.has("poiId")) this.poiId = post.getString("poiId");
-        if(post.has("liked")) this.liked = post.getBoolean("liked");
     }
 
     public String getId() {

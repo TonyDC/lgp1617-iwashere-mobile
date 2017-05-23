@@ -39,7 +39,7 @@ public interface PoiRepository {
 
     /**
      * Fetch the rating attributed by a user to a POI through API, updating the PoiModel.
-     *
+     * boolean fetchPoiPosts(PoiModel poi_poi)
      * @param poi    the PoiModel with information about the POI
      * @param userId the user's id
      * @return true upon success, false otherwise

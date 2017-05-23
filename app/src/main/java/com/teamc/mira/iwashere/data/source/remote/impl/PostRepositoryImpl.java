@@ -1,6 +1,7 @@
 package com.teamc.mira.iwashere.data.source.remote.impl;
 
 import android.content.Context;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.android.volley.Request;
@@ -17,6 +18,7 @@ import com.teamc.mira.iwashere.domain.model.util.Resource;
 import com.teamc.mira.iwashere.domain.repository.remote.PostRepository;
 import com.teamc.mira.iwashere.util.JsonObjectRequestWithNull;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -24,6 +26,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import static com.teamc.mira.iwashere.data.source.remote.base.ServerUrl.TIMEOUT;
@@ -35,7 +38,8 @@ import static com.teamc.mira.iwashere.data.source.remote.base.ServerUrl.TIMEOUT_
 
 public class PostRepositoryImpl extends AbstractPostRepository implements PostRepository {
 
-   private static final  String API_POST_URL = ServerUrl.getUrl() + ServerUrl.API +  ServerUrl.CONTENT;
+    public static final String TAG = PostRepositoryImpl.class.getSimpleName();
+    private static final  String API_POST_URL = ServerUrl.getUrl() + ServerUrl.API +  ServerUrl.CONTENT;
     private static final String API_POST_GET_LIKE_URL = ServerUrl.getUrl() + ServerUrl.API + ServerUrl.CONTENT + ServerUrl.LIKE;
     private static final  String API_POST_LIKE_URL = ServerUrl.getUrl() + ServerUrl.API + ServerUrl.CONTENT + ServerUrl.AUTH + ServerUrl.LIKE;
     private int response = -1;
@@ -161,7 +165,7 @@ public class PostRepositoryImpl extends AbstractPostRepository implements PostRe
             e.printStackTrace();
             return false;
         }
-    return true;
+        return true;
     }
 
     @Override
@@ -196,6 +200,46 @@ public class PostRepositoryImpl extends AbstractPostRepository implements PostRe
             return false;
         }
 
+    }
+
+    @Override
+    public ArrayList<PostModel> fetchPOIPosts(PoiModel poi) throws RemoteDataException {
+        //Instantiate the RequestQueue
+        RequestQueue queue = mRequestQueue;
+
+        String url = ServerUrl.getUrl() + ServerUrl.API + ServerUrl.CONTENT + ServerUrl.POI_CONTENT + "/" + poi.getId() + "/0" + "/10";
+        RequestFuture<JSONObject> future = RequestFuture.newFuture();
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null, future, future);
+        queue.add(request);
+
+        return getPoiPostModelsFromRequest(future);
+
+    }
+
+    @Nullable
+    ArrayList<PostModel> getPoiPostModelsFromRequest(RequestFuture<JSONObject> future) throws RemoteDataException {
+        try {
+            JSONObject response = future.get(3000, TimeUnit.MILLISECONDS); // this will block
+            System.out.println(TAG + ": " + String.valueOf(response));
+
+            ArrayList<PostModel> postModels = new ArrayList<PostModel>();
+            PostModel postModel;
+            JSONObject object;
+
+            JSONArray results = response.getJSONArray("results");
+            System.out.println(TAG + ": " + String.valueOf(results));
+
+            for (int i = 0; i < results.length(); i++) {
+                object = results.getJSONObject(i);
+                postModel = new PostModel(object);
+                postModels.add(postModel);
+            }
+
+            return postModels;
+        } catch (InterruptedException | ExecutionException | JSONException | TimeoutException e) {
+            handleError(e);
+            return null;
+        }
     }
 
 }

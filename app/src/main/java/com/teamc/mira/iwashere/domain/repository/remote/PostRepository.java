@@ -1,6 +1,7 @@
 package com.teamc.mira.iwashere.domain.repository.remote;
 
 import com.teamc.mira.iwashere.data.source.remote.exceptions.RemoteDataException;
+import com.teamc.mira.iwashere.domain.model.PoiModel;
 import com.teamc.mira.iwashere.domain.model.PostModel;
 import com.teamc.mira.iwashere.domain.model.util.Resource;
 
@@ -23,6 +24,8 @@ public interface PostRepository {
      * @see PostModel( JSONObject )
      */
     PostModel fetchPost(String postId) throws RemoteDataException;
+
+    ArrayList<PostModel> fetchPOIPosts(PoiModel poi) throws RemoteDataException;
 
     boolean addPostLike(PostModel post, String userId) throws RemoteDataException;
 
