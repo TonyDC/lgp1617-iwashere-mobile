@@ -3,6 +3,7 @@ package com.teamc.mira.iwashere.presentation.route;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -21,12 +22,11 @@ import com.teamc.mira.iwashere.domain.interactors.base.TemplateInteractor;
 import com.teamc.mira.iwashere.domain.interactors.impl.RouteDetailInteractorImpl;
 import com.teamc.mira.iwashere.domain.model.PoiModel;
 import com.teamc.mira.iwashere.domain.model.RouteModel;
-import com.teamc.mira.iwashere.domain.repository.remote.RouteRepository;
+import com.teamc.mira.iwashere.presentation.misc.MapFragment;
 import com.teamc.mira.iwashere.presentation.misc.costum_components.ViewMore;
 import com.teamc.mira.iwashere.presentation.poi.PoiDetailActivity;
 import com.teamc.mira.iwashere.threading.MainThreadImpl;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class RouteDetailActivity extends AppCompatActivity {
@@ -38,6 +38,8 @@ public class RouteDetailActivity extends AppCompatActivity {
 
     private ViewMore mDescription;
     private SwipeRefreshLayout mSwipeContainer;
+    private NestedScrollView mNestedScrollView;
+    private MapFragment mMapFragment;
 
     private String[] mPoiNames;
 
@@ -60,6 +62,8 @@ public class RouteDetailActivity extends AppCompatActivity {
             }
         });
 
+        mNestedScrollView = (NestedScrollView) findViewById(R.id.nestedView);
+
         setRouteInfo();
 
         fetchRouteDetails(route);
@@ -70,6 +74,18 @@ public class RouteDetailActivity extends AppCompatActivity {
         Bundle args = new Bundle();
         args.putSerializable(EXTRA_ROUTE, route);
         f.setArguments(args);
+        Log.d(TAG, f.toString());
+        mMapFragment = f;
+        mMapFragment.setListener(new MapFragment.OnTouchListener() {
+            @Override
+            public void onTouch() {
+                mSwipeContainer.requestDisallowInterceptTouchEvent(true);
+                mNestedScrollView.requestDisallowInterceptTouchEvent(true);
+                Log.d(TAG, "Disallow request");
+            }
+        });
+
+
         getSupportFragmentManager().beginTransaction().add(R.id.map, f, "map").commit();
     }
 
