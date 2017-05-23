@@ -14,6 +14,7 @@
         android:id="@+id/swipeContainer">
 
         <android.support.v4.widget.NestedScrollView
+            android:id="@+id/nestedView"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
@@ -27,7 +28,8 @@
                     android:name="com.teamc.mira.iwashere.presentation.route.RoutePreviewFragment"
                     android:layout_width="match_parent"
                     android:layout_height="200dp"
-                    tools:layout="@layout/fragment_map" />
+                    tools:layout="@layout/fragment_map"
+                    class="com.teamc.mira.iwashere.presentation.route.RoutePreviewFragment"/>
 
                 <TextView
                     android:id="@+id/descriptionLabel"

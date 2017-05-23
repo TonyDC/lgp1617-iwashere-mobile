@@ -3,6 +3,7 @@ package com.teamc.mira.iwashere.presentation.misc;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -23,24 +24,24 @@ public abstract class MapFragment extends SupportMapFragment implements OnMapRea
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mContext = getContext();
-
     }
 
 
     private OnTouchListener mListener;
+    private TouchableWrapper frameLayout;
 
     @Override
     public View onCreateView(LayoutInflater layoutInflater, ViewGroup viewGroup, Bundle savedInstance) {
+        getMapAsync(this);
         View layout = super.onCreateView(layoutInflater, viewGroup, savedInstance);
 
-        TouchableWrapper frameLayout = new TouchableWrapper(getActivity());
+        frameLayout = new TouchableWrapper(getActivity());
 
         frameLayout.setBackgroundColor(getResources().getColor(android.R.color.transparent));
 
         ((ViewGroup) layout).addView(frameLayout,
                 new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 
-        getMapAsync(this);
 
         return layout;
     }
@@ -71,6 +72,7 @@ public abstract class MapFragment extends SupportMapFragment implements OnMapRea
                         break;
                 }
             }
+
 
             return super.dispatchTouchEvent(event);
         }
