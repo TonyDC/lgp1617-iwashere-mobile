@@ -23,10 +23,10 @@
                 android:orientation="vertical">
 
                 <fragment
-                    android:layout_width="match_parent"
-                    android:layout_height="200dp"
                     android:id="@+id/map"
                     android:name="com.teamc.mira.iwashere.presentation.route.RoutePreviewFragment"
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
                     tools:layout="@layout/fragment_map" />
 
                 <TextView

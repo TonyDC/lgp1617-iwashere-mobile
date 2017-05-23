@@ -11,6 +11,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -23,6 +24,7 @@ import com.teamc.mira.iwashere.R;
 import com.teamc.mira.iwashere.domain.model.PoiModel;
 import com.teamc.mira.iwashere.domain.model.RouteModel;
 import com.teamc.mira.iwashere.presentation.main.MapFragment;
+import com.teamc.mira.iwashere.presentation.misc.PoiMapMarker;
 import com.teamc.mira.iwashere.presentation.poi.PoiDetailActivity;
 
 import java.util.ArrayList;
@@ -41,6 +43,7 @@ public class RoutePreviewFragment extends MapFragment implements OnMapReadyCallb
 
     private View mRootView;
     private Context mContext;
+    private PoiMapMarker poiMapMarker;
 
     public RoutePreviewFragment(){
         super();
@@ -50,29 +53,19 @@ public class RoutePreviewFragment extends MapFragment implements OnMapReadyCallb
     public void onMapReady(GoogleMap googleMap) {
         super.onMapReady(googleMap);
 
-        mGoogleMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
-            @Override
-            public void onInfoWindowClick(Marker marker) {
-                Intent intent = new Intent(getActivity(), PoiDetailActivity.class);
-                intent.putExtra(POI, poiMap.get(marker));
-                startActivity(intent);
-            }
-        });
+
+        poiMapMarker = new PoiMapMarker(mContext, mGoogleMap);
+        if(route != null){
+            poiMapMarker.addMarkers(route.getPois());
+        }
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        mRootView = inflater.inflate(R.layout.fragment_map, container, false);
+//        mRootView = inflater.inflate(R.layout.fragment_map, container, false);
+        mRootView = super.onCreateView(inflater, container, savedInstanceState);
         mContext = getContext();
-
-        mMapView = (MapView) mRootView.findViewById(R.id.map);
-        mMapView.onCreate(savedInstanceState);
-        mMapView.onResume();
-
-        mMapView = (MapView) mRootView.findViewById(R.id.map);
-        mMapView.onCreate(savedInstanceState);
-        mMapView.onResume();
 
 
         try {
@@ -80,8 +73,6 @@ public class RoutePreviewFragment extends MapFragment implements OnMapReadyCallb
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        mMapView.getMapAsync(this);
 
         return mRootView;
     }
@@ -94,4 +85,5 @@ public class RoutePreviewFragment extends MapFragment implements OnMapReadyCallb
             route = (RouteModel) bundle.getSerializable(EXTRA_ROUTE);
         }
     }
+
 }
