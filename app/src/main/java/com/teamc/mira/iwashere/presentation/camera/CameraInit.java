@@ -143,12 +143,6 @@ public class CameraInit extends Activity {
             startActivityForResult(cameraIntent, REQUEST_VIDEO_CAPTURE);
         }
         else if(key.equals("gallery")) {
-           /* Intent i = new Intent(
-                    Intent.ACTION_PICK,
-                    android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-
-            startActivityForResult(i, RESULT_LOAD_IMAGE);*/
-
             Intent intent = new Intent();
             intent.setType("image/*");
             intent.setAction(Intent.ACTION_GET_CONTENT);
@@ -185,23 +179,34 @@ public class CameraInit extends Activity {
         }
 
         if (requestCode == RESULT_LOAD_IMAGE && resultCode == RESULT_OK && null != data) {
-            Uri uri = data.getData();
+            Uri selectedImage = data.getData();
+            if (Build.VERSION.SDK_INT<Build.VERSION_CODES.N){
+                String[] filePathColumn = { MediaStore.Images.Media.DATA };
 
-            try {
-                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
-                videoView.setVisibility(View.GONE);
-                imageView.setVisibility(View.VISIBLE);
+                Cursor cursor = getContentResolver().query(selectedImage,
+                        filePathColumn, null, null, null);
+                cursor.moveToFirst();
 
-                File myFile = new File(uri.getPath());
+                int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+                String picturePath = cursor.getString(columnIndex);
+                cursor.close();
 
-                bitmap = requireRotation(myFile.getAbsolutePath(),bitmap);
-                imageView.setImageBitmap(bitmap);
+                Bitmap photo = BitmapFactory.decodeFile(picturePath);
+                photo = requireRotation(picturePath,photo);
+                imageView.setImageBitmap(photo);
 
-            } catch (IOException e) {
-                e.printStackTrace();
             }
+            else{
+                try {
+                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), selectedImage);
+                    imageView.setImageBitmap(bitmap);
 
-
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            videoView.setVisibility(View.GONE);
+            imageView.setVisibility(View.VISIBLE);
         }
 
     }
