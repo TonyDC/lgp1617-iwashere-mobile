@@ -4,7 +4,9 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.support.annotation.Nullable;
 import android.text.Html;
+import android.text.Layout;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +17,7 @@ import com.teamc.mira.iwashere.R;
 
 public class ViewMore extends LinearLayout{
     public static final int MAX_LINES = 8;
+    private static final String TAG = ViewMore.class.getSimpleName();
     private final TextView viewMoreButton;
 
     private View mView;
@@ -40,11 +43,10 @@ public class ViewMore extends LinearLayout{
         mMaxLines = a.getInt(R.styleable.ViewMore_maxLines, MAX_LINES);
 
         textView = (TextView) getChildAt(0);
-        textView.setText(mText);
 
         viewMoreButton = (TextView) getChildAt(1);
+        setText(mText);
         setDynamicDescriptionSize();
-        applyViewMoreButtonDynamicVisibility();
 
         // TODO: 21/05/2017 change text color and view more button color dynamically
     }
@@ -64,7 +66,11 @@ public class ViewMore extends LinearLayout{
     }*/
 
     private void applyViewMoreButtonDynamicVisibility() {
-        if(textView.getLineCount() <= mMaxLines){
+        Layout l = textView.getLayout();
+        if ((l.getLineCount() > 0 && l.getEllipsisCount(l.getLineCount() - 1) > 0 ) ||
+                textView.getLineCount() > mMaxLines) {
+            viewMoreButton.setVisibility(VISIBLE);
+        } else {
             viewMoreButton.setVisibility(GONE);
         }
     }
@@ -91,6 +97,11 @@ public class ViewMore extends LinearLayout{
     public void setText(String text) {
         TextView textDescription = (TextView) mView.findViewById(R.id.viewMoreText);
         textDescription.setText(text);
+    }
+
+    @Override
+    protected void onLayout(boolean changed, int l, int t, int r, int b) {
+        super.onLayout(changed, l, t, r, b);
         applyViewMoreButtonDynamicVisibility();
     }
 }

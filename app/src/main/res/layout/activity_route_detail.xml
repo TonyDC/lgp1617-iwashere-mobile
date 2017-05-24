@@ -27,7 +27,7 @@
                     android:id="@+id/map"
                     android:name="com.teamc.mira.iwashere.presentation.route.RoutePreviewFragment"
                     android:layout_width="match_parent"
-                    android:layout_height="200dp"
+                    android:layout_height="300dp"
                     tools:layout="@layout/fragment_map"
                     class="com.teamc.mira.iwashere.presentation.route.RoutePreviewFragment"/>
 
@@ -36,6 +36,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="15dp"
+                    android:textColor="@color/colorAccentPrimary"
                     android:text="@string/description"
                     android:textSize="25sp" />
 
@@ -45,6 +46,25 @@
                     android:layout_height="wrap_content"
                     android:padding="25dp" />
 
+                <android.support.v4.widget.Space
+                    android:layout_width="match_parent"
+                    android:layout_height="20dp" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
+                    android:background="@android:color/darker_gray"/>
+
+                <TextView
+                    android:id="@+id/poiListLabel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="15dp"
+                    android:textColor="@color/colorAccentPrimary"
+                    android:text="@string/poi_list"
+                    android:textSize="25sp" />
 
                 <ListView
                     android:id="@+id/listOfPois"
