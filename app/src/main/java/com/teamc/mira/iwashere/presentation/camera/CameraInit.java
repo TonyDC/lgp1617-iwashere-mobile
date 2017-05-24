@@ -3,6 +3,7 @@ package com.teamc.mira.iwashere.presentation.camera;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -15,6 +16,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.view.View;
 import android.widget.Button;
@@ -24,6 +27,7 @@ import android.widget.Toast;
 import android.widget.VideoView;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.teamc.mira.iwashere.Manifest;
 import com.teamc.mira.iwashere.R;
 import com.teamc.mira.iwashere.data.source.remote.impl.PostRepositoryImpl;
 import com.teamc.mira.iwashere.domain.executor.Executor;
@@ -52,6 +56,7 @@ public class CameraInit extends Activity {
     private static final int CAMERA_REQUEST = 1888;
     private static final int REQUEST_VIDEO_CAPTURE = 1;
     private static final int RESULT_LOAD_IMAGE = 2;
+    private int PICK_IMAGE_REQUEST = 1;
 
     private PostModel post;
     FirebaseAuth auth;
@@ -95,6 +100,7 @@ public class CameraInit extends Activity {
     }
 
     public void callCamera(){
+
         if (Build.VERSION.SDK_INT>Build.VERSION_CODES.LOLLIPOP_MR1){
             String[] perms = {"android.permission.WRITE_EXTERNAL_STORAGE"};
 
@@ -102,6 +108,7 @@ public class CameraInit extends Activity {
 
             requestPermissions(perms, permsRequestCode);
         }
+
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String imageFileName = "IWasHere" + timeStamp + "_";
         Intent cameraIntent;
@@ -136,11 +143,18 @@ public class CameraInit extends Activity {
             startActivityForResult(cameraIntent, REQUEST_VIDEO_CAPTURE);
         }
         else if(key.equals("gallery")) {
-            Intent i = new Intent(
+           /* Intent i = new Intent(
                     Intent.ACTION_PICK,
                     android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
 
-            startActivityForResult(i, RESULT_LOAD_IMAGE);
+            startActivityForResult(i, RESULT_LOAD_IMAGE);*/
+
+            Intent intent = new Intent();
+            intent.setType("image/*");
+            intent.setAction(Intent.ACTION_GET_CONTENT);
+            startActivityForResult(Intent.createChooser(intent, "Select Picture"), RESULT_LOAD_IMAGE);
+
+
         }
         else{
             Toast.makeText(CameraInit.this, key, Toast.LENGTH_SHORT).show();
@@ -158,34 +172,7 @@ public class CameraInit extends Activity {
         if (requestCode == CAMERA_REQUEST && resultCode == Activity.RESULT_OK) {
             String filePath = resourceToUploadUri.getPath();
             Bitmap photo = getBitmap(resourceToUploadUri);
-            try {
-                ExifInterface ei = new ExifInterface(filePath);
-                int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION,
-                        ExifInterface.ORIENTATION_UNDEFINED);
-
-                switch(orientation) {
-
-                    case ExifInterface.ORIENTATION_ROTATE_90:
-                        photo = rotateImage(photo, 90);
-                        break;
-
-                    case ExifInterface.ORIENTATION_ROTATE_180:
-                        photo = rotateImage(photo, 180);
-                        break;
-
-                    case ExifInterface.ORIENTATION_ROTATE_270:
-                        photo =rotateImage(photo, 270);
-                        break;
-
-                    case ExifInterface.ORIENTATION_NORMAL:
-
-                    default:
-                        break;
-                }
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            photo = requireRotation(filePath,photo);
 
             videoView.setVisibility(View.GONE);
             imageView.setImageBitmap(photo);
@@ -198,22 +185,61 @@ public class CameraInit extends Activity {
         }
 
         if (requestCode == RESULT_LOAD_IMAGE && resultCode == RESULT_OK && null != data) {
-            Uri selectedImage = data.getData();
-            String[] filePathColumn = { MediaStore.Images.Media.DATA };
+            Uri uri = data.getData();
 
-            Cursor cursor = getContentResolver().query(selectedImage,
-                    filePathColumn, null, null, null);
-            cursor.moveToFirst();
+            try {
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
+                videoView.setVisibility(View.GONE);
+                imageView.setVisibility(View.VISIBLE);
 
-            int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-            String picturePath = cursor.getString(columnIndex);
-            cursor.close();
-            videoView.setVisibility(View.GONE);
-            imageView.setVisibility(View.VISIBLE);
-            Bitmap photo = BitmapFactory.decodeFile(picturePath);
-            imageView.setImageBitmap(scaleBitmap(photo));
+                File myFile = new File(uri.getPath());
+
+                bitmap = requireRotation(myFile.getAbsolutePath(),bitmap);
+                imageView.setImageBitmap(bitmap);
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+
         }
 
+    }
+
+    public void checkPermissions(){
+        //ActivityCompat.requestPermissions();
+    }
+
+    public Bitmap requireRotation(String filePath, Bitmap photo){
+        try {
+            ExifInterface ei = new ExifInterface(filePath);
+            int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION,
+                    ExifInterface.ORIENTATION_UNDEFINED);
+
+            switch(orientation) {
+
+                case ExifInterface.ORIENTATION_ROTATE_90:
+                    photo = rotateImage(photo, 90);
+                    break;
+
+                case ExifInterface.ORIENTATION_ROTATE_180:
+                    photo = rotateImage(photo, 180);
+                    break;
+
+                case ExifInterface.ORIENTATION_ROTATE_270:
+                    photo =rotateImage(photo, 270);
+                    break;
+
+                case ExifInterface.ORIENTATION_NORMAL:
+
+                default:
+                    break;
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return photo;
     }
 
     public static Bitmap rotateImage(Bitmap source, float angle) {
@@ -241,6 +267,9 @@ public class CameraInit extends Activity {
         Bitmap scaledBitmap = scaleBitmap(bitmap);
         return scaledBitmap;
     }
+
+
+
 
     private int getInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
         int width = options.outWidth;
