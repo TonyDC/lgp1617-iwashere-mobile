@@ -58,7 +58,7 @@ public class PoiMapFragment extends LocationBasedMapFragment implements
     @Override
     protected void updateCurrentLocation(LatLng latLng) {
         //move map camera
-        if (!mFirstZoomFlag) {
+        if (!mFirstZoomFlag && mGoogleMap != null) {
             mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, ZOOM));
             mFirstZoomFlag = true;
         }
