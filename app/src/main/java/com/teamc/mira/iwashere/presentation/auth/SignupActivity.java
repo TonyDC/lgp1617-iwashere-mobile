@@ -2,6 +2,7 @@ package com.teamc.mira.iwashere.presentation.auth;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
@@ -10,7 +11,11 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.teamc.mira.iwashere.IWasHereActivity;
 import com.teamc.mira.iwashere.R;
 import com.teamc.mira.iwashere.data.source.remote.impl.UserRepositoryImpl;
@@ -20,6 +25,7 @@ import com.teamc.mira.iwashere.domain.executor.impl.ThreadExecutor;
 import com.teamc.mira.iwashere.domain.interactors.base.TemplateInteractor;
 import com.teamc.mira.iwashere.domain.interactors.impl.SignupInteractorImpl;
 import com.teamc.mira.iwashere.domain.repository.remote.UserRepository;
+import com.teamc.mira.iwashere.presentation.main.MainActivity;
 import com.teamc.mira.iwashere.threading.MainThreadImpl;
 
 /**
@@ -47,7 +53,7 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
         auth = FirebaseAuth.getInstance();
 
         inputEmail = (EditText) findViewById(R.id.email);
-        inputUsername = (EditText) findViewById(R.id.confirm_password);
+        inputUsername = (EditText) findViewById(R.id.username);
         inputPassword = (EditText) findViewById(R.id.password);
         inputConfirmPassword = (EditText) findViewById(R.id.confirm_password);
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
@@ -70,9 +76,9 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
     public void onClick(View v) {
         int i = v.getId();
         if (i == R.id.btn_sign_up) {
-            String email = inputEmail.getText().toString().trim();
+            final String email = inputEmail.getText().toString().trim();
             String username = inputUsername.getText().toString().trim();
-            String password = inputPassword.getText().toString().trim();
+            final String password = inputPassword.getText().toString().trim();
             String confirmPassword = inputConfirmPassword.getText().toString().trim();
 
             if (TextUtils.isEmpty(email)) {
@@ -90,7 +96,7 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
                 return;
             }
 
-            if (!TextUtils.equals(password,confirmPassword)) {
+            if (!TextUtils.equals(password, confirmPassword)) {
                 Toast.makeText(getApplicationContext(), "Passwords don't match!", Toast.LENGTH_SHORT).show();
                 return;
             }
@@ -108,19 +114,44 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
             TemplateInteractor.CallBack callback = new TemplateInteractor.CallBack() {
                 @Override
                 public void onSuccess(Object result) {
-                    Toast.makeText(getApplicationContext(), "Success", Toast.LENGTH_SHORT).show();
                     Log.d(TAG, "Register Successful");
                     progressBar.setVisibility(View.GONE);
+
+                    //authenticate user
+                    auth.signInWithEmailAndPassword(email, password).addOnCompleteListener(SignupActivity.this, new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            progressBar.setVisibility(View.GONE);
+                            if (!task.isSuccessful()) {
+                                try {
+                                    throw task.getException();
+                                } catch (FirebaseAuthUserCollisionException e) {
+                                    Toast.makeText(SignupActivity.this, "Authentication failed - email already taken.",
+                                            Toast.LENGTH_SHORT).show();
+                                } catch (Exception e) {
+                                    Log.e(TAG, e.getMessage());
+                                    Toast.makeText(SignupActivity.this, "Authentication failed.",
+                                            Toast.LENGTH_SHORT).show();
+                                }
+                                Log.w(TAG, "signInWithCredential", task.getException());
+                            } else {
+                                Intent intent = new Intent(SignupActivity.this, MainActivity.class);
+                                startActivity(intent);
+                                finish();
+                            }
+                        }
+                    });
                 }
 
                 @Override
                 public void onNetworkError() {
-
+                    progressBar.setVisibility(View.GONE);
+                    Toast.makeText(getApplicationContext(), getResources().getString(R.string.error_connection), Toast.LENGTH_SHORT).show();
                 }
 
                 @Override
                 public void onError(String code, String message) {
-                    Toast.makeText(getApplicationContext(), "Fail", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
                     Log.d(TAG, "Failed to signup");
                     progressBar.setVisibility(View.GONE);
                 }
@@ -130,7 +161,7 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
                     mainThread,
                     callback,
                     userRepository,
-                        email,username,password, confirmPassword);
+                    email, username, password, confirmPassword);
 
             signupInteractor.execute();
 

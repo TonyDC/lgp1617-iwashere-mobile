@@ -18,6 +18,11 @@ public class ServerUrl {
     //PATHS
     public static final String API = "/api";
 
+    public static final String USER = "/user";
+    public static final String UNAUTH = "/unauth";
+    public static final String REGISTER = "/register";
+    public static final String REGISTER_BY_PROVIDER = "/register-by-provider";
+
     public static final String POI = "/poi";
     public static final String RANGE = "/range";
     public static final String MEDIA = "/media";
