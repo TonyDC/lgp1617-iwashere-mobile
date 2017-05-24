@@ -26,6 +26,9 @@ public class ViewMore extends LinearLayout{
     private String mText;
     private final TextView textView;
 
+    private final String attrText;
+    private final int attrMaxLines;
+
     public ViewMore(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         mContext = context;
@@ -39,12 +42,19 @@ public class ViewMore extends LinearLayout{
 
         TypedArray a = context.obtainStyledAttributes(attrs,
                 R.styleable.ViewMore, 0, 0);
-        mText = a.getString(R.styleable.ViewMore_text);
-        mMaxLines = a.getInt(R.styleable.ViewMore_maxLines, MAX_LINES);
 
+        // Store attr arguments
+        attrText = a.getString(R.styleable.ViewMore_text);
+        attrMaxLines = a.getInt(R.styleable.ViewMore_maxLines, MAX_LINES);
+
+        // Assign attr arguments as initial arguments
+        mText = attrText;
+        mMaxLines = attrMaxLines;
+
+        // Get views
         textView = (TextView) getChildAt(0);
-
         viewMoreButton = (TextView) getChildAt(1);
+
         setText(mText);
         setDynamicDescriptionSize();
 
@@ -96,7 +106,11 @@ public class ViewMore extends LinearLayout{
 
     public void setText(String text) {
         TextView textDescription = (TextView) mView.findViewById(R.id.viewMoreText);
-        textDescription.setText(text);
+        if(text.trim().length() > 0){
+            textDescription.setText(text);
+        }else{
+            textView.setText(attrText);
+        }
     }
 
     @Override

@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical" android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <include layout="@layout/toolbar" />
@@ -44,6 +46,7 @@
                     android:id="@+id/routeDescritpion"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    app:text="@string/no_description"
                     android:padding="25dp" />
 
                 <android.support.v4.widget.Space
