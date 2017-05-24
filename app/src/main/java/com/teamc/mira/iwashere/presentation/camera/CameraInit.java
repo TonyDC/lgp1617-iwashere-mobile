@@ -15,6 +15,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.v4.content.FileProvider;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -40,6 +41,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -108,15 +110,29 @@ public class CameraInit extends Activity {
         if(key.equals("photo")) {
             cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
             File f = new File(Environment.getExternalStorageDirectory(), imageFileName + ".jpg");
-            cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(f));
-            resourceToUploadUri = Uri.fromFile(f);
+
+            if (Build.VERSION.SDK_INT>Build.VERSION_CODES.M){
+                cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, FileProvider.getUriForFile(CameraInit.this,CameraInit.this.getApplicationContext().getPackageName()+".provider",f));
+                resourceToUploadUri = FileProvider.getUriForFile(CameraInit.this,CameraInit.this.getApplicationContext().getPackageName()+".provider",f);
+            }
+            else{
+                cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(f));
+                resourceToUploadUri = Uri.fromFile(f);
+            }
             startActivityForResult(cameraIntent, CAMERA_REQUEST);
         }
         else if(key.equals("video")) {
             cameraIntent = new Intent(android.provider.MediaStore.ACTION_VIDEO_CAPTURE);
             File f = new File(Environment.getExternalStorageDirectory(), imageFileName + ".mp4");
-            cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(f));
-            resourceToUploadUri = Uri.fromFile(f);
+
+            if (Build.VERSION.SDK_INT>Build.VERSION_CODES.M){
+                cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, FileProvider.getUriForFile(CameraInit.this,CameraInit.this.getApplicationContext().getPackageName()+".provider",f));
+                resourceToUploadUri = FileProvider.getUriForFile(CameraInit.this,CameraInit.this.getApplicationContext().getPackageName()+".provider",f);
+            }
+            else{
+                cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(f));
+                resourceToUploadUri = Uri.fromFile(f);
+            }
             startActivityForResult(cameraIntent, REQUEST_VIDEO_CAPTURE);
         }
         else if(key.equals("gallery")) {
@@ -199,7 +215,7 @@ public class CameraInit extends Activity {
         }
 
     }
-    
+
     public static Bitmap rotateImage(Bitmap source, float angle) {
         Matrix matrix = new Matrix();
         matrix.postRotate(angle);
