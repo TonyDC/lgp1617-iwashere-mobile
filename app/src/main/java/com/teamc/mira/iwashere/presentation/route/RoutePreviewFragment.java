@@ -3,18 +3,24 @@ package com.teamc.mira.iwashere.presentation.route;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.teamc.mira.iwashere.domain.model.PoiModel;
 import com.teamc.mira.iwashere.domain.model.RouteModel;
 import com.teamc.mira.iwashere.presentation.misc.MapFragment;
 import com.teamc.mira.iwashere.presentation.misc.PoiMapMarker;
+import com.teamc.mira.iwashere.presentation.misc.util.MapUtil;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -23,6 +29,7 @@ import static com.teamc.mira.iwashere.presentation.route.RouteDetailActivity.EXT
 
 public class RoutePreviewFragment extends MapFragment implements OnMapReadyCallback {
     public static final String TAG = RoutePreviewFragment.class.getSimpleName();
+    public static final float ZOOM = 12.0f;
 
     protected RouteModel route;
     private Map<Marker, PoiModel> poiMap = new HashMap<>();
@@ -43,7 +50,28 @@ public class RoutePreviewFragment extends MapFragment implements OnMapReadyCallb
         poiMapMarker = new PoiMapMarker(mContext, mGoogleMap);
         if(route != null){
             poiMapMarker.addMarkers(route.getPois());
+            poiMapMarker.zoomAroundMarkers();
+
+            /*if (route.getPois().size() > 0) {
+                CameraUpdate cu;
+                if (route.getPois().size() == 1){
+                    PoiModel poi = route.getPois().get(0);
+
+                    LatLng center;
+                    center = new LatLng(poi.getLatitude(), poi.getLongitude());
+
+                    cu = CameraUpdateFactory.newLatLngZoom(center, ZOOM);
+                }else {
+                    LatLngBounds bounds = MapUtil.getBounds(route.getPois());
+                    cu = CameraUpdateFactory.newLatLngBounds(bounds, PADDING);
+                }
+
+                googleMap.moveCamera(cu);
+            }*/
+
         }
+
+
     }
 
     @Nullable

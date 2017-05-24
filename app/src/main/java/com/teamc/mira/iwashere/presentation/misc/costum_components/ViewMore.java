@@ -6,7 +6,6 @@ import android.support.annotation.Nullable;
 import android.text.Html;
 import android.text.Layout;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -48,8 +47,8 @@ public class ViewMore extends LinearLayout{
         attrMaxLines = a.getInt(R.styleable.ViewMore_maxLines, MAX_LINES);
 
         // Assign attr arguments as initial arguments
-        mText = attrText;
-        mMaxLines = attrMaxLines;
+        setText(attrText);
+        setMaxLines(attrMaxLines);
 
         // Get views
         textView = (TextView) getChildAt(0);
@@ -61,19 +60,13 @@ public class ViewMore extends LinearLayout{
         // TODO: 21/05/2017 change text color and view more button color dynamically
     }
 
-    public int getmMaxLines() {
+    public int getMaxLines() {
         return mMaxLines;
     }
 
-    public void setmMaxLines(int mMaxLines) {
+    public void setMaxLines(int mMaxLines) {
         this.mMaxLines = mMaxLines;
     }
-
-    /*private void apply(){
-        setText(mText);
-        setDynamicDescriptionSize();
-        applyViewMoreButtonDynamicVisibility();
-    }*/
 
     private void applyViewMoreButtonDynamicVisibility() {
         Layout l = textView.getLayout();
@@ -106,7 +99,7 @@ public class ViewMore extends LinearLayout{
 
     public void setText(String text) {
         TextView textDescription = (TextView) mView.findViewById(R.id.viewMoreText);
-        if(text.trim().length() > 0){
+        if(text != null && text.trim().length() > 0){
             textDescription.setText(text);
         }else{
             textView.setText(attrText);

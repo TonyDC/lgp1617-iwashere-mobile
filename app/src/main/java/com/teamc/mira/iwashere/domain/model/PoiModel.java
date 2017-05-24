@@ -98,16 +98,16 @@ public class PoiModel extends BasicModel implements Serializable {
         this.address = address;
     }
 
-    public String getLongitude() {
-        return longitude;
+    public double getLongitude() {
+        return Double.parseDouble(longitude);
     }
 
     public void setLongitude(String longitude) {
         this.longitude = longitude;
     }
 
-    public String getLatitude() {
-        return latitude;
+    public double getLatitude() {
+        return Double.parseDouble(latitude);
     }
 
     public void setLatitude(String latitude) {

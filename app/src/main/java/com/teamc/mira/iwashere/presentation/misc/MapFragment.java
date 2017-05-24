@@ -16,6 +16,8 @@ import com.google.android.gms.maps.SupportMapFragment;
 
 public abstract class MapFragment extends SupportMapFragment implements OnMapReadyCallback {
     public static final String TAG = MapFragment.class.getSimpleName();
+    public static final float ZOOM = 14.0f;
+    protected static final int PADDING = 150;
 
     protected GoogleMap mGoogleMap;
     protected Context mContext;
@@ -32,9 +34,9 @@ public abstract class MapFragment extends SupportMapFragment implements OnMapRea
 
     @Override
     public View onCreateView(LayoutInflater layoutInflater, ViewGroup viewGroup, Bundle savedInstance) {
-        getMapAsync(this);
         View layout = super.onCreateView(layoutInflater, viewGroup, savedInstance);
 
+        getMapAsync(this);
         frameLayout = new TouchableWrapper(getActivity());
 
         frameLayout.setBackgroundColor(getResources().getColor(android.R.color.transparent));

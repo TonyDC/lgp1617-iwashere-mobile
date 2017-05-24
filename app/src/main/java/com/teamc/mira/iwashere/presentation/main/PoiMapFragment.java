@@ -28,7 +28,6 @@ import java.util.ArrayList;
 public class PoiMapFragment extends LocationBasedMapFragment implements
         GoogleMap.OnCameraMoveListener{
 
-    public static final float ZOOM = 14.0f;
     private static final LatLng PORTO_LAT_LNG = new LatLng(41.1485647, -8.6119707);
 
     private boolean mFirstZoomFlag = false;

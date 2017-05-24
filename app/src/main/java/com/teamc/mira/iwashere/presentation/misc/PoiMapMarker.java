@@ -3,9 +3,13 @@ package com.teamc.mira.iwashere.presentation.misc;
 import android.content.Context;
 import android.content.Intent;
 
+import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.teamc.mira.iwashere.R;
@@ -16,6 +20,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.teamc.mira.iwashere.presentation.misc.MapFragment.PADDING;
 import static com.teamc.mira.iwashere.presentation.poi.PoiDetailActivity.POI;
 
 public class PoiMapMarker {
@@ -23,6 +28,8 @@ public class PoiMapMarker {
     private final Context mContext;
 
     private Map<Marker, PoiModel> poiMap = new HashMap<>();
+
+    private static final BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.mipmap.marker_primary);
 
     public PoiMapMarker(Context context, GoogleMap googleMap) {
         mGoogleMap = googleMap;
@@ -35,14 +42,16 @@ public class PoiMapMarker {
                 intent.putExtra(POI, poiMap.get(marker));
                 mContext.startActivity(intent);
             }
-        });    }
+        });
+
+    }
 
     public void addMarker(PoiModel poi){
         MarkerOptions markerOptions = new MarkerOptions();
         markerOptions.position(new LatLng(Double.valueOf(poi.getLatitude()), Double.valueOf(poi.getLongitude())));
         markerOptions.title(poi.getName());
 
-        markerOptions.icon(BitmapDescriptorFactory.fromResource(R.mipmap.marker_primary));
+        markerOptions.icon(icon);
 
         Marker marker = mGoogleMap.addMarker(markerOptions);
         poiMap.put(marker,poi);
@@ -53,5 +62,27 @@ public class PoiMapMarker {
              list) {
             addMarker(poi);
         }
+    }
+
+    public void zoomAroundMarkers(){
+        if (poiMap.size() == 0) return;
+
+        CameraUpdate cu;
+        int padding = PADDING; // offset from edges of the map in pixels
+
+        if (poiMap.size() == 1) {
+            cu = CameraUpdateFactory.newLatLngZoom(poiMap.keySet().iterator().next().getPosition(), padding);
+        } else {
+            LatLngBounds.Builder builder = new LatLngBounds.Builder();
+            for (Marker marker : poiMap.keySet()) {
+                builder.include(marker.getPosition());
+            }
+            LatLngBounds bounds = builder.build();
+
+            cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
+        }
+
+
+        mGoogleMap.moveCamera(cu);
     }
 }
