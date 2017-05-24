@@ -18,8 +18,6 @@ public class AuthenticateActivity extends AppCompatActivity implements View.OnCl
         // Buttons
         findViewById(R.id.main_sign_in_btn).setOnClickListener(this);
         findViewById(R.id.main_sign_up_btn).setOnClickListener(this);
-        findViewById(R.id.main_test_slider).setOnClickListener(this);
-
     }
 
     @Override
