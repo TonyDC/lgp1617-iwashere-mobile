@@ -64,6 +64,7 @@ public class RouteDetailActivity extends AppCompatActivity {
 
         mNestedScrollView = (NestedScrollView) findViewById(R.id.nestedView);
 
+
         setRouteInfo();
 
         fetchRouteDetails(route);

@@ -18,6 +18,7 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.teamc.mira.iwashere.domain.model.PoiModel;
 import com.teamc.mira.iwashere.domain.model.RouteModel;
+import com.teamc.mira.iwashere.presentation.misc.LocationBasedMapFragment;
 import com.teamc.mira.iwashere.presentation.misc.MapFragment;
 import com.teamc.mira.iwashere.presentation.misc.PoiMapMarker;
 import com.teamc.mira.iwashere.presentation.misc.util.MapUtil;
@@ -27,7 +28,7 @@ import java.util.Map;
 
 import static com.teamc.mira.iwashere.presentation.route.RouteDetailActivity.EXTRA_ROUTE;
 
-public class RoutePreviewFragment extends MapFragment implements OnMapReadyCallback {
+public class RoutePreviewFragment extends LocationBasedMapFragment {
     public static final String TAG = RoutePreviewFragment.class.getSimpleName();
     public static final float ZOOM = 12.0f;
 
@@ -43,6 +44,11 @@ public class RoutePreviewFragment extends MapFragment implements OnMapReadyCallb
     }
 
     @Override
+    protected void updateCurrentLocation(LatLng latLng) {
+        //DO NOTHING
+    }
+
+    @Override
     public void onMapReady(GoogleMap googleMap) {
         super.onMapReady(googleMap);
 
@@ -51,27 +57,7 @@ public class RoutePreviewFragment extends MapFragment implements OnMapReadyCallb
         if(route != null){
             poiMapMarker.addMarkers(route.getPois());
             poiMapMarker.zoomAroundMarkers();
-
-            /*if (route.getPois().size() > 0) {
-                CameraUpdate cu;
-                if (route.getPois().size() == 1){
-                    PoiModel poi = route.getPois().get(0);
-
-                    LatLng center;
-                    center = new LatLng(poi.getLatitude(), poi.getLongitude());
-
-                    cu = CameraUpdateFactory.newLatLngZoom(center, ZOOM);
-                }else {
-                    LatLngBounds bounds = MapUtil.getBounds(route.getPois());
-                    cu = CameraUpdateFactory.newLatLngBounds(bounds, PADDING);
-                }
-
-                googleMap.moveCamera(cu);
-            }*/
-
         }
-
-
     }
 
     @Nullable
