@@ -6,6 +6,8 @@ import android.support.annotation.Nullable;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
@@ -27,7 +29,9 @@ import com.teamc.mira.iwashere.presentation.misc.costum_components.ViewMore;
 import com.teamc.mira.iwashere.presentation.poi.PoiDetailActivity;
 import com.teamc.mira.iwashere.threading.MainThreadImpl;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.List;
 
 public class RouteDetailActivity extends AppCompatActivity {
 
@@ -41,7 +45,7 @@ public class RouteDetailActivity extends AppCompatActivity {
     private NestedScrollView mNestedScrollView;
     private MapFragment mMapFragment;
 
-    private String[] mPoiNames;
+    private ArrayList<String> mPoiNames;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -121,22 +125,21 @@ public class RouteDetailActivity extends AppCompatActivity {
     }
 
     private void setPoiList() {
-        ListView listView = (ListView) findViewById(R.id.listOfPois);
+        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.listOfPois);
+        recyclerView.setNestedScrollingEnabled(true);
 
-        ArrayList<PoiModel> routePois = route.getPois();
-        mPoiNames = new String[routePois.size()];
+        ArrayList<PoiModel> routePois =  route.getPois();
+        mPoiNames = new ArrayList<>();
 
         for (int i = 0; i < routePois.size(); i++){
             Log.d(TAG, "Adding to route's pois list: poiId-"+routePois.get(i).getId());
-            mPoiNames[i]= (i+1) + " - " + routePois.get(i).getName();
+            mPoiNames.add((i+1) + " - " + routePois.get(i).getName());
         }
 
-        final ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-                android.R.layout.simple_list_item_1, mPoiNames);
-        listView.setAdapter(adapter);
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        final CustomArrayAdapter adapter = new CustomArrayAdapter(this,mPoiNames);
+        adapter.setOnItemClickListener(new CustomArrayAdapter.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            public void onClick(View v, int position) {
                 PoiModel poi = route.getPois().get(position);
 
                 Intent intent = new Intent(RouteDetailActivity.this, PoiDetailActivity.class);
@@ -144,6 +147,9 @@ public class RouteDetailActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setAdapter(adapter);
+
     }
 
     private void setToolBar() {

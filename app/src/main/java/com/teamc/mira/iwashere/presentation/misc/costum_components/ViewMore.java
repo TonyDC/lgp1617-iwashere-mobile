@@ -46,13 +46,14 @@ public class ViewMore extends LinearLayout{
         attrText = a.getString(R.styleable.ViewMore_text);
         attrMaxLines = a.getInt(R.styleable.ViewMore_maxLines, MAX_LINES);
 
-        // Assign attr arguments as initial arguments
-        setText(attrText);
-        setMaxLines(attrMaxLines);
 
         // Get views
         textView = (TextView) getChildAt(0);
         viewMoreButton = (TextView) getChildAt(1);
+
+        // Assign attr arguments as initial arguments
+        setText(attrText);
+        setMaxLines(attrMaxLines);
 
         setText(mText);
         setDynamicDescriptionSize();
