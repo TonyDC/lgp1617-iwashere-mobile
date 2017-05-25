@@ -2,6 +2,11 @@ package com.teamc.mira.iwashere.presentation.misc;
 
 import android.content.Context;
 import android.content.Intent;
+import android.support.annotation.NonNull;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -12,8 +17,13 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.squareup.picasso.Picasso;
 import com.teamc.mira.iwashere.R;
+import com.teamc.mira.iwashere.domain.model.ContentModel;
 import com.teamc.mira.iwashere.domain.model.PoiModel;
+import com.teamc.mira.iwashere.domain.model.util.Resource;
 import com.teamc.mira.iwashere.presentation.poi.PoiDetailActivity;
 
 import java.util.ArrayList;
@@ -62,6 +72,8 @@ public class PoiMapMarker {
              list) {
             addMarker(poi);
         }
+
+        mGoogleMap.setInfoWindowAdapter(new PoiInfoWindowAdapter());
     }
 
     public void zoomAroundMarkers(){
@@ -84,5 +96,41 @@ public class PoiMapMarker {
 
 
         mGoogleMap.moveCamera(cu);
+    }
+
+    class PoiInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
+
+        private final View myContentsView;
+
+        PoiInfoWindowAdapter(){
+            myContentsView = LayoutInflater.from(mContext).inflate(R.layout.costum_poi_info_window_map, null);
+        }
+
+        @Override
+        public View getInfoContents(Marker marker) {
+            TextView tvTitle = ((TextView)myContentsView.findViewById(R.id.poiName));
+            tvTitle.setText(marker.getTitle());
+            final ImageView imageView = ((ImageView)myContentsView.findViewById(R.id.poiImage));
+
+            ArrayList<ContentModel> resource = poiMap.get(marker).getContent();
+            if (resource.size() > 0) {
+                resource.get(0).getResource().fetchDownloadUrl(new OnCompleteListener() {
+                    @Override
+                    public void onComplete(@NonNull Task task) {
+                        String imageUrl = task.getResult().toString();
+                        Picasso.with(mContext).load(imageUrl).into(imageView);
+                    }
+                });
+            }
+
+            return myContentsView;
+        }
+
+        @Override
+        public View getInfoWindow(Marker marker) {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
     }
 }
