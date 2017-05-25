@@ -128,7 +128,7 @@ public class PoiDetailActivity extends AppCompatActivity {
                     public void onSuccess(PoiModel updatedPoi) {
                         poi.setUserRating(rating);
                         poi.setRating(updatedPoi.getRating());
-//                        setPoiRating(poi);
+                        Toast.makeText(getApplicationContext(), R.string.vote_sent, LENGTH_SHORT).show();
                     }
                 };
 

@@ -1,5 +1,6 @@
 package com.teamc.mira.iwashere.domain.interactors.impl;
 
+import com.teamc.mira.iwashere.domain.interactors.base.TemplateInteractor;
 import com.teamc.mira.iwashere.domain.repository.remote.UserRepository;
 
 import org.junit.Test;
@@ -13,7 +14,7 @@ import static org.mockito.Mockito.when;
  */
 public class SignupInteractorImplTest extends InteractorTest {
 
-    @Mock AuthInteractor.Callback             mMockedCallback;
+    @Mock TemplateInteractor.CallBack             mMockedCallback;
     @Mock UserRepository                        mUserRepository;
 
     @Mock String email, username, password, confirmPassword;
@@ -36,6 +37,6 @@ public class SignupInteractorImplTest extends InteractorTest {
 
         Mockito.verify(mUserRepository).signUp(email,username,password,confirmPassword);
         Mockito.verifyNoMoreInteractions(mUserRepository);
-        Mockito.verify(mMockedCallback).onSuccess();
+        Mockito.verify(mMockedCallback).onSuccess(null);
     }
 }

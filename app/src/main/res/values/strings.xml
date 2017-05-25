@@ -78,4 +78,7 @@
     <string name="hello_world_account">Hello World: Account</string>
     <string name="description">Description</string>
     <string name="title_activity_route_detail">Route</string>
+    <string name="vote_sent">Success! Vote sent.</string>
+    <string name="poi_list">List of Points</string>
+    <string name="no_description">No description available!</string>
 </resources>

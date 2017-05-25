@@ -1,4 +1,4 @@
-package com.teamc.mira.iwashere.presentation.main;
+package com.teamc.mira.iwashere.presentation.misc;
 
 import android.Manifest;
 import android.app.AlertDialog;
@@ -23,8 +23,8 @@ import com.google.android.gms.maps.model.LatLng;
 public abstract class LocationBasedMapFragment extends MapFragment{
     static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
     private static final String INTENT_NEW_LOCATION = "New Location";
-    static double mLatitude;
-    static double mLongitude;
+    protected double mLatitude;
+    protected double mLongitude;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -61,7 +61,7 @@ public abstract class LocationBasedMapFragment extends MapFragment{
                 }
             };
 
-    abstract void updateCurrentLocation(LatLng latLng);
+    protected abstract void updateCurrentLocation(LatLng latLng);
 
     protected void checkLocationPermission() {
         if (ContextCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION)

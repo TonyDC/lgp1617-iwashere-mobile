@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.support.annotation.Nullable;
 import android.text.Html;
+import android.text.Layout;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -13,9 +14,9 @@ import android.widget.TextView;
 
 import com.teamc.mira.iwashere.R;
 
-// TODO: 19/05/2017 Make this inherite from View and create a costum view
 public class ViewMore extends LinearLayout{
     public static final int MAX_LINES = 8;
+    private static final String TAG = ViewMore.class.getSimpleName();
     private final TextView viewMoreButton;
 
     private View mView;
@@ -23,6 +24,9 @@ public class ViewMore extends LinearLayout{
     private int mMaxLines = MAX_LINES;
     private String mText;
     private final TextView textView;
+
+    private final String attrText;
+    private final int attrMaxLines;
 
     public ViewMore(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
@@ -37,35 +41,40 @@ public class ViewMore extends LinearLayout{
 
         TypedArray a = context.obtainStyledAttributes(attrs,
                 R.styleable.ViewMore, 0, 0);
-        mText = a.getString(R.styleable.ViewMore_text);
-        mMaxLines = a.getInt(R.styleable.ViewMore_maxLines, MAX_LINES);
 
+        // Store attr arguments
+        attrText = a.getString(R.styleable.ViewMore_text);
+        attrMaxLines = a.getInt(R.styleable.ViewMore_maxLines, MAX_LINES);
+
+
+        // Get views
         textView = (TextView) getChildAt(0);
-        textView.setText(mText);
-
         viewMoreButton = (TextView) getChildAt(1);
+
+        // Assign attr arguments as initial arguments
+        setText(attrText);
+        setMaxLines(attrMaxLines);
+
+        setText(mText);
         setDynamicDescriptionSize();
-        applyViewMoreButtonDynamicVisibility();
 
         // TODO: 21/05/2017 change text color and view more button color dynamically
     }
 
-    public int getmMaxLines() {
+    public int getMaxLines() {
         return mMaxLines;
     }
 
-    public void setmMaxLines(int mMaxLines) {
+    public void setMaxLines(int mMaxLines) {
         this.mMaxLines = mMaxLines;
     }
 
-    /*private void apply(){
-        setText(mText);
-        setDynamicDescriptionSize();
-        applyViewMoreButtonDynamicVisibility();
-    }*/
-
     private void applyViewMoreButtonDynamicVisibility() {
-        if(textView.getLineCount() <= mMaxLines){
+        Layout l = textView.getLayout();
+        if ((l.getLineCount() > 0 && l.getEllipsisCount(l.getLineCount() - 1) > 0 ) ||
+                textView.getLineCount() > mMaxLines) {
+            viewMoreButton.setVisibility(VISIBLE);
+        } else {
             viewMoreButton.setVisibility(GONE);
         }
     }
@@ -91,7 +100,16 @@ public class ViewMore extends LinearLayout{
 
     public void setText(String text) {
         TextView textDescription = (TextView) mView.findViewById(R.id.viewMoreText);
-        textDescription.setText(text);
+        if(text != null && text.trim().length() > 0){
+            textDescription.setText(text);
+        }else{
+            textView.setText(attrText);
+        }
+    }
+
+    @Override
+    protected void onLayout(boolean changed, int l, int t, int r, int b) {
+        super.onLayout(changed, l, t, r, b);
         applyViewMoreButtonDynamicVisibility();
     }
 }
