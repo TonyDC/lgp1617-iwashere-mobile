@@ -5,7 +5,8 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <com.google.android.gms.maps.MapView
+    <fragment
+        android:name="com.teamc.mira.iwashere.presentation.main.PoiMapFragment"
         android:id="@+id/map"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

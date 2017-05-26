@@ -24,7 +24,7 @@ public class UserRepositoryImplTest {
         String password = "123456";
         String confirmPassword = "123456";
 
-        assertTrue(userRepository.signup(email, username, password, confirmPassword));*/
+        assertTrue(userRepository.signUp(email, username, password, confirmPassword));*/
     }
 
 }
