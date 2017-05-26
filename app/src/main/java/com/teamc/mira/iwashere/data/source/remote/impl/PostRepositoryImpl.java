@@ -203,7 +203,7 @@ public class PostRepositoryImpl extends AbstractPostRepository implements PostRe
     }
 
     @Override
-    public ArrayList<PostModel> fetchPOIPosts(PoiModel poi) throws RemoteDataException {
+    public ArrayList<PostModel> fetchPOIPosts(PoiModel poi, int contentOffset, int contentLimit) throws RemoteDataException {
         //Instantiate the RequestQueue
         RequestQueue queue = mRequestQueue;
 
