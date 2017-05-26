@@ -1,22 +1,12 @@
 package com.teamc.mira.iwashere.domain.interactors;
 
-import com.teamc.mira.iwashere.domain.interactors.base.Interactor;
+import com.teamc.mira.iwashere.domain.interactors.base.BasicInteractor;
 import com.teamc.mira.iwashere.domain.model.PoiModel;
 
-public interface PoiContentInteractor extends Interactor {
-
-    interface CallBack {
-
-        void onNetworkFail();
-
-        void onError(String code, String message);
-
-        void onSuccess(PoiModel poi, boolean moreResults);
+public interface PoiContentInteractor extends BasicInteractor {
+    interface CallBack extends BasicInteractor.CallBack{
+        void onSuccess(PoiModel poi, boolean hasMoreContent);
     }
 
-    void notifyError(String code, String message);
-
-    void notifyError(String code);
-
-    void notifySuccess(PoiModel poi);
+    void notifySuccess(PoiModel poi, boolean hasMoreContent);
 }
