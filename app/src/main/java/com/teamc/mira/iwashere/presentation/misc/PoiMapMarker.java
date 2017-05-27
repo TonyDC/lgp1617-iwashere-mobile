@@ -99,6 +99,8 @@ public class PoiMapMarker {
         mGoogleMap.moveCamera(cu);
     }
 
+
+
     class PoiInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
 
         private final View myContentsView;
@@ -109,9 +111,16 @@ public class PoiMapMarker {
 
         @Override
         public View getInfoContents(Marker marker) {
-            TextView tvTitle = ((TextView)myContentsView.findViewById(R.id.poiName));
+
+            return null;
+        }
+
+
+        @Override
+        public View getInfoWindow(Marker marker) {
+            TextView tvTitle = ((TextView) myContentsView.findViewById(R.id.poiName));
             tvTitle.setText(marker.getTitle());
-            final ImageView imageView = ((ImageView)myContentsView.findViewById(R.id.poiImage));
+            final ImageView imageView = ((ImageView) myContentsView.findViewById(R.id.poiImage));
 
             ArrayList<ContentModel> contentList = poiMap.get(marker).getContent();
             if (contentList.size() > 0) {
@@ -129,12 +138,6 @@ public class PoiMapMarker {
             }
 
             return myContentsView;
-        }
-
-        @Override
-        public View getInfoWindow(Marker marker) {
-            // TODO Auto-generated method stub
-            return null;
         }
 
     }
