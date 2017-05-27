@@ -23,6 +23,7 @@ import com.squareup.picasso.Picasso;
 import com.teamc.mira.iwashere.R;
 import com.teamc.mira.iwashere.domain.model.ContentModel;
 import com.teamc.mira.iwashere.domain.model.PoiModel;
+import com.teamc.mira.iwashere.domain.model.util.ImageResource;
 import com.teamc.mira.iwashere.domain.model.util.Resource;
 import com.teamc.mira.iwashere.presentation.poi.PoiDetailActivity;
 
@@ -112,15 +113,19 @@ public class PoiMapMarker {
             tvTitle.setText(marker.getTitle());
             final ImageView imageView = ((ImageView)myContentsView.findViewById(R.id.poiImage));
 
-            ArrayList<ContentModel> resource = poiMap.get(marker).getContent();
-            if (resource.size() > 0) {
-                resource.get(0).getResource().fetchDownloadUrl(new OnCompleteListener() {
-                    @Override
-                    public void onComplete(@NonNull Task task) {
-                        String imageUrl = task.getResult().toString();
-                        Picasso.with(mContext).load(imageUrl).into(imageView);
-                    }
-                });
+            ArrayList<ContentModel> contentList = poiMap.get(marker).getContent();
+            if (contentList.size() > 0) {
+                Resource resource = contentList.get(0).getResource();
+                if (resource instanceof ImageResource) {
+                    ((ImageResource) resource).fetchDownloadUrl(ImageResource.Size.SIZE_XSMALL, new OnCompleteListener() {
+                        @Override
+                        public void onComplete(@NonNull Task task) {
+                            String imageUrl = task.getResult().toString();
+                            Picasso.with(mContext).load(imageUrl).into(imageView);
+                        }
+                    });
+                }
+
             }
 
             return myContentsView;

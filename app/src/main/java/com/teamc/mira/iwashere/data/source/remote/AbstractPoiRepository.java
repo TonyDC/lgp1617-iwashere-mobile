@@ -4,18 +4,18 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 
 import com.android.volley.RequestQueue;
-import com.teamc.mira.iwashere.data.source.local.UserRepository;
 import com.teamc.mira.iwashere.data.source.remote.base.AbstractRepository;
 import com.teamc.mira.iwashere.domain.model.ContentModel;
+import com.teamc.mira.iwashere.domain.model.util.BasicResource;
+import com.teamc.mira.iwashere.domain.model.util.ImageResource;
 import com.teamc.mira.iwashere.domain.model.util.Resource;
+import com.teamc.mira.iwashere.domain.model.util.ResourceFactory;
 import com.teamc.mira.iwashere.domain.repository.remote.PoiRepository;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -41,14 +41,12 @@ public abstract class AbstractPoiRepository extends AbstractRepository implement
     protected ArrayList<Resource> getMedia(JSONArray response) {
         ArrayList<Resource> mediaList = new ArrayList<>();
 
+
         for (int i = 0; i < response.length(); i++) {
             JSONObject object = null;
             try {
                 object = response.getJSONObject(i);
-                if (object.getString("type").contains("image")) {
-                    Resource resource = new Resource( object.getString("url"));
-                    mediaList.add(resource);
-                }
+                mediaList.add(ResourceFactory.getResource(object));
             } catch (JSONException e) {
                 e.printStackTrace();
             }

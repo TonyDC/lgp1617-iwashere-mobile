@@ -8,10 +8,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ImageView;
-import android.widget.ListAdapter;
 
-import com.squareup.picasso.Picasso;
 import com.teamc.mira.iwashere.R;
+import com.teamc.mira.iwashere.domain.model.util.BasicResource;
+import com.teamc.mira.iwashere.domain.model.util.ImageResource;
 import com.teamc.mira.iwashere.domain.model.util.Resource;
 
 import java.util.ArrayList;
