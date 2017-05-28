@@ -26,8 +26,10 @@ import java.util.ArrayList;
 
 
 public class PoiMapFragment extends LocationBasedMapFragment implements
-        GoogleMap.OnCameraMoveListener{
+        GoogleMap.OnCameraMoveListener,
+        GoogleMap.OnMapLoadedCallback {
 
+    private static final String TAG = PoiMapFragment.class.getSimpleName();
     private static final LatLng PORTO_LAT_LNG = new LatLng(41.1485647, -8.6119707);
 
     private boolean mFirstZoomFlag = false;
@@ -77,9 +79,9 @@ public class PoiMapFragment extends LocationBasedMapFragment implements
         // Set flag so that it that the map starts on the current location
         mFirstZoomFlag = true;
 
+        mGoogleMap.setOnMapLoadedCallback(this);
 
         mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(PORTO_LAT_LNG, ZOOM));
-        fetchPoisOnCameraMove(mGoogleMap.getProjection().getVisibleRegion().latLngBounds);
     }
 
     @Override
@@ -111,6 +113,8 @@ public class PoiMapFragment extends LocationBasedMapFragment implements
     private void fetchPoisOnCameraMove(LatLngBounds bounds) {
         LatLng northeast = bounds.northeast;
         LatLng southwest = bounds.southwest;
+
+        Log.d(TAG, bounds.toString());
 
         double minLat, maxLat, minLng, maxLng;
         minLat = southwest.latitude;
@@ -160,5 +164,10 @@ public class PoiMapFragment extends LocationBasedMapFragment implements
 
     public LatLng getPosition(){
         return  new LatLng(mLatitude, mLongitude);
+    }
+
+    @Override
+    public void onMapLoaded() {
+        fetchPoisOnCameraMove(mGoogleMap.getProjection().getVisibleRegion().latLngBounds);
     }
 }
