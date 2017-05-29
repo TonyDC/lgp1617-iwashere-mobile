@@ -13,14 +13,15 @@ android {
     }
     buildTypes {
         release {
+
             buildConfigField "String", "API_HOSTNAME", "\"" + "http://iwashere.fe.up.pt" + "\""
+
 
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
 
         debug {
-
 
             String host;
             Enumeration en = NetworkInterface.getNetworkInterfaces();
