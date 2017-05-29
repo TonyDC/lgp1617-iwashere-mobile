@@ -81,4 +81,7 @@
     <string name="vote_sent">Success! Vote sent.</string>
     <string name="poi_list">List of Points</string>
     <string name="no_description">No description available!</string>
+    <string name="video">Video</string>
+    <string name="picture">Picture</string>
+    <string name="gallery">Gallery</string>
 </resources>

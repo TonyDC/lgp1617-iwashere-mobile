@@ -43,11 +43,6 @@ public class CameraFragment extends Fragment implements View.OnClickListener {
         v.findViewById(R.id.videoBtn).setOnClickListener(this);
         v.findViewById(R.id.galleryBtn).setOnClickListener(this);
 
-        Toolbar toolbar = (Toolbar) v.findViewById(R.id.toolbar);
-        toolbar.setTitle(FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
-        ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
-
-
         return v;
     }
 

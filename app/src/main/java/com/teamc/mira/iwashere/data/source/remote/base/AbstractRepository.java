@@ -60,10 +60,12 @@ public class AbstractRepository {
         }
 
         if (e instanceof TimeoutException) {
-           throw new BasicRemoteException(NETWORK_FAIL);
+            e.printStackTrace();
+            throw new BasicRemoteException(NETWORK_FAIL);
         }
 
         if (e instanceof JSONException) {
+            e.printStackTrace();
             throw new BasicRemoteException(ErrorCodes.JSON_PARSING_ERROR);
         }
     }

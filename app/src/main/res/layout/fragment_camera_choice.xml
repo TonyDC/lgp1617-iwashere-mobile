@@ -1,66 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="match_parent"
-    android:background="@color/colorAccentSecundary"
-    android:orientation="vertical">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
 
-    <include
-        android:id="@+id/include"
-        layout="@layout/toolbar"></include>
-
-
-    <Button
-        android:id="@+id/photoBtn"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:layout_margin="15dp"
-        android:background="@drawable/corner_round_button"
-        android:drawableLeft="@mipmap/ic_photo"
-        android:drawablePadding="50dp"
-        android:paddingLeft="50dp"
-        android:gravity="left|center"
-        android:text="Take a picture"
-        android:textColor="@color/white"
-        android:textStyle="bold" />
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center">
 
-    <Button
-        android:id="@+id/videoBtn"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:layout_margin="15dp"
-        android:background="@drawable/corner_round_button"
-        android:drawableLeft="@mipmap/ic_video"
-        android:drawablePadding="50dp"
-        android:paddingLeft="50dp"
-        android:gravity="left|center"
-        android:text="Record a video"
-        android:textColor="@color/white"
-        android:textStyle="bold" />
+        <Button
+            android:id="@+id/photoBtn"
+            android:layout_width="200dp"
+            android:layout_height="60dp"
+            android:drawableLeft="@mipmap/ic_photo"
+            android:padding="15dp"
+            android:layout_marginBottom="50dp"
+            android:text="@string/picture"
+            android:textColor="@color/white"
+            android:clickable="true"
+            android:background="@drawable/corner_round_button"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/videoBtn"
+            android:layout_width="200dp"
+            android:layout_height="60dp"
+            android:background="@drawable/rounded_corner_shape"
+            android:drawableLeft="@mipmap/ic_video"
+            android:layout_marginBottom="50dp"
+            android:padding="15dp"
+            android:paddingTop="20dp"
+            android:text="@string/video"
+            android:textColor="@color/white"
+            android:textStyle="bold" />
 
 
-    <Button
-        android:id="@+id/galleryBtn"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:layout_margin="15dp"
-        android:background="@drawable/corner_round_button"
-        android:drawableLeft="@mipmap/ic_gallery"
-        android:drawablePadding="50dp"
-        android:paddingLeft="50dp"
-        android:gravity="left|center"
-        android:text="Go to gallery"
-        android:textColor="@color/white"
-        android:textStyle="bold" />
+        <Button
+            android:id="@+id/galleryBtn"
+            android:layout_width="200dp"
+            android:layout_height="60dp"
+            android:background="@drawable/rounded_corner_shape"
+            android:drawableLeft="@mipmap/ic_gallery"
+            android:padding="15dp"
+            android:text="@string/gallery"
+            android:clickable="true"
+            android:textColor="@color/white"
+            android:textStyle="bold" />
 
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="55dp"
-        android:background="@color/colorAccentSecundary"
-        android:gravity="left|center"
-        android:textColor="@color/white"
-        android:textStyle="bold" />
+    </LinearLayout>
+
 </LinearLayout>
