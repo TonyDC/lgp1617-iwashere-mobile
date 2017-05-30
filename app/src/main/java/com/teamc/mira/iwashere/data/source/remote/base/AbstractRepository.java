@@ -70,9 +70,10 @@ public class AbstractRepository {
 
     @NonNull
     protected HashMap<String, String> getHeaders() {
-        String token = UserRepository.getInstance().getToken();
+        //String token = UserRepository.getInstance().getToken();
         HashMap<String, String> params = new HashMap<>();
-        params.put("Authorization", "Bearer " + token);
+        params.put("Authorization", "Bearer " + "eyJhbGciOiJSUzI1NiIsImtpZCI6IjBmOWVmYTVjZWVhNTVjZWM1OTk2MzAzZGE0Y2Y4MmJlNmJlYjdmZmIifQ.eyJpc3MiOiJodHRwczovL3NlY3VyZXRva2VuLmdvb2dsZS5jb20vaXdhc2hlcmUtbW9iaWxlIiwibmFtZSI6ImJiYmJiIiwiYXVkIjoiaXdhc2hlcmUtbW9iaWxlIiwiYXV0aF90aW1lIjoxNDk2MTgwMTgxLCJ1c2VyX2lkIjoiRWFJUWpUQUY1TlFBa3MwVGxpS3l2ZUx3OHZDMyIsInN1YiI6IkVhSVFqVEFGNU5RQWtzMFRsaUt5dmVMdzh2QzMiLCJpYXQiOjE0OTYxODMzOTgsImV4cCI6MTQ5NjE4Njk5OCwiZW1haWwiOiJiQGIucHQiLCJlbWFpbF92ZXJpZmllZCI6ZmFsc2UsImZpcmViYXNlIjp7ImlkZW50aXRpZXMiOnsiZW1haWwiOlsiYkBiLnB0Il19LCJzaWduX2luX3Byb3ZpZGVyIjoicGFzc3dvcmQifX0.NZZj80scLUSdckFAOpOKaz8Gv1ZRiObKpv3RC3RklVJKyhnZQC_TQjOZHj9lPdjgCp10vibKZIy5M12NzaXK52ETzCogTN817RORjTYk9hGLiq-qHbHNb4we4CvkE5mQVdfAJGOLBSMvQQ_cL6KdS55B0a5X_1BX2AtWtUEsKijzAThAp7x21BbUL4H3zZlQGoRkdL53A6-XupwDPT0KAQ59GHyQQViEFRnbT7FBC0Qh0a2Umzfn73QvxRLzdfYQZay6xtuxm8cm-cW51q4rGwGy40RYeEbot0XRjm5-3qPnLNLawLo3vwkakxykMESkY7_gruJ6lg_E74JZeTi-Fg");
+        //"Bearer eyJhbGciOiJSUzI1NiIsImtpZCI6IjBmOWVmYTVjZWVhNTVjZWM1OTk2MzAzZGE0Y2Y4MmJlNmJlYjdmZmIifQ.eyJpc3MiOiJodHRwczovL3NlY3VyZXRva2VuLmdvb2dsZS5jb20vaXdhc2hlcmUtbW9iaWxlIiwibmFtZSI6ImJiYmJiIiwiYXVkIjoiaXdhc2hlcmUtbW9iaWxlIiwiYXV0aF90aW1lIjoxNDk2MTgwMTU4LCJ1c2VyX2lkIjoiRWFJUWpUQUY1TlFBa3MwVGxpS3l2ZUx3OHZDMyIsInN1YiI6IkVhSVFqVEFGNU5RQWtzMFRsaUt5dmVMdzh2QzMiLCJpYXQiOjE0OTYxODAxNTgsImV4cCI6MTQ5NjE4Mzc1OCwiZW1haWwiOiJiQGIucHQiLCJlbWFpbF92ZXJpZmllZCI6ZmFsc2UsImZpcmViYXNlIjp7ImlkZW50aXRpZXMiOnsiZW1haWwiOlsiYkBiLnB0Il19LCJzaWduX2luX3Byb3ZpZGVyIjoicGFzc3dvcmQifX0.C3wpdn36kcfDp-GRYyJDudqlKYcdHJkLbs-kea7XELCnHciSQ27bNdXPcVeDOpoMCQv7po4MG33WJRINdvOnO0kDSAwB8KftAWx86G7RZCxXwEGowX9NWiBCbcM4h5GvUNCv4oFlgncjbheKNNKJlQDNZOxxqplbLYUJR4-8ZxIKo6yimgQJohb5D9oWX4dRfXVcXSQrqY5jMQXMj_Juo15PnoMPwJO8AQbmL66hSUNi1B34UxnkhMQb1vxACrzJLAGCng9e-VA1ZqQzLxBFJ7oWbF9fA_TKJMI6NgvfXq-7pnJAWwQPQYCr00yjxYD0pod-sFqR6lqpP9R62fVhmw"
         params.put("Content-Type", "application/json;charset=UTF-8");
         params.put("Accept", "application/json");
         return params;

@@ -165,6 +165,7 @@ public class PoiRepositoryImpl extends AbstractPoiRepository implements PoiRepos
                 future, future){
             @Override
             public HashMap<String, String> getHeaders() {
+                System.out.println(PoiRepositoryImpl.this.getHeaders());
                 return PoiRepositoryImpl.this.getHeaders();
             }
         };

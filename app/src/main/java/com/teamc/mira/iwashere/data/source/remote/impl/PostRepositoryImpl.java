@@ -39,7 +39,7 @@ import static com.teamc.mira.iwashere.data.source.remote.base.ServerUrl.TIMEOUT_
 public class PostRepositoryImpl extends AbstractPostRepository implements PostRepository {
 
     public static final String TAG = PostRepositoryImpl.class.getSimpleName();
-    private static final  String API_POST_URL = ServerUrl.getUrl() + ServerUrl.API +  ServerUrl.CONTENT;
+    private static final  String API_POST_URL = ServerUrl.getUrl() + ServerUrl.API +  ServerUrl.CONTENT + ServerUrl.AUTH;
     private static final String API_POST_GET_LIKE_URL = ServerUrl.getUrl() + ServerUrl.API + ServerUrl.CONTENT + ServerUrl.LIKE;
     private static final  String API_POST_LIKE_URL = ServerUrl.getUrl() + ServerUrl.API + ServerUrl.CONTENT + ServerUrl.AUTH + ServerUrl.LIKE;
     private int response = -1;
@@ -137,12 +137,15 @@ public class PostRepositoryImpl extends AbstractPostRepository implements PostRe
     public boolean post(String poiId, String description, ArrayList<String> tags, Resource resource) {
 
         RequestQueue queue = mRequestQueue;
-
+        poiId = "1";
+        description = "Test post";
         final HashMap<String, Object> params = new HashMap<>();
-        params.put("poiId", poiId);
+        params.put("poiID", poiId);
+        System.out.println("POI ID " + poiId);
         params.put("description", description);
-        params.put("tags", tags);
-        params.put("resource", resource);
+        System.out.println("POI ID " + description);
+        //params.put("tags", tags);
+        //params.put("resource", resource);
 
 
         RequestFuture<JSONObject> future = RequestFuture.newFuture();
@@ -153,6 +156,7 @@ public class PostRepositoryImpl extends AbstractPostRepository implements PostRe
                 future, future) {
             @Override
             public HashMap<String, String> getHeaders() {
+                System.out.println(PostRepositoryImpl.this.getHeaders());
                 return PostRepositoryImpl.this.getHeaders();
             }
         };
@@ -160,7 +164,7 @@ public class PostRepositoryImpl extends AbstractPostRepository implements PostRe
         queue.add(request);
 
         try {
-            JSONObject response = future.get(ServerUrl.TIMEOUT, ServerUrl.TIMEOUT_TIME_UNIT); // this will block
+            future.get(TIMEOUT, TIMEOUT_TIME_UNIT); // this will block
         }catch (InterruptedException | ExecutionException | TimeoutException e){
             e.printStackTrace();
             return false;
