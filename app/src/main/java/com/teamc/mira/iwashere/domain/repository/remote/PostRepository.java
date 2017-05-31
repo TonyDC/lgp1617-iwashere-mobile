@@ -8,6 +8,7 @@ import com.teamc.mira.iwashere.domain.model.util.Resource;
 
 import org.json.JSONObject;
 
+import java.io.File;
 import java.util.ArrayList;
 
 /**
@@ -31,7 +32,7 @@ public interface PostRepository {
 
     boolean getPostLike(PostModel post) throws RemoteDataException;
 
-    boolean post(String poiId, String description, ArrayList<String> tags, Resource resource);
+    boolean post(String poiId, String description, ArrayList<String> tags, File resource);
 
     boolean updatePostLike(PostModel post, String userId, boolean liked) throws RemoteDataException;
 }

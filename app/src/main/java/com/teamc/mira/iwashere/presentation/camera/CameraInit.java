@@ -283,7 +283,7 @@ public class CameraInit extends Activity {
                 poiId,
                 description_text.getText().toString(),
                 tags,
-                new Resource(resourceToUploadUri.toString())
+                new File(resourceToUploadUri.toString())
         );
 
         postInteractor.execute();}

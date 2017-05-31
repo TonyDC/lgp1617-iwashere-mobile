@@ -14,6 +14,7 @@ import com.teamc.mira.iwashere.domain.model.util.Resource;
 import com.teamc.mira.iwashere.domain.repository.remote.PoiRepository;
 import com.teamc.mira.iwashere.domain.repository.remote.PostRepository;
 
+import java.io.File;
 import java.util.ArrayList;
 
 
@@ -24,7 +25,7 @@ public class PostInteractorImpl extends AbstractInteractor implements PostIntera
     String description;
     ArrayList<String> tags;
     PostModel post;
-    Resource resource;
+    File resource;
 
 
     public PostInteractorImpl(Executor threadExecutor,
@@ -35,7 +36,7 @@ public class PostInteractorImpl extends AbstractInteractor implements PostIntera
                               String poiId,
                               String description,
                               ArrayList<String> tags,
-                              Resource resource) {
+                              File resource) {
         super(threadExecutor, mainThread);
 
         this.callBack = callBack;
