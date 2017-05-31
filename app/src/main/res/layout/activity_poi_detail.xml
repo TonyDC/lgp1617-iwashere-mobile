@@ -38,11 +38,16 @@
 
             </com.teamc.mira.iwashere.presentation.misc.costum_components.ViewMore>
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:background="@color/colorAccentSecundary" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@color/colorAccentSecundary"
                 android:orientation="vertical">
 
                <LinearLayout
@@ -55,7 +60,8 @@
                   <ImageView
                       android:layout_width="36dp"
                       android:layout_height="36dp"
-                      android:src="@drawable/ic_star_black_36dp" />
+                      android:src="@drawable/ic_star_black_36dp"
+                      android:tint="@color/colorAccentPrimary" />
 
                   <TextView
                       android:id="@+id/poiRating"
@@ -85,6 +91,7 @@
                       android:id="@+id/ic_location"
                       android:layout_width="36dp"
                       android:layout_height="36dp"
+                      android:tint="@color/colorAccentPrimary"
                       android:src="@drawable/ic_location_on_black_32dp" />
 
                   <LinearLayout
@@ -133,6 +140,14 @@
                   </LinearLayout>
                </LinearLayout>
             </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:background="@color/colorAccentSecundary" />
+
 
             <com.teamc.mira.iwashere.util.ViewMoreGridView
                 android:id="@+id/grid_view_image_text"

@@ -2,8 +2,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorAccentPrimary"
-    android:orientation="horizontal">
+    android:orientation="horizontal"
+    android:background="@drawable/rounded_corner_shape"
+    >
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -21,6 +22,7 @@
         <android.support.v7.widget.AppCompatTextView
             android:id="@+id/poiName"
             android:textColor="@color/white"
+
             android:layout_margin="5dp"
             android:layout_width="fill_parent"
             android:layout_height="match_parent" />

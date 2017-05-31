@@ -1,27 +1,25 @@
 package com.teamc.mira.iwashere.domain.model;
 
 import com.teamc.mira.iwashere.domain.model.util.Resource;
+import com.teamc.mira.iwashere.domain.model.util.ResourceFactory;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 
 public class ContentModel {
+    private Resource resource;
     private String id;
     private String createdAt;
-    private String type;
+    private Resource.Type type;
     private String description;
     private boolean likedByUser;
     private ArrayList<String> tags;
-    private Resource resource;
 
-    public ContentModel(String id, String url) {
+    public ContentModel(String id) {
         this.id = id;
-        this.resource = new Resource(url);
     }
 
     public ContentModel(JSONObject content) throws JSONException {
@@ -42,13 +40,9 @@ public class ContentModel {
             }
         }
 
-        // optional fields
-        try {
-            this.type = content.getString("type");
-            this.resource = new Resource(content.getString("url"));
-        } catch (JSONException e) {
-            e.getCause();
-        }
+        this.resource = ResourceFactory.getResource(content);
+        this.type = resource.getType();
+
     }
 
     public String getId() {
@@ -67,11 +61,11 @@ public class ContentModel {
         this.createdAt = createdAt;
     }
 
-    public String getType() {
+    public Resource.Type getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(Resource.Type type) {
         this.type = type;
     }
 

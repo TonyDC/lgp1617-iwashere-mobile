@@ -13,8 +13,34 @@ android {
     }
     buildTypes {
         release {
+
+            buildConfigField "String", "API_HOSTNAME", "\"" + "http://iwashere.fe.up.pt" + "\""
+
+
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+
+        debug {
+
+            String host;
+            Enumeration en = NetworkInterface.getNetworkInterfaces();
+            boolean hasFound = false;
+            while (en.hasMoreElements() && !hasFound) {
+                NetworkInterface ni = (NetworkInterface) en.nextElement();
+                Enumeration ee = ni.getInetAddresses();
+                while (ee.hasMoreElements() && !hasFound) {
+                    InetAddress ia = (InetAddress) ee.nextElement();
+
+                    if ((!ia.isLoopbackAddress()) && ia instanceof Inet4Address){
+                        host = ia.getHostAddress();
+                        hasFound = true;
+                    }
+                }
+            }
+            def port = ":8080"
+            def protocol = "http://"
+            buildConfigField "String", "API_HOSTNAME",  "\"" + protocol + host + port + "\""
         }
     }
     lintOptions{
@@ -70,6 +96,5 @@ configurations.all {
         }
     }
 }
-
 
 apply plugin: 'com.google.gms.google-services'

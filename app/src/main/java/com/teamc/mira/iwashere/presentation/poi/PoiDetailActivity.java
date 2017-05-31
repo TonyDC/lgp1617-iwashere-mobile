@@ -36,6 +36,8 @@ import com.teamc.mira.iwashere.domain.interactors.impl.PoiDetailInteractorImpl;
 import com.teamc.mira.iwashere.domain.interactors.impl.PoiRatingInteractorImpl;
 import com.teamc.mira.iwashere.domain.model.ContentModel;
 import com.teamc.mira.iwashere.domain.model.PoiModel;
+import com.teamc.mira.iwashere.domain.model.util.BasicResource;
+import com.teamc.mira.iwashere.domain.model.util.ImageResource;
 import com.teamc.mira.iwashere.domain.model.util.Resource;
 import com.teamc.mira.iwashere.domain.repository.remote.PoiRepository;
 import com.teamc.mira.iwashere.presentation.misc.costum_components.ViewMore;
@@ -285,10 +287,11 @@ public class PoiDetailActivity extends AppCompatActivity {
 
         for (ContentModel content : contentList){
             contentIdList.add(content.getId());
+
             contentResourceList.add(content.getResource());
         }
 
-        ViewMoreGridView.ViewMoreGridViewAdapter adapterView = new ViewMoreGridView.ViewMoreGridViewAdapter(
+        ViewMoreGridView.ViewMoreGridViewAdapter adapterView = new ViewMoreGridView.ViewMoreGridViewAdapter (
                 PoiDetailActivity.this,
                 contentIdList.toArray(new String[contentIdList.size()]),
                 contentResourceList,
@@ -329,16 +332,19 @@ public class PoiDetailActivity extends AppCompatActivity {
         sliderShow = (SliderLayout) findViewById(R.id.slider);
         sliderShow.removeAllSliders();
         for (Resource image : poi.getPhotos()) {
-            image.fetchDownloadUrl(new OnCompleteListener() {
-                @Override
-                public void onComplete(@NonNull Task task) {
-                    String imageURL = task.getResult().toString();
-                    TextSliderView textSliderView = new TextSliderView(PoiDetailActivity.this);
-                    textSliderView.image(imageURL.toString());
+            if (image instanceof ImageResource){
+                ((ImageResource) image).fetchDownloadUrl(ImageResource.Size.SIZE_MEDIUM, new OnCompleteListener() {
+                    @Override
+                    public void onComplete(@NonNull Task task) {
+                        String imageURL = task.getResult().toString();
+                        TextSliderView textSliderView = new TextSliderView(PoiDetailActivity.this);
+                        textSliderView.image(imageURL.toString());
 
-                    sliderShow.addSlider(textSliderView);
-                }
-            });
+                        sliderShow.addSlider(textSliderView);
+                    }
+                });
+            }
+
 
         }
     }
