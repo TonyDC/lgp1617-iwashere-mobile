@@ -1,13 +1,11 @@
 package com.teamc.mira.iwashere.presentation.camera;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
-import android.graphics.Point;
 import android.graphics.Rect;
 import android.media.ExifInterface;
 import android.net.Uri;
@@ -31,7 +29,6 @@ import com.teamc.mira.iwashere.domain.executor.impl.ThreadExecutor;
 import com.teamc.mira.iwashere.domain.interactors.PostInteractor;
 import com.teamc.mira.iwashere.domain.interactors.impl.PostInteractorImpl;
 import com.teamc.mira.iwashere.domain.model.PostModel;
-import com.teamc.mira.iwashere.domain.model.util.Resource;
 import com.teamc.mira.iwashere.domain.repository.remote.PostRepository;
 import com.teamc.mira.iwashere.presentation.main.MainActivity;
 import com.teamc.mira.iwashere.threading.MainThreadImpl;
@@ -251,6 +248,20 @@ public class CameraInit extends Activity {
     }
 
 
+    private String getRealPathFromURI(Uri contentURI) {
+        String result;
+        Cursor cursor = getContentResolver().query(contentURI, null, null, null, null);
+        if (cursor == null) { // Source is Dropbox or other similar local file path
+            result = contentURI.getPath();
+        } else {
+            cursor.moveToFirst();
+            int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
+            result = cursor.getString(idx);
+            cursor.close();
+        }
+        return result;
+    }
+
     public void sendPost(){ Toast.makeText(CameraInit.this, key, Toast.LENGTH_SHORT).show();
 
         MainThread mainThread = MainThreadImpl.getInstance();
@@ -283,7 +294,7 @@ public class CameraInit extends Activity {
                 poiId,
                 description_text.getText().toString(),
                 tags,
-                new File(resourceToUploadUri.toString())
+                new File(getRealPathFromURI(resourceToUploadUri))
         );
 
         postInteractor.execute();}

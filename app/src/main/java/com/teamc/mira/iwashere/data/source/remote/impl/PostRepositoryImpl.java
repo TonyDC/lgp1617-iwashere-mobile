@@ -1,54 +1,42 @@
 package com.teamc.mira.iwashere.data.source.remote.impl;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.support.annotation.Nullable;
 import android.util.Log;
-import android.widget.Toast;
+import android.webkit.MimeTypeMap;
 
-import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.RequestFuture;
-import com.android.volley.toolbox.StringRequest;
 import com.teamc.mira.iwashere.data.source.local.UserRepository;
 import com.teamc.mira.iwashere.data.source.remote.AbstractPostRepository;
-import com.teamc.mira.iwashere.data.source.remote.MultipartRequest;
 import com.teamc.mira.iwashere.data.source.remote.base.ServerUrl;
 import com.teamc.mira.iwashere.data.source.remote.exceptions.RemoteDataException;
 import com.teamc.mira.iwashere.domain.model.PoiModel;
 import com.teamc.mira.iwashere.domain.model.PostModel;
-import com.teamc.mira.iwashere.domain.model.util.Resource;
 import com.teamc.mira.iwashere.domain.repository.remote.PostRepository;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.mime.HttpMultipartMode;
-import org.apache.http.entity.mime.MultipartEntity;
-import org.apache.http.entity.mime.content.ByteArrayBody;
-import org.apache.http.entity.mime.content.FileBody;
-import org.apache.http.entity.mime.content.StringBody;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import static android.R.attr.bitmap;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.OkHttpClient;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+
 import static com.teamc.mira.iwashere.data.source.remote.base.ServerUrl.TIMEOUT;
 import static com.teamc.mira.iwashere.data.source.remote.base.ServerUrl.TIMEOUT_TIME_UNIT;
 
@@ -59,9 +47,9 @@ import static com.teamc.mira.iwashere.data.source.remote.base.ServerUrl.TIMEOUT_
 public class PostRepositoryImpl extends AbstractPostRepository implements PostRepository {
 
     public static final String TAG = PostRepositoryImpl.class.getSimpleName();
-    private static final  String API_POST_URL = ServerUrl.getUrl() + ServerUrl.API +  ServerUrl.CONTENT + ServerUrl.AUTH;
+    private static final String API_POST_URL = ServerUrl.getUrl() + ServerUrl.API + ServerUrl.CONTENT + ServerUrl.AUTH;
     private static final String API_POST_GET_LIKE_URL = ServerUrl.getUrl() + ServerUrl.API + ServerUrl.CONTENT + ServerUrl.LIKE;
-    private static final  String API_POST_LIKE_URL = ServerUrl.getUrl() + ServerUrl.API + ServerUrl.CONTENT + ServerUrl.AUTH + ServerUrl.LIKE;
+    private static final String API_POST_LIKE_URL = ServerUrl.getUrl() + ServerUrl.API + ServerUrl.CONTENT + ServerUrl.AUTH + ServerUrl.LIKE;
     private int response = -1;
 
 
@@ -105,10 +93,10 @@ public class PostRepositoryImpl extends AbstractPostRepository implements PostRe
 
         RequestFuture<JSONObject> future = RequestFuture.newFuture();
         JsonObjectRequest request = new JsonObjectRequest(
-                Request.Method.POST,
+                com.android.volley.Request.Method.POST,
                 API_POST_LIKE_URL,
                 new JSONObject(params),
-                future, future){
+                future, future) {
             @Override
             public HashMap<String, String> getHeaders() {
                 return PostRepositoryImpl.this.getHeaders();
@@ -131,7 +119,7 @@ public class PostRepositoryImpl extends AbstractPostRepository implements PostRe
     public boolean getPostLike(PostModel post) throws RemoteDataException {
         RequestQueue queue = mRequestQueue;
 
-        String url =  API_POST_GET_LIKE_URL + "/" + post.getId();
+        String url = API_POST_GET_LIKE_URL + "/" + post.getId();
         RequestFuture<JSONObject> future = RequestFuture.newFuture();
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null, future, future);
         queue.add(request);
@@ -152,48 +140,58 @@ public class PostRepositoryImpl extends AbstractPostRepository implements PostRe
         }
     }
 
-
+    public static String getMimeType(String url) {
+        String type = null;
+        String extension = MimeTypeMap.getFileExtensionFromUrl(url);
+        if (extension != null) {
+            type = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
+        }
+        return type;
+    }
 
     @Override
     public boolean post(String poiId, String description, ArrayList<String> tags, File resource) {
-        RequestQueue queue = mRequestQueue;
-        String token = UserRepository.getInstance().getToken();
-        HttpClient httpClient = new DefaultHttpClient();
-        HttpPost postRequest = new HttpPost(API_POST_URL);
-        postRequest.setHeader("Content-Type", "multipart/form-data; boundary="+ "----WebKitFormBoundaryuvqJnU09Spax4f4c");
-        postRequest.setHeader("Authorization", "Bearer " + token);
 
-        MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
-        try{
-            reqEntity.addPart("poiID", new StringBody("1"));
-            reqEntity.addPart("description", new StringBody("Teste comment"));
-            reqEntity.addPart("postFiles", new FileBody(resource));
-            reqEntity.addPart("tags", new StringBody("1"));
-        }
-        catch(Exception e){
-            //Log.v("Exception in Image", ""+e);
-        }
-        postRequest.setEntity(reqEntity);
-        HttpResponse response = null;
+        OkHttpClient client = new OkHttpClient();
+
         try {
-            System.out.println("Starting request...");
-            System.out.println("POST REQUEST" + postRequest.getURI());
-            response = httpClient.execute(postRequest);
-            System.out.println("RESPONSE " + response);
-            BufferedReader reader = new BufferedReader(new InputStreamReader(response.getEntity().getContent(), "UTF-8"));
-            String sResponse;
-            StringBuilder s = new StringBuilder();
-            while ((sResponse = reader.readLine()) != null) {
-                s = s.append(sResponse);
-                System.out.println("STRING " + s);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
+            RequestBody requestBody = new MultipartBody.Builder()
+                    .setType(MultipartBody.FORM)
+                    .addFormDataPart("poiID", "1")
+                    .addFormDataPart("description", description)
+                    .addFormDataPart("postFiles", resource.getName(),
+                            RequestBody.create(MediaType.parse("iamge/" + getMimeType(resource.getAbsolutePath())), resource))
+                    .build();
+
+            okhttp3.Request request = new okhttp3.Request.Builder()
+                    .url(API_POST_URL)
+                    .method("POST", requestBody)
+                    .addHeader("Authorization", "Bearer " + UserRepository.getInstance().getToken())
+                    .build();
+
+            client.newCall(request).enqueue(new Callback() {
+
+                @Override
+                public void onFailure(Call call, IOException e) {
+                    Log.d(TAG, "okhttp3 onFailure " + e);
+                    System.out.println("okhttp3 onFailure " + e);
+                }
+
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    Log.d(TAG, "okhttp3 onResponse " + response.isSuccessful());
+                    System.out.println("okhttp3 onResponse " + response.isSuccessful());
+                    if (response.isSuccessful()) {
+                        // Handle the error
+                    }
+                    // Upload successful
+                }
+            });
+            return true;
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
-
-
-        return true;
-
+        return false;
     }
 
     @Override
@@ -211,7 +209,7 @@ public class PostRepositoryImpl extends AbstractPostRepository implements PostRe
                         Request.Method.POST,
                         API_POST_LIKE_URL,
                         new JSONObject(params),
-                        future, future){
+                        future, future) {
                     @Override
                     public HashMap<String, String> getHeaders() {
                         return PostRepositoryImpl.this.getHeaders();
