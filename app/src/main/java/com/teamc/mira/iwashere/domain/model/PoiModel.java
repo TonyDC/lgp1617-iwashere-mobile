@@ -1,12 +1,12 @@
 package com.teamc.mira.iwashere.domain.model;
 
+import com.teamc.mira.iwashere.domain.model.util.BasicResource;
 import com.teamc.mira.iwashere.domain.model.util.Resource;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.Serializable;
-import java.net.URL;
 import java.util.ArrayList;
 
 public class PoiModel extends BasicModel implements Serializable {

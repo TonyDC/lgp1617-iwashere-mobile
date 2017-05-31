@@ -23,6 +23,7 @@ import com.squareup.picasso.Picasso;
 import com.teamc.mira.iwashere.R;
 import com.teamc.mira.iwashere.domain.model.ContentModel;
 import com.teamc.mira.iwashere.domain.model.PoiModel;
+import com.teamc.mira.iwashere.domain.model.util.ImageResource;
 import com.teamc.mira.iwashere.domain.model.util.Resource;
 import com.teamc.mira.iwashere.presentation.poi.PoiDetailActivity;
 
@@ -98,6 +99,8 @@ public class PoiMapMarker {
         mGoogleMap.moveCamera(cu);
     }
 
+
+
     class PoiInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
 
         private final View myContentsView;
@@ -108,28 +111,33 @@ public class PoiMapMarker {
 
         @Override
         public View getInfoContents(Marker marker) {
-            TextView tvTitle = ((TextView)myContentsView.findViewById(R.id.poiName));
-            tvTitle.setText(marker.getTitle());
-            final ImageView imageView = ((ImageView)myContentsView.findViewById(R.id.poiImage));
 
-            ArrayList<ContentModel> resource = poiMap.get(marker).getContent();
-            if (resource.size() > 0) {
-                resource.get(0).getResource().fetchDownloadUrl(new OnCompleteListener() {
-                    @Override
-                    public void onComplete(@NonNull Task task) {
-                        String imageUrl = task.getResult().toString();
-                        Picasso.with(mContext).load(imageUrl).into(imageView);
-                    }
-                });
-            }
-
-            return myContentsView;
+            return null;
         }
+
 
         @Override
         public View getInfoWindow(Marker marker) {
-            // TODO Auto-generated method stub
-            return null;
+            TextView tvTitle = ((TextView) myContentsView.findViewById(R.id.poiName));
+            tvTitle.setText(marker.getTitle());
+            final ImageView imageView = ((ImageView) myContentsView.findViewById(R.id.poiImage));
+
+            ArrayList<ContentModel> contentList = poiMap.get(marker).getContent();
+            if (contentList.size() > 0) {
+                Resource resource = contentList.get(0).getResource();
+                if (resource instanceof ImageResource) {
+                    ((ImageResource) resource).fetchDownloadUrl(ImageResource.Size.SIZE_XSMALL, new OnCompleteListener() {
+                        @Override
+                        public void onComplete(@NonNull Task task) {
+                            String imageUrl = task.getResult().toString();
+                            Picasso.with(mContext).load(imageUrl).into(imageView);
+                        }
+                    });
+                }
+
+            }
+
+            return myContentsView;
         }
 
     }

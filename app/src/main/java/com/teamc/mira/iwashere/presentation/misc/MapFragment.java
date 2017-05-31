@@ -85,6 +85,6 @@ public abstract class MapFragment extends SupportMapFragment implements OnMapRea
         mGoogleMap = googleMap;
         mGoogleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 
-
     }
+
 }

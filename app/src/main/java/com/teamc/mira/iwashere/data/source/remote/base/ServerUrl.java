@@ -1,18 +1,19 @@
 package com.teamc.mira.iwashere.data.source.remote.base;
 
+import com.teamc.mira.iwashere.BuildConfig;
+
 import java.util.concurrent.TimeUnit;
 
 public class ServerUrl {
 
-    public static final String DOMAIN = "172.30.5.114";
-    public static final String PORT = "8080";
+    public static final String DOMAIN = BuildConfig.API_HOSTNAME;
 
     public static final long TIMEOUT = 3;
     public static final TimeUnit TIMEOUT_TIME_UNIT = TimeUnit.SECONDS;
     public static final String AUTH = "/auth";
 
     public static String getUrl(){
-        return "http://"+DOMAIN+":"+PORT;
+        return DOMAIN;
     }
 
     //PATHS
