@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.teamc.mira.iwashere.presentation.main.MainActivity"
-    tools:showIn="@layout/fragment_map">
+    tools:showIn="@layout/fragment_main_map">
 
     <ExpandableListView
         android:layout_width="match_parent"

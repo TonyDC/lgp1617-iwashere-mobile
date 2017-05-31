@@ -8,25 +8,25 @@ import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.teamc.mira.iwashere.R;
 import com.teamc.mira.iwashere.domain.model.PoiModel;
 import com.teamc.mira.iwashere.domain.model.RouteModel;
 import com.teamc.mira.iwashere.domain.model.TagModel;
 import com.teamc.mira.iwashere.presentation.poi.PoiDetailActivity;
+import com.teamc.mira.iwashere.presentation.route.RouteDetailActivity;
 
 import java.util.ArrayList;
 
-public class MyExpandableListAdapter extends BaseExpandableListAdapter {
+public class SearchExpandableListAdapter extends BaseExpandableListAdapter {
 
-    private Context context;
+    private Context mContext;
     private ArrayList<ParentRow> parentRowList;
     private ArrayList<ParentRow> originalList;
 
-    public MyExpandableListAdapter(Context context
+    public SearchExpandableListAdapter(Context mContext
             , ArrayList<ParentRow> originalList) {
-        this.context = context;
+        this.mContext = mContext;
         this.parentRowList = new ArrayList<>();
         this.parentRowList.addAll(originalList);
         this.originalList = new ArrayList<>();
@@ -73,7 +73,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter {
         ParentRow parentRow = (ParentRow) getGroup(groupPosition);
 
         if (convertView == null) {
-            LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            LayoutInflater layoutInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = layoutInflater.inflate(R.layout.parent_row, null);
         }
 
@@ -87,7 +87,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter {
     public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
         final ChildRow childRow = (ChildRow) getChild(groupPosition, childPosition);
         if (convertView == null) {
-            LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(context.LAYOUT_INFLATER_SERVICE);
+            LayoutInflater layoutInflater = (LayoutInflater) mContext.getSystemService(mContext.LAYOUT_INFLATER_SERVICE);
             convertView = layoutInflater.inflate(R.layout.child_row, null);
         }
 
@@ -102,11 +102,14 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter {
             @Override
             public void onClick(View v) {
                 if (childRow.getBasicModel() instanceof PoiModel) {
-                    Intent intent = new Intent(context, PoiDetailActivity.class);
+                    Intent intent = new Intent(mContext, PoiDetailActivity.class);
                     intent.putExtra("poi", (PoiModel) childRow.getBasicModel());
-                    context.startActivity(intent);
+                    mContext.startActivity(intent);
                 } else if (childRow.getBasicModel() instanceof RouteModel) {
-                    //TODO 01.05.2017 Start Route Activity
+                    Intent intent = new Intent(mContext, RouteDetailActivity.class);
+                    intent.putExtra(RouteDetailActivity.EXTRA_ROUTE, (RouteModel) childRow.getBasicModel());
+                    mContext.startActivity(intent);
+
                 } else if (childRow.getBasicModel() instanceof TagModel) {
                     //TODO 01.05.2017 Start Tag Activity
                 }

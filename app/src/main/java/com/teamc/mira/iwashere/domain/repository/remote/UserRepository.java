@@ -3,15 +3,15 @@ package com.teamc.mira.iwashere.domain.repository.remote;
 import com.teamc.mira.iwashere.data.source.remote.exceptions.RemoteDataException;
 import com.teamc.mira.iwashere.domain.model.UserModel;
 
-/**
- * Created by Duart on 02/04/2017.
- */
+import org.json.JSONException;
 
 public interface UserRepository {
 
     boolean isValidUsername(String username);
 
-    boolean signup(String email, String username, String pswd, String confPswd) throws RemoteDataException;
+    boolean signUp(String email, String username, String pswd, String confPswd) throws RemoteDataException, JSONException;
+
+    boolean signUp(String userId) throws RemoteDataException;
 
     boolean signin(String email, String pswd);
 
