@@ -100,11 +100,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     progressBar.setVisibility(View.GONE);
                     if (!task.isSuccessful()) {
                         // there was an error
-                        if (password.length() < 6) {
-                            inputPassword.setError(getString(R.string.minimum_password));
-                        } else {
-                            Toast.makeText(LoginActivity.this, getString(R.string.auth_failed), Toast.LENGTH_LONG).show();
-                        }
+                        Toast.makeText(LoginActivity.this, getString(R.string.auth_failed), Toast.LENGTH_LONG).show();
                     } else {
                         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                         startActivity(intent);

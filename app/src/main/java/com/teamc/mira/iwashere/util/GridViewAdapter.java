@@ -1,6 +1,7 @@
 package com.teamc.mira.iwashere.util;
 
 import android.content.Context;
+import android.media.Image;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,6 +14,8 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.squareup.picasso.Picasso;
 import com.teamc.mira.iwashere.R;
+import com.teamc.mira.iwashere.domain.model.util.BasicResource;
+import com.teamc.mira.iwashere.domain.model.util.ImageResource;
 import com.teamc.mira.iwashere.domain.model.util.Resource;
 
 import java.util.ArrayList;
@@ -66,16 +69,25 @@ public class GridViewAdapter extends BaseAdapter {
             imageView.setImageResource(mTemplateImageId);
 
             Resource resource = mResources.get(i);
-            resource.fetchDownloadUrl(new OnCompleteListener() {
-                @Override
-                public void onComplete(@NonNull Task task) {
-                    String imageUrl = task.getResult().toString();
 
-                    Log.d(TAG,"GridViewAdapter image "+i+":"+imageUrl);
-                    Picasso.with(mContext).load(imageUrl)
-                        .into(imageView);
+            if (resource instanceof ImageResource) {
+                ((ImageResource) resource).fetchDownloadUrl(ImageResource.Size.SIZE_XSMALL,new OnCompleteListener() {
+                    @Override
+                    public void onComplete(@NonNull Task task) {
+                        String imageUrl = task.getResult().toString();
+
+                        Log.d(TAG, "GridViewAdapter image " + i + ":" + imageUrl);
+                        Picasso.with(mContext).load(imageUrl)
+                                .into(imageView);
+                    }
+                });
+            } else {
+                try {
+                    throw new Exception("Invalide resource type");
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-            });
+            }
         } else {
             gridViewAndroid = (View) convertView;
         }

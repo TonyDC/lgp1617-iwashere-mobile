@@ -9,7 +9,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-import android.view.Menu;
 import android.view.MenuItem;
 
 import com.teamc.mira.iwashere.R;
@@ -29,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
         final FragmentManager fragmentManager = getSupportFragmentManager();
 
         // define your fragments here
-        final Fragment map = new MapFragment();
+        final Fragment map = new MainMapFragment();
         final Fragment feed = new FeedFragment();
         final Fragment search = new SearchFragment();
         final Fragment account = new AccountFragment();
@@ -58,7 +57,6 @@ public class MainActivity extends AppCompatActivity {
                         case R.id.action_camera:
                             fragmentTransaction = fragmentManager.beginTransaction();
                             fragmentTransaction.replace(R.id.flContainer, camera).commit();
-                            // TODO: 11/04/2017 Start new activity with camera and image uploading
                             return true;
                         case R.id.action_account:
                             fragmentTransaction = fragmentManager.beginTransaction();

@@ -1,12 +1,12 @@
 package com.teamc.mira.iwashere.domain.model;
 
+import com.teamc.mira.iwashere.domain.model.util.BasicResource;
 import com.teamc.mira.iwashere.domain.model.util.Resource;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.Serializable;
-import java.net.URL;
 import java.util.ArrayList;
 
 public class PoiModel extends BasicModel implements Serializable {
@@ -49,8 +49,8 @@ public class PoiModel extends BasicModel implements Serializable {
     }
 
     public PoiModel(JSONObject poi) throws JSONException {
-        if(poi.has("poiId")) this.id = poi.getString("poiId");
-        if(poi.has("name")) this.name = poi.getString("name");
+        super(poi.getString("poiId"), poi.getString("name"));
+
         if(poi.has("description")) this.description = poi.getString("description");
         if(poi.has("address")) this.address = poi.getString("address");
         if(poi.has("longitude")) this.longitude = poi.getString("longitude");
@@ -98,16 +98,16 @@ public class PoiModel extends BasicModel implements Serializable {
         this.address = address;
     }
 
-    public String getLongitude() {
-        return longitude;
+    public double getLongitude() {
+        return Double.parseDouble(longitude);
     }
 
     public void setLongitude(String longitude) {
         this.longitude = longitude;
     }
 
-    public String getLatitude() {
-        return latitude;
+    public double getLatitude() {
+        return Double.parseDouble(latitude);
     }
 
     public void setLatitude(String latitude) {

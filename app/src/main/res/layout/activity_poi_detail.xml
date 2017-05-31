@@ -4,175 +4,167 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <include
-        android:id="@+id/include"
-        layout="@layout/toolbar"></include>
+   <include
+       android:id="@+id/include"
+       layout="@layout/toolbar"></include>
 
-    <android.support.v4.widget.SwipeRefreshLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/swipeContainer"
-        >
+   <android.support.v4.widget.SwipeRefreshLayout
+       android:id="@+id/swipeContainer"
+       android:layout_width="match_parent"
+       android:layout_height="match_parent">
 
-        <android.support.v4.widget.NestedScrollView
-                                               android:layout_width="match_parent"
-                                               android:layout_height="match_parent"
-                                               android:layout_alignParentStart="true"
-                                               android:layout_below="@+id/include">
+      <android.support.v4.widget.NestedScrollView
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"
+          android:layout_alignParentStart="true"
+          android:layout_below="@+id/include">
 
-                                               <LinearLayout
-                                               android:layout_width="match_parent"
-                                               android:layout_height="match_parent"
-                                               android:gravity="center_horizontal"
-                                               android:orientation="vertical">
+         <LinearLayout
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             android:gravity="center_horizontal"
+             android:orientation="vertical">
 
-                                               <com.daimajia.slider.library.SliderLayout
-                                               android:id="@+id/slider"
-                                               android:layout_width="match_parent"
-                                               android:layout_height="250dp" /> <!--TODO change this in the future to accomodate more sizes-->
+            <com.daimajia.slider.library.SliderLayout
+                android:id="@+id/slider"
+                android:layout_width="match_parent"
+                android:layout_height="250dp" /> <!--TODO change this in the future to accomodate more sizes-->
 
-                                               <LinearLayout
-                                               android:layout_width="match_parent"
-                                               android:layout_height="match_parent"
-                                               android:id="@+id/description_box"
-                                               android:orientation="vertical"
-                                               android:padding="25dp">
+            <com.teamc.mira.iwashere.presentation.misc.costum_components.ViewMore
+                android:id="@+id/poiDescription"
+                android:layout_width="match_parent"
+                android:layout_height="fill_parent"
+                android:padding="25dp">
 
-                                               <TextView
-                                               android:id="@+id/description"
-                                               android:layout_width="match_parent"
-                                               android:layout_height="match_parent"
-                                               android:ellipsize="end"
-                                               />
-                                               <TextView
-                                               android:layout_width="match_parent"
-                                               android:layout_height="wrap_content"
-                                               android:maxLines="1"
-                                               android:id="@+id/moreInformation"
-                                               android:text="@string/more_info"
-                                               android:gravity="right"
-                                               android:textColor="@color/colorAccentPrimary"
-                                               />
-                                               </LinearLayout>
+            </com.teamc.mira.iwashere.presentation.misc.costum_components.ViewMore>
 
-                                               <LinearLayout
-                                               android:layout_width="match_parent"
-                                               android:layout_height="match_parent"
-                                               android:orientation="vertical"
-                                               android:background="@color/colorAccentSecundary"
-                                               >
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:background="@color/colorAccentSecundary" />
 
-                                               <LinearLayout
-                                               android:layout_width="match_parent"
-                                               android:layout_height="wrap_content"
-                                               android:orientation="horizontal"
-                                               android:gravity="center_vertical"
-                                               android:padding="15dp"
-                                               >
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
 
-                                               <ImageView
-                                               android:layout_width="36dp"
-                                               android:layout_height="36dp"
-                                               android:src="@drawable/ic_star_black_36dp"
-                                               />
-                                               <TextView
-                                               android:id="@+id/poiRating"
-                                               android:layout_width="wrap_content"
-                                               android:layout_height="wrap_content"
-                                               android:padding="10dp"
-                                               android:text="@string/default_pontuation_poi"
-                                               />
-                                               </LinearLayout>
+               <LinearLayout
+                   android:layout_width="match_parent"
+                   android:layout_height="wrap_content"
+                   android:gravity="center_vertical"
+                   android:orientation="horizontal"
+                   android:padding="15dp">
 
-                                               <RatingBar
-                                               android:id="@+id/userRatingBar"
-                                               android:layout_width="wrap_content"
-                                               android:layout_height="match_parent"
-                                               android:layout_gravity="center_horizontal"
-                                               android:numStars="5"
-                                               android:stepSize="1.0" />
+                  <ImageView
+                      android:layout_width="36dp"
+                      android:layout_height="36dp"
+                      android:src="@drawable/ic_star_black_36dp"
+                      android:tint="@color/colorAccentPrimary" />
 
-                                               <LinearLayout
-                                               android:id="@+id/addressPinPoint"
-                                               android:layout_width="match_parent"
-                                               android:layout_height="match_parent"
-                                               android:orientation="horizontal"
-                                               android:gravity="center_vertical"
-                                               android:padding="15dp"
-                                               >
+                  <TextView
+                      android:id="@+id/poiRating"
+                      android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:padding="10dp"
+                      android:text="@string/default_pontuation_poi" />
+               </LinearLayout>
 
-                                               <ImageView
-                                               android:id="@+id/ic_location"
-                                               android:layout_width="36dp"
-                                               android:layout_height="36dp"
-                                               android:src="@drawable/ic_location_on_black_32dp" />
+               <RatingBar
+                   android:id="@+id/userRatingBar"
+                   android:layout_width="wrap_content"
+                   android:layout_height="match_parent"
+                   android:layout_gravity="center_horizontal"
+                   android:numStars="5"
+                   android:stepSize="1.0" />
 
-                                               <LinearLayout
-                                               android:id="@+id/addressBox"
-                                               android:layout_width="wrap_content"
-                                               android:layout_height="wrap_content"
-                                               android:orientation="horizontal"
-                                               android:padding="10dp">
+               <LinearLayout
+                   android:id="@+id/addressPinPoint"
+                   android:layout_width="match_parent"
+                   android:layout_height="match_parent"
+                   android:gravity="center_vertical"
+                   android:orientation="horizontal"
+                   android:padding="15dp">
 
-                                               <TextView
-                                               android:id="@+id/addressLabel"
-                                               android:layout_width="wrap_content"
-                                               android:layout_height="match_parent"
-                                               android:paddingRight="10dp"
-                                               android:text="@string/address"
-                                               />
+                  <ImageView
+                      android:id="@+id/ic_location"
+                      android:layout_width="36dp"
+                      android:layout_height="36dp"
+                      android:tint="@color/colorAccentPrimary"
+                      android:src="@drawable/ic_location_on_black_32dp" />
 
-                                               <TextView
-                                               android:id="@+id/address"
-                                               android:layout_width="wrap_content"
-                                               android:layout_height="match_parent"
-                                               android:layout_toRightOf="@+id/addressLabel"
-                                               />
-                                               </LinearLayout>
+                  <LinearLayout
+                      android:id="@+id/addressBox"
+                      android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:orientation="horizontal"
+                      android:padding="10dp">
+
+                     <TextView
+                         android:id="@+id/addressLabel"
+                         android:layout_width="wrap_content"
+                         android:layout_height="match_parent"
+                         android:paddingRight="10dp"
+                         android:text="@string/address" />
+
+                     <TextView
+                         android:id="@+id/address"
+                         android:layout_width="wrap_content"
+                         android:layout_height="match_parent"
+                         android:layout_toRightOf="@+id/addressLabel" />
+                  </LinearLayout>
 
 
-                                               <LinearLayout
-                                               android:id="@+id/hours"
-                                               android:layout_width="wrap_content"
-                                               android:layout_height="wrap_content"
-                                               android:orientation="horizontal"
-                                               android:visibility="gone"
-                                               android:padding="10dp">
+                  <LinearLayout
+                      android:id="@+id/hours"
+                      android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:orientation="horizontal"
+                      android:padding="10dp"
+                      android:visibility="gone">
 
-                                               <TextView
-                                               android:id="@+id/hoursT"
-                                               android:layout_width="wrap_content"
-                                               android:layout_height="wrap_content"
-                                               android:layout_weight="0"
-                                               android:paddingRight="20dp" />
+                     <TextView
+                         android:id="@+id/hoursT"
+                         android:layout_width="wrap_content"
+                         android:layout_height="wrap_content"
+                         android:layout_weight="0"
+                         android:paddingRight="20dp" />
 
-                                               <TextView
-                                               android:id="@+id/hoursF"
-                                               android:layout_width="wrap_content"
-                                               android:layout_height="wrap_content"
-                                               android:layout_toRightOf="@+id/hoursT"
-                                               android:layout_weight="0"/>
-                                               </LinearLayout>
-                                               </LinearLayout>
-                                               </LinearLayout>
+                     <TextView
+                         android:id="@+id/hoursF"
+                         android:layout_width="wrap_content"
+                         android:layout_height="wrap_content"
+                         android:layout_toRightOf="@+id/hoursT"
+                         android:layout_weight="0" />
+                  </LinearLayout>
+               </LinearLayout>
+            </LinearLayout>
 
-                                               <com.teamc.mira.iwashere.util.ViewMoreGridView
-                                               android:id="@+id/grid_view_image_text"
-                                               android:layout_width="match_parent"
-                                               android:layout_height="match_parent"
-                                               android:numColumns="3"
-                                               android:gravity="center"
-                                               android:horizontalSpacing="2dp"
-                                               android:isScrollContainer="false"
-                                               android:stretchMode="columnWidth"
-                                               android:verticalSpacing="20dp"
-                                               />
-                                               </LinearLayout>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:background="@color/colorAccentSecundary" />
 
 
-                                               </android.support.v4.widget.NestedScrollView>
+            <com.teamc.mira.iwashere.util.ViewMoreGridView
+                android:id="@+id/grid_view_image_text"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:horizontalSpacing="2dp"
+                android:isScrollContainer="false"
+                android:numColumns="3"
+                android:stretchMode="columnWidth"
+                android:verticalSpacing="20dp" />
+         </LinearLayout>
 
-    </android.support.v4.widget.SwipeRefreshLayout>
+
+      </android.support.v4.widget.NestedScrollView>
+
+   </android.support.v4.widget.SwipeRefreshLayout>
 
 </LinearLayout>
 
