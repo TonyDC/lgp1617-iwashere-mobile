@@ -14,6 +14,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.RequestFuture;
 import com.android.volley.toolbox.StringRequest;
+import com.teamc.mira.iwashere.data.source.local.UserRepository;
 import com.teamc.mira.iwashere.data.source.remote.AbstractPostRepository;
 import com.teamc.mira.iwashere.data.source.remote.MultipartRequest;
 import com.teamc.mira.iwashere.data.source.remote.base.ServerUrl;
@@ -29,6 +30,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntity;
 import org.apache.http.entity.mime.content.ByteArrayBody;
+import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONArray;
@@ -155,13 +157,18 @@ public class PostRepositoryImpl extends AbstractPostRepository implements PostRe
     @Override
     public boolean post(String poiId, String description, ArrayList<String> tags, File resource) {
         RequestQueue queue = mRequestQueue;
+        String token = UserRepository.getInstance().getToken();
         HttpClient httpClient = new DefaultHttpClient();
         HttpPost postRequest = new HttpPost(API_POST_URL);
+        postRequest.setHeader("Content-Type", "multipart/form-data; boundary="+ "----WebKitFormBoundaryuvqJnU09Spax4f4c");
+        postRequest.setHeader("Authorization", "Bearer " + token);
+
         MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
         try{
             reqEntity.addPart("poiID", new StringBody("1"));
             reqEntity.addPart("description", new StringBody("Teste comment"));
-            reqEntity.addPart("resource",new StringBody(resource.toString()));
+            reqEntity.addPart("postFiles", new FileBody(resource));
+            reqEntity.addPart("tags", new StringBody("1"));
         }
         catch(Exception e){
             //Log.v("Exception in Image", ""+e);
@@ -169,16 +176,21 @@ public class PostRepositoryImpl extends AbstractPostRepository implements PostRe
         postRequest.setEntity(reqEntity);
         HttpResponse response = null;
         try {
+            System.out.println("Starting request...");
+            System.out.println("POST REQUEST" + postRequest.getURI());
             response = httpClient.execute(postRequest);
+            System.out.println("RESPONSE " + response);
             BufferedReader reader = new BufferedReader(new InputStreamReader(response.getEntity().getContent(), "UTF-8"));
             String sResponse;
             StringBuilder s = new StringBuilder();
             while ((sResponse = reader.readLine()) != null) {
                 s = s.append(sResponse);
+                System.out.println("STRING " + s);
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
+
 
         return true;
 

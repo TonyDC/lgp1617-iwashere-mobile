@@ -182,10 +182,10 @@ public class CameraInit extends Activity {
         }
 
         if (requestCode == RESULT_LOAD_IMAGE && resultCode == RESULT_OK && null != data) {
-            Uri selectedImage = data.getData();
+            resourceToUploadUri = data.getData();
             String[] filePathColumn = { MediaStore.Images.Media.DATA };
 
-            Cursor cursor = getContentResolver().query(selectedImage,
+            Cursor cursor = getContentResolver().query(resourceToUploadUri,
                     filePathColumn, null, null, null);
             cursor.moveToFirst();
 
