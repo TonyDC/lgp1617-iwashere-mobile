@@ -30,30 +30,17 @@ import android.widget.Toast;
 import android.widget.VideoView;
 
 import com.google.firebase.auth.FirebaseAuth;
-import com.teamc.mira.iwashere.Manifest;
 import com.teamc.mira.iwashere.R;
-import com.teamc.mira.iwashere.data.source.remote.impl.PostRepositoryImpl;
-import com.teamc.mira.iwashere.domain.executor.Executor;
-import com.teamc.mira.iwashere.domain.executor.MainThread;
-import com.teamc.mira.iwashere.domain.executor.impl.ThreadExecutor;
-import com.teamc.mira.iwashere.domain.interactors.PostInteractor;
-import com.teamc.mira.iwashere.domain.interactors.impl.PostInteractorImpl;
 import com.teamc.mira.iwashere.domain.model.PostModel;
-import com.teamc.mira.iwashere.domain.model.util.Resource;
-import com.teamc.mira.iwashere.domain.repository.remote.PostRepository;
 import com.teamc.mira.iwashere.presentation.main.MainActivity;
-import com.teamc.mira.iwashere.threading.MainThreadImpl;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-
-import static android.widget.Toast.LENGTH_SHORT;
 
 public class CameraInit extends AppCompatActivity {
     private static final int CAMERA_REQUEST = 1888;
@@ -191,7 +178,7 @@ public class CameraInit extends AppCompatActivity {
 
                 Cursor cursor = getContentResolver().query(selectedImage,
                         filePathColumn, null, null, null);
-                cursor.moveToFirst();
+               cursor.moveToFirst();
 
                 int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
                 String picturePath = cursor.getString(columnIndex);
