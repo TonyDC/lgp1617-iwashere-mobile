@@ -19,6 +19,9 @@ import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.AppCompatDelegate;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -52,7 +55,7 @@ import java.util.Date;
 
 import static android.widget.Toast.LENGTH_SHORT;
 
-public class CameraInit extends Activity {
+public class CameraInit extends AppCompatActivity {
     private static final int CAMERA_REQUEST = 1888;
     private static final int REQUEST_VIDEO_CAPTURE = 1;
     private static final int RESULT_LOAD_IMAGE = 2;
@@ -71,10 +74,13 @@ public class CameraInit extends Activity {
 
 
 
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera);
+
+        setToolBar();
 
         Bundle b = getIntent().getExtras();
         if(b != null)
@@ -300,9 +306,16 @@ public class CameraInit extends Activity {
         return scaled;
     }
 
+    private void setToolBar() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    }
+
 
     public void sendPost(){ Toast.makeText(CameraInit.this, key, Toast.LENGTH_SHORT).show();
-
+/*
         MainThread mainThread = MainThreadImpl.getInstance();
         Executor executor = ThreadExecutor.getInstance();
         PostRepository postRepository = new PostRepositoryImpl(getApplicationContext());
@@ -336,6 +349,7 @@ public class CameraInit extends Activity {
                 new Resource(resourceToUploadUri.toString())
         );
 
-        postInteractor.execute();}
+        postInteractor.execute();
+        */}
 
 }
