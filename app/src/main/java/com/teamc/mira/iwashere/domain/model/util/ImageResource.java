@@ -1,6 +1,9 @@
 package com.teamc.mira.iwashere.domain.model.util;
 
+import android.net.Uri;
+
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -11,6 +14,11 @@ public class ImageResource extends Resource {
     String storageS;
     String storageM;
     String storageL;
+
+    Task<Uri> taskXS;
+    Task<Uri> taskS;
+    Task<Uri> taskM;
+    Task<Uri> taskL;
 
     protected ImageResource() {
         super(Type.IMAGE);
@@ -23,6 +31,11 @@ public class ImageResource extends Resource {
         this.storageM = jsonObject.getString("urlM");
         this.storageS = jsonObject.getString("urlS");
         this.storageXS = jsonObject.getString("urlXs");
+
+        this.taskL = startTask(storageL);
+        this.taskM = startTask(storageM);
+        this.taskS = startTask(storageS);
+        this.taskXS = startTask(storageXS);
     }
 
     public enum Size {
@@ -33,35 +46,37 @@ public class ImageResource extends Resource {
     }
 
     public void fetchDownloadUrl(Size size, OnCompleteListener listener) {
-        String storageUrl;
+        Task<Uri> task;
+
         switch (size){
             case SIZE_XSMALL:
-                storageUrl = storageXS;
+                task = taskXS;
 
                 break;
 
             case SIZE_SMALL:
-                storageUrl = storageS;
+                task = taskS;
 
                 break;
             case SIZE_MEDIUM:
-                storageUrl = storageM;
+                task = taskM;
 
                 break;
             case SIZE_LARGE:
-                storageUrl = storageL;
+                task = taskL;
                 break;
             default:
-                storageUrl = storageL;
+                task = taskL;
         }
 
-        fetchDownloadUrl(listener, storageUrl);
+        super.fetchDownloadUrl(listener, task);
+
     }
 
 
 
     @Deprecated
     public void fetchDownloadUrl(OnCompleteListener listener) {
-        fetchDownloadUrl(listener, storageL);
+        fetchDownloadUrl(listener, taskL);
     }
 }

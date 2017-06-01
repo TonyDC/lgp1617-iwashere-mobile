@@ -1,5 +1,6 @@
 package com.teamc.mira.iwashere.domain.model.util;
 
+import android.net.Uri;
 import android.support.annotation.NonNull;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -10,14 +11,19 @@ public abstract class BasicResource extends Resource {
     private String storageUrl;
     private String downloadUrl;
 
+    private Task<Uri> task;
+
     public BasicResource(Type type, String storageUrl){
         super(type);
         this.storageUrl = storageUrl;
+
+        task = startTask(storageUrl);
     }
 
 
     public BasicResource(Type type, String storageUrl, String downloadUrl){
         super(type);
+        task = startTask(storageUrl);
         this.storageUrl = storageUrl;
     }
 
@@ -35,7 +41,7 @@ public abstract class BasicResource extends Resource {
 
     @Override
     public void fetchDownloadUrl(OnCompleteListener listener) {
-        fetchDownloadUrl(listener, storageUrl);
+        fetchDownloadUrl(listener, task);
     }
 
     public String getStorageUrl() {

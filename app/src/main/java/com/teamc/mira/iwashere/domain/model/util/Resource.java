@@ -20,16 +20,22 @@ public abstract class Resource {
 
     protected final Type type;
 
-
-    protected void fetchDownloadUrl(OnCompleteListener listener, String storageUrl) {
+    protected Task<Uri> startTask(String storageUrl){
         ResourcesRepository repository = new ResourcesRepositoryImpl();
 
         try{
             Task<Uri> task = repository.fetch(storageUrl);
-            task.addOnCompleteListener(listener);
+
+            return task;
         }catch (Exception e){
             e.printStackTrace();
+            return null;
         }
+    }
+
+    protected void fetchDownloadUrl(OnCompleteListener listener, Task<Uri> task) {
+
+        task.addOnCompleteListener(listener);
     }
 
     public Type getType() {
