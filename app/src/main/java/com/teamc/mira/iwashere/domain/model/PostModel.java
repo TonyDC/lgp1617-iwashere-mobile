@@ -2,6 +2,9 @@ package com.teamc.mira.iwashere.domain.model;
 
 import com.teamc.mira.iwashere.domain.model.util.Resource;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -16,6 +19,7 @@ public class PostModel extends BasicModel implements Serializable {
     String poiId;
     String userId;
     ArrayList<String> tags;
+    boolean liked;
 
     public PostModel(){
         super();
@@ -27,16 +31,27 @@ public class PostModel extends BasicModel implements Serializable {
             String userId,
             String description,
             String poiId,
+            boolean liked,
             Resource resource,
             ArrayList<String> tags
     ){
-        super(id, name);
+        super(id, userId);
         this.userId = userId;
         this.description = description;
         this.resource = resource;
         this.poiId = poiId;
         this.tags = tags;
+        this.liked = liked;
 
+    }
+
+    public PostModel(JSONObject post) throws JSONException {
+        super(post.getString("postId"), post.getString("userId"));
+        if(post.has("description")) this.description = post.getString("description");
+    }
+
+    public String getId() {
+        return id;
     }
 
     public String getDescription(){
@@ -78,5 +93,18 @@ public class PostModel extends BasicModel implements Serializable {
 
     public void setTags(ArrayList<String> tags){
         this.tags = tags;
+    }
+
+    public void fetchPost(String postId) {this.id = postId;}
+
+    public void addPostLike(String postId, String userId) {
+        this.id = postId;
+        this.userId  = userId;
+    }
+
+    public void updatePostLike(String postId, String userId, boolean liked) {
+        this.id = postId;
+        this.userId = userId;
+        this.liked = liked;
     }
 }

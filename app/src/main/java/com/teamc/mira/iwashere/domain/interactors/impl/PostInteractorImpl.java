@@ -2,35 +2,35 @@ package com.teamc.mira.iwashere.domain.interactors.impl;
 
 import com.teamc.mira.iwashere.domain.executor.Executor;
 import com.teamc.mira.iwashere.domain.executor.MainThread;
-import com.teamc.mira.iwashere.domain.interactors.base.AbstractTemplateInteractor;
-import com.teamc.mira.iwashere.domain.interactors.base.TemplateInteractor;
+import com.teamc.mira.iwashere.domain.interactors.PostInteractor;
+import com.teamc.mira.iwashere.domain.interactors.base.AbstractInteractor;
 import com.teamc.mira.iwashere.domain.model.PostModel;
-import com.teamc.mira.iwashere.domain.model.util.Resource;
 import com.teamc.mira.iwashere.domain.repository.remote.PostRepository;
 
+import java.io.File;
 import java.util.ArrayList;
 
 
-public class PostInteractorImpl extends AbstractTemplateInteractor<PostModel> {
+public class PostInteractorImpl extends AbstractInteractor implements PostInteractor {
     PostRepository repository;
-    TemplateInteractor.CallBack callBack;
+    CallBack callBack;
     String poiId;
     String description;
     ArrayList<String> tags;
     PostModel post;
-    Resource resource;
+    File resource;
 
 
     public PostInteractorImpl(Executor threadExecutor,
                               MainThread mainThread,
-                              TemplateInteractor.CallBack callBack,
+                              CallBack callBack,
                               PostRepository postRepository,
                               PostModel post,
                               String poiId,
                               String description,
                               ArrayList<String> tags,
-                              Resource resource) {
-        super(threadExecutor, mainThread, callBack);
+                              File resource) {
+        super(threadExecutor, mainThread);
 
         this.callBack = callBack;
         repository = postRepository;
@@ -38,6 +38,36 @@ public class PostInteractorImpl extends AbstractTemplateInteractor<PostModel> {
         this.description = description;
         this.resource = resource;
         this.tags = tags;
+    }
+
+    @Override
+    public void notifyError(final String code, final String message) {
+        mMainThread.post(new Runnable() {
+            @Override
+            public void run() {
+                if (code.equals("network-fail")) {
+                    callBack.onNetworkFail();
+                } else {
+                    callBack.onError(code, message);
+                }
+            }
+        });
+    }
+
+    @Override
+    public void notifySuccess(final PostModel post) {
+        mMainThread.post(new Runnable() {
+            @Override
+            public void run() {
+                callBack.onSuccess(post);
+            }
+        });
+
+    }
+
+    @Override
+    public void notifyError(String code) {
+        notifyError(code, "");
     }
 
     @Override
