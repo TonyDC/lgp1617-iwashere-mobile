@@ -1,19 +1,27 @@
 package com.teamc.mira.iwashere.presentation.camera;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.graphics.Point;
 import android.graphics.Rect;
+import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.util.Log;
-import android.view.Display;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.AppCompatDelegate;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -21,7 +29,9 @@ import android.widget.ImageView;
 import android.widget.Toast;
 import android.widget.VideoView;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.teamc.mira.iwashere.R;
+import com.teamc.mira.iwashere.domain.model.PostModel;
 import com.teamc.mira.iwashere.presentation.main.MainActivity;
 
 import java.io.File;
@@ -29,20 +39,26 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
-public class CameraInit extends Activity {
+public class CameraInit extends AppCompatActivity {
     private static final int CAMERA_REQUEST = 1888;
     private static final int REQUEST_VIDEO_CAPTURE = 1;
-    private static final int RESULT_LOAD_IMAGE = 1;
+    private static final int RESULT_LOAD_IMAGE = 2;
+    private int PICK_IMAGE_REQUEST = 1;
 
-
+    private PostModel post;
+    FirebaseAuth auth;
     private ImageView imageView;
     private VideoView videoView;
     private Button postButton;
-    private Uri imageToUploadUri;
+    private Uri resourceToUploadUri;
     private EditText description_text, poi_text;
     String key = "";
+    ArrayList<String> tags = null;
+    String poiId = null;
+
 
 
 
@@ -51,10 +67,13 @@ public class CameraInit extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera);
 
+        setToolBar();
+
         Bundle b = getIntent().getExtras();
         if(b != null)
             key = b.getString("key");
 
+        auth = FirebaseAuth.getInstance();
 
         imageView = (ImageView) this.findViewById(R.id.picturedisplay);
         videoView = (VideoView) this.findViewById(R.id.videodisplay);
@@ -65,15 +84,16 @@ public class CameraInit extends Activity {
         callCamera();
 
         postButton.setOnClickListener(new View.OnClickListener() {
-
             @Override
             public void onClick(View v) {
-                Toast.makeText(CameraInit.this, key, Toast.LENGTH_SHORT).show();
+                sendPost();
             }
         });
+
     }
 
     public void callCamera(){
+
         if (Build.VERSION.SDK_INT>Build.VERSION_CODES.LOLLIPOP_MR1){
             String[] perms = {"android.permission.WRITE_EXTERNAL_STORAGE"};
 
@@ -81,6 +101,7 @@ public class CameraInit extends Activity {
 
             requestPermissions(perms, permsRequestCode);
         }
+
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String imageFileName = "IWasHere" + timeStamp + "_";
         Intent cameraIntent;
@@ -89,30 +110,43 @@ public class CameraInit extends Activity {
         if(key.equals("photo")) {
             cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
             File f = new File(Environment.getExternalStorageDirectory(), imageFileName + ".jpg");
-            cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(f));
-            imageToUploadUri = Uri.fromFile(f);
+
+            if (Build.VERSION.SDK_INT>Build.VERSION_CODES.M){
+                cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, FileProvider.getUriForFile(CameraInit.this,CameraInit.this.getApplicationContext().getPackageName()+".provider",f));
+                resourceToUploadUri = FileProvider.getUriForFile(CameraInit.this,CameraInit.this.getApplicationContext().getPackageName()+".provider",f);
+            }
+            else{
+                cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(f));
+                resourceToUploadUri = Uri.fromFile(f);
+            }
             startActivityForResult(cameraIntent, CAMERA_REQUEST);
         }
         else if(key.equals("video")) {
             cameraIntent = new Intent(android.provider.MediaStore.ACTION_VIDEO_CAPTURE);
             File f = new File(Environment.getExternalStorageDirectory(), imageFileName + ".mp4");
-            cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(f));
-            imageToUploadUri = Uri.fromFile(f);
+
+            if (Build.VERSION.SDK_INT>Build.VERSION_CODES.M){
+                cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, FileProvider.getUriForFile(CameraInit.this,CameraInit.this.getApplicationContext().getPackageName()+".provider",f));
+                resourceToUploadUri = FileProvider.getUriForFile(CameraInit.this,CameraInit.this.getApplicationContext().getPackageName()+".provider",f);
+            }
+            else{
+                cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(f));
+                resourceToUploadUri = Uri.fromFile(f);
+            }
             startActivityForResult(cameraIntent, REQUEST_VIDEO_CAPTURE);
         }
         else if(key.equals("gallery")) {
-            Intent i = new Intent(
-                    Intent.ACTION_PICK,
-                    android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+            Intent intent = new Intent();
+            intent.setType("image/*");
+            intent.setAction(Intent.ACTION_GET_CONTENT);
+            startActivityForResult(Intent.createChooser(intent, "Select Picture"), RESULT_LOAD_IMAGE);
 
-            startActivityForResult(i, RESULT_LOAD_IMAGE);
+
         }
         else{
             Toast.makeText(CameraInit.this, key, Toast.LENGTH_SHORT).show();
             return;
         }
-
-
 
     }
 
@@ -123,37 +157,94 @@ public class CameraInit extends Activity {
             finish();}
 
         if (requestCode == CAMERA_REQUEST && resultCode == Activity.RESULT_OK) {
-            Bitmap photo = getBitmap(imageToUploadUri);
+            String filePath = resourceToUploadUri.getPath();
+            Bitmap photo = getBitmap(resourceToUploadUri);
+            photo = requireRotation(filePath,photo);
+
             videoView.setVisibility(View.GONE);
             imageView.setImageBitmap(photo);
-
-
-
         }
         if (requestCode == REQUEST_VIDEO_CAPTURE && resultCode == RESULT_OK) {
             imageView.setVisibility(View.GONE);
-            videoView.setVideoURI(imageToUploadUri);
+            videoView.setVideoURI(resourceToUploadUri);
             videoView.setZOrderOnTop(true);
             videoView.start();
         }
 
         if (requestCode == RESULT_LOAD_IMAGE && resultCode == RESULT_OK && null != data) {
             Uri selectedImage = data.getData();
-            String[] filePathColumn = { MediaStore.Images.Media.DATA };
+            if (Build.VERSION.SDK_INT<Build.VERSION_CODES.N){
+                String[] filePathColumn = { MediaStore.Images.Media.DATA };
 
-            Cursor cursor = getContentResolver().query(selectedImage,
-                    filePathColumn, null, null, null);
-            cursor.moveToFirst();
+                Cursor cursor = getContentResolver().query(selectedImage,
+                        filePathColumn, null, null, null);
+               cursor.moveToFirst();
 
-            int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-            String picturePath = cursor.getString(columnIndex);
-            cursor.close();
+                int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+                String picturePath = cursor.getString(columnIndex);
+                cursor.close();
+
+                Bitmap photo = BitmapFactory.decodeFile(picturePath);
+                photo = requireRotation(picturePath,photo);
+                imageView.setImageBitmap(photo);
+
+            }
+            else{
+                try {
+                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), selectedImage);
+                    imageView.setImageBitmap(bitmap);
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
             videoView.setVisibility(View.GONE);
             imageView.setVisibility(View.VISIBLE);
-            Bitmap photo = BitmapFactory.decodeFile(picturePath);
-            imageView.setImageBitmap(scaleBitmap(photo));
         }
 
+    }
+
+    public void checkPermissions(){
+        //ActivityCompat.requestPermissions();
+    }
+
+    public Bitmap requireRotation(String filePath, Bitmap photo){
+        try {
+            ExifInterface ei = new ExifInterface(filePath);
+            int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION,
+                    ExifInterface.ORIENTATION_UNDEFINED);
+
+            switch(orientation) {
+
+                case ExifInterface.ORIENTATION_ROTATE_90:
+                    photo = rotateImage(photo, 90);
+                    break;
+
+                case ExifInterface.ORIENTATION_ROTATE_180:
+                    photo = rotateImage(photo, 180);
+                    break;
+
+                case ExifInterface.ORIENTATION_ROTATE_270:
+                    photo =rotateImage(photo, 270);
+                    break;
+
+                case ExifInterface.ORIENTATION_NORMAL:
+
+                default:
+                    break;
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return photo;
+    }
+
+    public static Bitmap rotateImage(Bitmap source, float angle) {
+        Matrix matrix = new Matrix();
+        matrix.postRotate(angle);
+        return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(),
+                matrix, true);
     }
 
     private Bitmap getBitmap(Uri uri) {
@@ -174,6 +265,9 @@ public class CameraInit extends Activity {
         Bitmap scaledBitmap = scaleBitmap(bitmap);
         return scaledBitmap;
     }
+
+
+
 
     private int getInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
         int width = options.outWidth;
@@ -198,5 +292,51 @@ public class CameraInit extends Activity {
         Bitmap scaled = Bitmap.createScaledBitmap(myBitmap, 512, nh, true);
         return scaled;
     }
+
+    private void setToolBar() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    }
+
+
+    public void sendPost(){ Toast.makeText(CameraInit.this, key, Toast.LENGTH_SHORT).show();
+/*
+        MainThread mainThread = MainThreadImpl.getInstance();
+        Executor executor = ThreadExecutor.getInstance();
+        PostRepository postRepository = new PostRepositoryImpl(getApplicationContext());
+        PostInteractor.CallBack callback = new PostInteractor.CallBack() {
+
+            @Override
+            public void onNetworkFail() {
+                Toast.makeText(getApplicationContext(), R.string.error_connection, LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onError(String code, String message) {
+                Toast.makeText(getApplicationContext(), R.string.error_request, LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onSuccess(PostModel newPost) {
+                System.out.println("POST DONE");
+            }
+        };
+
+        PostInteractor postInteractor = new PostInteractorImpl(
+                executor,
+                mainThread,
+                callback,
+                postRepository,
+                post,
+                poiId,
+                description_text.getText().toString(),
+                tags,
+                new Resource(resourceToUploadUri.toString())
+        );
+
+        postInteractor.execute();
+        */}
 
 }
