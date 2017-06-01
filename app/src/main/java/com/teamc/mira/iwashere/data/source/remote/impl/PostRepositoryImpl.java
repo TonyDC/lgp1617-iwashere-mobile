@@ -149,8 +149,23 @@ public class PostRepositoryImpl extends AbstractPostRepository implements PostRe
         return type;
     }
 
+    public String getFileExtension(String path){
+        String filename = path;
+        String filenameArray[] = filename.split("\\.");
+        String extension = filenameArray[filenameArray.length-1];
+        return extension;
+    }
+
     @Override
     public boolean post(String poiId, String description, ArrayList<String> tags, File resource) {
+
+        String extension = getFileExtension(resource.getAbsolutePath());
+        String media = "image/";
+        if (extension.equals("jpg") ||extension.equals("png")) {
+            media += extension;
+        } else if (extension.equals("mp4")) {
+            media = "video/" + extension;
+        }
 
         OkHttpClient client = new OkHttpClient();
 
@@ -160,7 +175,7 @@ public class PostRepositoryImpl extends AbstractPostRepository implements PostRe
                     .addFormDataPart("poiID", "1")
                     .addFormDataPart("description", description)
                     .addFormDataPart("postFiles", resource.getName(),
-                            RequestBody.create(MediaType.parse("iamge/" + getMimeType(resource.getAbsolutePath())), resource))
+                            RequestBody.create(MediaType.parse(media), resource))
                     .build();
 
             okhttp3.Request request = new okhttp3.Request.Builder()

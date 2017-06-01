@@ -121,7 +121,6 @@ public class CameraInit extends AppCompatActivity {
             }
             startActivityForResult(cameraIntent, CAMERA_REQUEST);
 
-
         } else if (key.equals("video")) {
             cameraIntent = new Intent(android.provider.MediaStore.ACTION_VIDEO_CAPTURE);
             File f = new File(Environment.getExternalStorageDirectory(), imageFileName + ".mp4");
@@ -203,10 +202,6 @@ public class CameraInit extends AppCompatActivity {
             imageView.setVisibility(View.VISIBLE);
         }
 
-    }
-
-    public void checkPermissions() {
-        //ActivityCompat.requestPermissions();
     }
 
     public Bitmap requireRotation(String filePath, Bitmap photo) {
@@ -313,6 +308,13 @@ public class CameraInit extends AppCompatActivity {
         return result;
     }
 
+    public String getFileExtension(String path){
+        String filename = path;
+        String filenameArray[] = filename.split("\\.");
+        String extension = filenameArray[filenameArray.length-1];
+        return extension;
+    }
+
     public void sendPost(){ Toast.makeText(CameraInit.this, key, Toast.LENGTH_SHORT).show();
 
         MainThread mainThread = MainThreadImpl.getInstance();
@@ -333,6 +335,7 @@ public class CameraInit extends AppCompatActivity {
             @Override
             public void onSuccess(PostModel newPost) {
                 System.out.println("POST DONE");
+                Toast.makeText(getApplicationContext(), "POST DONE", LENGTH_SHORT).show();
             }
         };
 
