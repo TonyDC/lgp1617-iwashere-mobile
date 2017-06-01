@@ -295,6 +295,11 @@ public class CameraInit extends AppCompatActivity {
     }
 
     private String getRealPathFromURI(Uri contentURI) {
+/*
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M) {
+        return  contentURI.toString();
+        }
+*/
         String result;
         Cursor cursor = getContentResolver().query(contentURI, null, null, null, null);
         if (cursor == null) { // Source is Dropbox or other similar local file path
