@@ -1,8 +1,9 @@
 package com.teamc.mira.iwashere.domain.model;
 
-import com.teamc.mira.iwashere.domain.model.util.BasicResource;
 import com.teamc.mira.iwashere.domain.model.util.Resource;
+import com.teamc.mira.iwashere.domain.model.util.ResourceFactory;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -18,7 +19,7 @@ public class PoiModel extends BasicModel implements Serializable {
     private int ratingCount;
     private float userRating;
 
-    private ArrayList<Resource> photos = new ArrayList<>();
+    private ArrayList<Resource> media = new ArrayList<>();
     private ArrayList<ContentModel> content = new ArrayList<>();
 
     private ArrayList<PoiModel> relatedPois = new ArrayList<>();
@@ -35,7 +36,7 @@ public class PoiModel extends BasicModel implements Serializable {
                     String address,
                     String longitude,
                     String latitude,
-                    ArrayList<Resource> photos,
+                    ArrayList<Resource> media,
                     ArrayList<ContentModel> content,
                     ArrayList<PoiModel> relatedContent) {
         super(id, name);
@@ -43,7 +44,7 @@ public class PoiModel extends BasicModel implements Serializable {
         this.address = address;
         this.longitude = longitude;
         this.latitude = latitude;
-        this.photos = photos;
+        this.media = media;
         this.content = content;
         this.relatedPois = relatedContent;
     }
@@ -55,6 +56,15 @@ public class PoiModel extends BasicModel implements Serializable {
         if(poi.has("address")) this.address = poi.getString("address");
         if(poi.has("longitude")) this.longitude = poi.getString("longitude");
         if(poi.has("latitude")) this.latitude = poi.getString("latitude");
+        if (poi.has("media")) {
+            JSONArray array = poi.getJSONArray("media");
+            Resource resource;
+            for (int i = 0; i < array.length(); i++) {
+                JSONObject object = array.getJSONObject(i);
+                resource = ResourceFactory.getResource(object);
+                this.media.add(resource);
+            }
+        }
     }
 
     public PoiModel(String id, String name, String description, String address, String longitude, String latitude) {
@@ -114,12 +124,12 @@ public class PoiModel extends BasicModel implements Serializable {
         this.latitude = latitude;
     }
 
-    public ArrayList<Resource> getPhotos() {
-        return photos;
+    public ArrayList<Resource> getMedia() {
+        return media;
     }
 
-    public void setPhotos(ArrayList<Resource> photos) {
-        this.photos = photos;
+    public void setMedia(ArrayList<Resource> media) {
+        this.media = media;
     }
 
     public ArrayList<ContentModel> getContent() {

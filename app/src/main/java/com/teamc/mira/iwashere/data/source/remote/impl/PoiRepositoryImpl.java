@@ -13,7 +13,6 @@ import com.teamc.mira.iwashere.data.source.remote.AbstractPoiRepository;
 import com.teamc.mira.iwashere.data.source.remote.base.ServerUrl;
 import com.teamc.mira.iwashere.data.source.remote.exceptions.RemoteDataException;
 import com.teamc.mira.iwashere.domain.model.PoiModel;
-import com.teamc.mira.iwashere.domain.model.util.BasicResource;
 import com.teamc.mira.iwashere.domain.model.util.Resource;
 import com.teamc.mira.iwashere.domain.repository.remote.PoiRepository;
 import com.teamc.mira.iwashere.util.JsonObjectRequestWithNull;
@@ -87,7 +86,7 @@ public class PoiRepositoryImpl extends AbstractPoiRepository implements PoiRepos
             JSONArray response = future.get(TIMEOUT, TIMEOUT_TIME_UNIT); // this will block
             Log.d(TAG, "fetchPoiMedia raw data: "+response.toString());
             ArrayList<Resource> photos = getMedia(response);
-            poi.setPhotos(photos);
+            poi.setMedia(photos);
 
 
             future.cancel(true);
