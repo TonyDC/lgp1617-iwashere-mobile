@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">#iwashere</string>
-    <string name="versionCode">0.2</string>
-    <string name="versionName">0.2</string>
+    <string name="versionCode">0.4</string>
+    <string name="versionName">0.4-Beta</string>
 
 
     <string name="action_sign_in_short">Register</string>
