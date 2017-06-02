@@ -40,8 +40,7 @@ android {
             }
             def port = ":8080"
             def protocol = "http://"
-//            buildConfigField "String", "API_HOSTNAME",  "\"" + protocol + host + port + "\""
-            buildConfigField "String", "API_HOSTNAME", "\"" + "https://iwashere.fe.up.pt" + "\""
+            buildConfigField "String", "API_HOSTNAME",  "\"" + protocol + host + port + "\""
         }
     }
     lintOptions{
