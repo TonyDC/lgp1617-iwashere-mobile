@@ -95,14 +95,6 @@ public class CameraInit extends AppCompatActivity {
 
     public void callCamera() {
 
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1) {
-            String[] perms = {"android.permission.WRITE_EXTERNAL_STORAGE"};
-
-            int permsRequestCode = 200;
-
-            requestPermissions(perms, permsRequestCode);
-        }
-
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String imageFileName = "IWasHere" + timeStamp + "_";
         Intent cameraIntent;
