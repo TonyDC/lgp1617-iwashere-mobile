@@ -41,8 +41,8 @@ import com.teamc.mira.iwashere.domain.model.util.Resource;
 import com.teamc.mira.iwashere.domain.repository.remote.PoiRepository;
 import com.teamc.mira.iwashere.presentation.misc.costum_components.ViewMore;
 import com.teamc.mira.iwashere.threading.MainThreadImpl;
-import com.teamc.mira.iwashere.util.ExpandableHeightGridView;
-import com.teamc.mira.iwashere.util.ViewMoreGridView;
+import com.teamc.mira.iwashere.presentation.misc.costum_components.ExpandableHeightGridView;
+import com.teamc.mira.iwashere.presentation.misc.costum_components.ViewMoreGridView;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;

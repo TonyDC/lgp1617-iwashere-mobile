@@ -5,6 +5,6 @@
     android:layout_height="match_parent"
     android:background="@color/red_google"
     android:fitsSystemWindows="true"
-    tools:context=".presentation.auth.GoogleActivity">
+    tools:mContext=".presentation.auth.GoogleActivity">
 
 </android.support.design.widget.CoordinatorLayout>

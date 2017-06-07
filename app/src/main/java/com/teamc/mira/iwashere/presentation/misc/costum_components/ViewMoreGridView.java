@@ -1,4 +1,4 @@
-package com.teamc.mira.iwashere.util;
+package com.teamc.mira.iwashere.presentation.misc.costum_components;
 
 import android.content.Context;
 import android.support.annotation.Nullable;
@@ -10,9 +10,9 @@ import android.widget.AdapterView;
 import android.widget.ImageView;
 
 import com.teamc.mira.iwashere.R;
-import com.teamc.mira.iwashere.domain.model.util.BasicResource;
-import com.teamc.mira.iwashere.domain.model.util.ImageResource;
 import com.teamc.mira.iwashere.domain.model.util.Resource;
+import com.teamc.mira.iwashere.presentation.misc.costum_components.ExpandableHeightGridView;
+import com.teamc.mira.iwashere.presentation.misc.costum_components.GridViewAdapter;
 
 import java.util.ArrayList;
 
