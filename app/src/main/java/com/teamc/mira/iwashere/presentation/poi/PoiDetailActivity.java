@@ -36,7 +36,6 @@ import com.teamc.mira.iwashere.domain.interactors.impl.PoiDetailInteractorImpl;
 import com.teamc.mira.iwashere.domain.interactors.impl.PoiRatingInteractorImpl;
 import com.teamc.mira.iwashere.domain.model.ContentModel;
 import com.teamc.mira.iwashere.domain.model.PoiModel;
-import com.teamc.mira.iwashere.domain.model.util.BasicResource;
 import com.teamc.mira.iwashere.domain.model.util.ImageResource;
 import com.teamc.mira.iwashere.domain.model.util.Resource;
 import com.teamc.mira.iwashere.domain.repository.remote.PoiRepository;
@@ -331,7 +330,7 @@ public class PoiDetailActivity extends AppCompatActivity {
     private void setPoiMediaSlider(PoiModel poi) {
         sliderShow = (SliderLayout) findViewById(R.id.slider);
         sliderShow.removeAllSliders();
-        for (Resource image : poi.getPhotos()) {
+        for (Resource image : poi.getMedia()) {
             if (image instanceof ImageResource){
                 ((ImageResource) image).fetchDownloadUrl(ImageResource.Size.SIZE_MEDIUM, new OnCompleteListener() {
                     @Override

@@ -7,7 +7,9 @@ import com.google.android.gms.tasks.Task;
 import com.teamc.mira.iwashere.data.source.remote.impl.ResourcesRepositoryImpl;
 import com.teamc.mira.iwashere.domain.repository.remote.ResourcesRepository;
 
-public abstract class Resource {
+import java.io.Serializable;
+
+public abstract class Resource implements Serializable {
     protected Resource(Type type) {
         this.type = type;
     }

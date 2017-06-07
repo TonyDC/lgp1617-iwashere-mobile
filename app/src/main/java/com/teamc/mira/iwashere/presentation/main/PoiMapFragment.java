@@ -125,7 +125,7 @@ public class PoiMapFragment extends LocationBasedMapFragment implements
         TemplateInteractor.CallBack callBack = new TemplateInteractor.CallBack<ArrayList<PoiModel>>() {
             @Override
             public void onSuccess(ArrayList<PoiModel> poiModels) {
-                Log.d(TAG, "PoiMapInteractor.CallBack onSuccess");
+                Log.d(TAG, "onSuccess(): nPois- "+poiModels.size());
                 onPoiFetch(poiModels);
             }
 
@@ -151,6 +151,7 @@ public class PoiMapFragment extends LocationBasedMapFragment implements
                 MainThreadImpl.getInstance(),
                 callBack,
                 new PoiRepositoryImpl(mContext),
+                poiMapMarker,
                 minLat, maxLat, minLng, maxLng
         );
         poiMapInteractor.execute();

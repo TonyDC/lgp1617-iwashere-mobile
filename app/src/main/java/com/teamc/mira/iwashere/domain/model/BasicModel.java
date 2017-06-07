@@ -1,5 +1,7 @@
 package com.teamc.mira.iwashere.domain.model;
 
+import com.teamc.mira.iwashere.presentation.misc.PoiMapMarker;
+
 import java.io.Serializable;
 
 public class BasicModel implements Serializable{
@@ -28,6 +30,19 @@ public class BasicModel implements Serializable{
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(super.equals(obj))
+            return true;
+
+        return ((PoiModel) obj).getId().equals(this.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return getId().hashCode();
     }
 }
 

@@ -3,6 +3,7 @@ package com.teamc.mira.iwashere.presentation.misc;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
@@ -29,9 +30,11 @@ import com.teamc.mira.iwashere.presentation.poi.PoiDetailActivity;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
 import static com.teamc.mira.iwashere.presentation.misc.MapFragment.PADDING;
+import static com.teamc.mira.iwashere.presentation.misc.MapFragment.TAG;
 import static com.teamc.mira.iwashere.presentation.poi.PoiDetailActivity.POI;
 
 public class PoiMapMarker {
@@ -39,6 +42,7 @@ public class PoiMapMarker {
     private final Context mContext;
 
     private Map<Marker, PoiModel> poiMap = new HashMap<>();
+    private HashSet<PoiModel> poiSet = new HashSet<>();
 
     private static final BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.mipmap.marker_primary);
 
@@ -66,11 +70,13 @@ public class PoiMapMarker {
 
         Marker marker = mGoogleMap.addMarker(markerOptions);
         poiMap.put(marker,poi);
+        poiSet.add(poi);
     }
 
     public void addMarkers(ArrayList<PoiModel> list){
         for (PoiModel poi:
              list) {
+
             addMarker(poi);
         }
 
@@ -122,23 +128,29 @@ public class PoiMapMarker {
             tvTitle.setText(marker.getTitle());
             final ImageView imageView = ((ImageView) myContentsView.findViewById(R.id.poiImage));
 
-            ArrayList<ContentModel> contentList = poiMap.get(marker).getContent();
+            ArrayList<Resource> contentList = poiMap.get(marker).getMedia();
             if (contentList.size() > 0) {
-                Resource resource = contentList.get(0).getResource();
+                Resource resource = contentList.get(0);
                 if (resource instanceof ImageResource) {
                     ((ImageResource) resource).fetchDownloadUrl(ImageResource.Size.SIZE_XSMALL, new OnCompleteListener() {
                         @Override
                         public void onComplete(@NonNull Task task) {
                             String imageUrl = task.getResult().toString();
+                            Log.d(TAG, "Showing picture in " + imageView.toString());
                             Picasso.with(mContext).load(imageUrl).into(imageView);
                         }
                     });
+
+                    Log.d(TAG, "Showing picture of " + poiMap.get(marker).getName());
                 }
 
             }
 
             return myContentsView;
         }
+    }
 
+    public HashSet<PoiModel> getPoiSet() {
+        return poiSet;
     }
 }

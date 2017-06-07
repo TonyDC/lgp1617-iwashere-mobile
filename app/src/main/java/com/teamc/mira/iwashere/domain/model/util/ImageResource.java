@@ -15,10 +15,10 @@ public class ImageResource extends Resource {
     String storageM;
     String storageL;
 
-    Task<Uri> taskXS;
-    Task<Uri> taskS;
-    Task<Uri> taskM;
-    Task<Uri> taskL;
+    transient Task<Uri> taskXS;
+    transient Task<Uri> taskS;
+    transient Task<Uri> taskM;
+    transient Task<Uri> taskL;
 
     protected ImageResource() {
         super(Type.IMAGE);
@@ -47,26 +47,37 @@ public class ImageResource extends Resource {
 
     public void fetchDownloadUrl(Size size, OnCompleteListener listener) {
         Task<Uri> task;
+        String storageUrl;
 
         switch (size){
             case SIZE_XSMALL:
                 task = taskXS;
+                storageUrl = storageXS;
 
                 break;
 
             case SIZE_SMALL:
                 task = taskS;
+                storageUrl = storageS;
 
                 break;
             case SIZE_MEDIUM:
                 task = taskM;
+                storageUrl = storageM;
 
                 break;
             case SIZE_LARGE:
                 task = taskL;
+                storageUrl = storageL;
+
                 break;
             default:
                 task = taskL;
+                storageUrl = storageL;
+        }
+
+        if (task == null) {
+            task = startTask(storageUrl);
         }
 
         super.fetchDownloadUrl(listener, task);
@@ -77,6 +88,10 @@ public class ImageResource extends Resource {
 
     @Deprecated
     public void fetchDownloadUrl(OnCompleteListener listener) {
+        if (taskL == null) {
+            taskL = startTask(storageL);
+        }
+
         fetchDownloadUrl(listener, taskL);
     }
 }

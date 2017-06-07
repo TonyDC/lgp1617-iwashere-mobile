@@ -7,8 +7,8 @@ android {
         applicationId "com.teamc.mira.iwashere"
         minSdkVersion 21
         targetSdkVersion 25
-        versionCode 1
-        versionName "1.0"
+        versionCode 0
+        versionName "0.4 Beta"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
