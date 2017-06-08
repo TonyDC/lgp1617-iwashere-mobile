@@ -15,7 +15,7 @@ import com.teamc.mira.iwashere.data.source.remote.exceptions.RemoteDataException
 import com.teamc.mira.iwashere.domain.model.PoiModel;
 import com.teamc.mira.iwashere.domain.model.util.Resource;
 import com.teamc.mira.iwashere.domain.repository.remote.PoiRepository;
-import com.teamc.mira.iwashere.util.JsonObjectRequestWithNull;
+import com.teamc.mira.iwashere.domain.repository.JsonObjectRequestWithNull;
 
 import org.json.JSONArray;
 import org.json.JSONException;

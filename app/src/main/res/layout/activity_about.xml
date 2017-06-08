@@ -5,7 +5,7 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.teamc.mira.iwashere.presentation.misc.AboutActivity"
+    tools:mContext="com.teamc.mira.iwashere.presentation.misc.AboutActivity"
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
     <include layout="@layout/toolbar"></include>

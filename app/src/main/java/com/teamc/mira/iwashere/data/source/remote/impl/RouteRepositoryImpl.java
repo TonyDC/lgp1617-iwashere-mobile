@@ -11,7 +11,7 @@ import com.teamc.mira.iwashere.data.source.remote.base.ServerUrl;
 import com.teamc.mira.iwashere.data.source.remote.exceptions.RemoteDataException;
 import com.teamc.mira.iwashere.domain.model.RouteModel;
 import com.teamc.mira.iwashere.domain.repository.remote.RouteRepository;
-import com.teamc.mira.iwashere.util.JsonObjectRequestWithNull;
+import com.teamc.mira.iwashere.domain.repository.JsonObjectRequestWithNull;
 
 import org.json.JSONException;
 import org.json.JSONObject;

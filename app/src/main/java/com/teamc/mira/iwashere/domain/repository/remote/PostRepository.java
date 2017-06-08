@@ -1,7 +1,13 @@
 package com.teamc.mira.iwashere.domain.repository.remote;
 
-import com.teamc.mira.iwashere.domain.model.util.Resource;
+import com.teamc.mira.iwashere.data.source.remote.exceptions.BasicRemoteException;
+import com.teamc.mira.iwashere.data.source.remote.exceptions.RemoteDataException;
+import com.teamc.mira.iwashere.domain.model.PoiModel;
+import com.teamc.mira.iwashere.domain.model.PostModel;
 
+import org.json.JSONObject;
+
+import java.io.File;
 import java.util.ArrayList;
 
 /**
@@ -10,11 +16,22 @@ import java.util.ArrayList;
 
 public interface PostRepository {
 
-    boolean like(String userId, String postId, boolean liked);
+    /**
+     *
+     * @param postId the POST's id
+     * @return PostModel with information about the Post
+     * @throws RemoteDataException
+     * @see PostModel( JSONObject )
+     */
+    PostModel fetchPost(String postId) throws RemoteDataException;
 
-    boolean fetch(String userId, String poiId, int offset, int limit);
+    ArrayList<PostModel> fetchPOIPosts(PoiModel poi, int contentOffset, int contentLimit) throws RemoteDataException;
 
-    boolean fetch(String poiId, int offset, int limit);
+    boolean addPostLike(PostModel post, String userId) throws RemoteDataException;
 
-    boolean post(String poiId, String description, ArrayList<String> tags, Resource resource);
+    boolean getPostLike(PostModel post) throws RemoteDataException;
+
+    boolean post(String poiId, String description, ArrayList<String> tags, File resource) throws BasicRemoteException;
+
+    boolean updatePostLike(PostModel post, String userId, boolean liked) throws RemoteDataException;
 }

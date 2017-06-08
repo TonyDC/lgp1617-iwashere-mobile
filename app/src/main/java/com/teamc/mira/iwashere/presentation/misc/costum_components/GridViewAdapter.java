@@ -1,7 +1,6 @@
-package com.teamc.mira.iwashere.util;
+package com.teamc.mira.iwashere.presentation.misc.costum_components;
 
 import android.content.Context;
-import android.media.Image;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -14,7 +13,6 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.squareup.picasso.Picasso;
 import com.teamc.mira.iwashere.R;
-import com.teamc.mira.iwashere.domain.model.util.BasicResource;
 import com.teamc.mira.iwashere.domain.model.util.ImageResource;
 import com.teamc.mira.iwashere.domain.model.util.Resource;
 
