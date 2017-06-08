@@ -1,21 +1,26 @@
 package com.teamc.mira.iwashere.data.source.remote.impl;
 
 import android.content.Context;
+import android.os.Looper;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.webkit.MimeTypeMap;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.RequestFuture;
+import com.teamc.mira.iwashere.R;
 import com.teamc.mira.iwashere.data.source.local.UserRepository;
 import com.teamc.mira.iwashere.data.source.remote.AbstractPostRepository;
 import com.teamc.mira.iwashere.data.source.remote.base.ServerUrl;
+import com.teamc.mira.iwashere.data.source.remote.exceptions.BasicRemoteException;
 import com.teamc.mira.iwashere.data.source.remote.exceptions.RemoteDataException;
 import com.teamc.mira.iwashere.domain.model.PoiModel;
 import com.teamc.mira.iwashere.domain.model.PostModel;
 import com.teamc.mira.iwashere.domain.repository.remote.PostRepository;
+import com.teamc.mira.iwashere.util.FileUtil;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -25,6 +30,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -37,6 +43,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
+import static com.teamc.mira.iwashere.data.source.remote.base.ErrorCodes.UNKNOWN_ERROR;
 import static com.teamc.mira.iwashere.data.source.remote.base.ServerUrl.TIMEOUT;
 import static com.teamc.mira.iwashere.data.source.remote.base.ServerUrl.TIMEOUT_TIME_UNIT;
 
@@ -50,15 +57,12 @@ public class PostRepositoryImpl extends AbstractPostRepository implements PostRe
     private static final String API_POST_URL = ServerUrl.getUrl() + ServerUrl.API + ServerUrl.CONTENT + ServerUrl.AUTH;
     private static final String API_POST_GET_LIKE_URL = ServerUrl.getUrl() + ServerUrl.API + ServerUrl.CONTENT + ServerUrl.LIKE;
     private static final String API_POST_LIKE_URL = ServerUrl.getUrl() + ServerUrl.API + ServerUrl.CONTENT + ServerUrl.AUTH + ServerUrl.LIKE;
+    private final Context mContext;
     private int response = -1;
-
-
-    public PostRepositoryImpl(RequestQueue requestQueue) {
-        super(requestQueue);
-    }
 
     public PostRepositoryImpl(Context context) {
         super(context);
+        this.mContext = context;
     }
 
     @Override
@@ -149,17 +153,12 @@ public class PostRepositoryImpl extends AbstractPostRepository implements PostRe
         return type;
     }
 
-    public String getFileExtension(String path){
-        String filename = path;
-        String filenameArray[] = filename.split("\\.");
-        String extension = filenameArray[filenameArray.length-1];
-        return extension;
-    }
+
 
     @Override
-    public boolean post(String poiId, String description, ArrayList<String> tags, File resource) {
+    public boolean post(String poiId, String description, ArrayList<String> tags, File resource) throws BasicRemoteException {
 
-        String extension = getFileExtension(resource.getAbsolutePath());
+        String extension = FileUtil.getFileExtension(resource.getAbsolutePath());
         String media = "image/";
         if (extension.equals("jpg") ||extension.equals("png")) {
             media += extension;
@@ -170,43 +169,79 @@ public class PostRepositoryImpl extends AbstractPostRepository implements PostRe
         OkHttpClient client = new OkHttpClient();
 
         try {
-            RequestBody requestBody = new MultipartBody.Builder()
+            Log.d(TAG, "Start building body");
+            MultipartBody.Builder bodyBuilder = new MultipartBody.Builder()
                     .setType(MultipartBody.FORM)
                     .addFormDataPart("poiID", "1")
                     .addFormDataPart("description", description)
                     .addFormDataPart("postFiles", resource.getName(),
-                            RequestBody.create(MediaType.parse(media), resource))
-                    .build();
-
+                            RequestBody.create(MediaType.parse(media), resource));
+            addTagsToBody(bodyBuilder, tags);
+            Log.d(TAG, "BodyBuilder finished");
+            RequestBody requestBody = bodyBuilder.build();
+            Log.d(TAG, "Finished building Body");
             okhttp3.Request request = new okhttp3.Request.Builder()
                     .url(API_POST_URL)
                     .method("POST", requestBody)
                     .addHeader("Authorization", "Bearer " + UserRepository.getInstance().getToken())
-                    .build();
 
+                    .build();
+            final CountDownLatch countDownLatch = new CountDownLatch(1);
+            final boolean[] successful = new boolean[1];
+            successful[0] = true;
+            Log.d(TAG, "Started call");
+            Looper.prepare();
             client.newCall(request).enqueue(new Callback() {
 
                 @Override
                 public void onFailure(Call call, IOException e) {
                     Log.d(TAG, "okhttp3 onFailure " + e);
-                    System.out.println("okhttp3 onFailure " + e);
+                    e.printStackTrace();
+//                    Toast.makeText(mContext, mContext.getString(R.string.post_upload_failed), Toast.LENGTH_SHORT).show();
+                    successful[0] = false;
+                    countDownLatch.countDown();
                 }
 
                 @Override
                 public void onResponse(Call call, Response response) throws IOException {
                     Log.d(TAG, "okhttp3 onResponse " + response.isSuccessful());
                     System.out.println("okhttp3 onResponse " + response.isSuccessful());
-                    if (response.isSuccessful()) {
-                        // Handle the error
+                    if (!response.isSuccessful()) {
+                        // Handle Error
+//                        Toast.makeText(mContext, mContext.getString(R.string.post_upload_failed), Toast.LENGTH_SHORT).show();
+                        successful[0] = false;
+                    } else {
+                        // Upload successful
+//                        Toast.makeText(mContext, mContext.getString(R.string.post_uploaded), Toast.LENGTH_SHORT).show();
+                        successful[0] = true;
                     }
-                    // Upload successful
+                    countDownLatch.countDown();
                 }
             });
-            return true;
-        } catch (Exception ex) {
-            ex.printStackTrace();
+
+            countDownLatch.await(TIMEOUT, TIMEOUT_TIME_UNIT);
+
+            if (successful[0] == false) {
+                return false;
+            } else {
+                return true;
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            throw new BasicRemoteException(UNKNOWN_ERROR);
         }
-        return false;
+    }
+
+    private void addTagsToBody(MultipartBody.Builder bodyBuilder, ArrayList<String> tags) {
+        if (tags.size() == 0) {
+            bodyBuilder.addFormDataPart("tags", "");
+
+            return;
+        }
+
+        for (int i = 0; i < tags.size(); i++) {
+            bodyBuilder.addFormDataPart("tags[" + i + "]", tags.get(i));
+        }
     }
 
     @Override

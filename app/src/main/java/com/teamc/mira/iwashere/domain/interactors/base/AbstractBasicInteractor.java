@@ -3,10 +3,6 @@ package com.teamc.mira.iwashere.domain.interactors.base;
 import com.teamc.mira.iwashere.domain.executor.Executor;
 import com.teamc.mira.iwashere.domain.executor.MainThread;
 
-/**
- * Created by Duart on 22/05/2017.
- */
-
 public abstract class AbstractBasicInteractor extends AbstractInteractor implements BasicInteractor {
     protected BasicInteractor.CallBack mCallBack;
     public AbstractBasicInteractor(Executor threadExecutor, MainThread mainThread, BasicInteractor.CallBack callBack) {

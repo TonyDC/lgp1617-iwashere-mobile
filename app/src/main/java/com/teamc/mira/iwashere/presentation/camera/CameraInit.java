@@ -28,7 +28,9 @@ import com.teamc.mira.iwashere.data.source.remote.impl.PostRepositoryImpl;
 import com.teamc.mira.iwashere.domain.executor.Executor;
 import com.teamc.mira.iwashere.domain.executor.MainThread;
 import com.teamc.mira.iwashere.domain.executor.impl.ThreadExecutor;
-import com.teamc.mira.iwashere.domain.interactors.PostInteractor;
+import com.teamc.mira.iwashere.domain.interactors.base.AbstractInteractor;
+import com.teamc.mira.iwashere.domain.interactors.base.AbstractTemplateInteractor;
+import com.teamc.mira.iwashere.domain.interactors.base.TemplateInteractor;
 import com.teamc.mira.iwashere.domain.interactors.impl.PostInteractorImpl;
 import com.teamc.mira.iwashere.domain.model.PostModel;
 import com.teamc.mira.iwashere.domain.repository.local.FileRepository;
@@ -47,7 +49,7 @@ import static com.teamc.mira.iwashere.util.FileUtil.requireRotation;
 
 public class CameraInit extends AppCompatActivity {
     private static final String TAG = CameraInit.class.getSimpleName();
-    static final int REQUEST_TAKE_PHOTO = 1888;
+    private static final int REQUEST_TAKE_PHOTO = 1888;
     private static final int REQUEST_VIDEO_CAPTURE = 1;
     private static final int RESULT_LOAD_IMAGE = 2;
 
@@ -59,7 +61,7 @@ public class CameraInit extends AppCompatActivity {
     private Uri resourceToUploadUri;
     private EditText descriptionText;
     String key = "";
-    ArrayList<String> tags = null;
+    ArrayList<String> tags = new ArrayList<>();
     String poiId = null;
     private File photoFile;
 
@@ -197,15 +199,27 @@ public class CameraInit extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
-    public void sendPost() throws IOException { Toast.makeText(CameraInit.this, key, Toast.LENGTH_SHORT).show();
+    public void sendPost() throws IOException {
+        switch (key) {
+            case "video":
+                Toast.makeText(this, getString(R.string.video_beta_message), LENGTH_SHORT).show();
+                return;
+            case "photo":
+            case "gallery":
+
+                Toast.makeText(this, getString(R.string.start_uploading), LENGTH_SHORT).show();
+                break;
+            default:
+                Log.d(TAG, "Unknown error");
+        }
 
         MainThread mainThread = MainThreadImpl.getInstance();
         Executor executor = ThreadExecutor.getInstance();
         PostRepository postRepository = new PostRepositoryImpl(getApplicationContext());
-        PostInteractor.CallBack callback = new PostInteractor.CallBack() {
+        TemplateInteractor.CallBack callback = new TemplateInteractor.CallBack<PostModel>() {
 
             @Override
-            public void onNetworkFail() {
+            public void onNetworkError() {
                 Toast.makeText(getApplicationContext(), R.string.error_connection, LENGTH_SHORT).show();
             }
 
@@ -216,14 +230,12 @@ public class CameraInit extends AppCompatActivity {
 
             @Override
             public void onSuccess(PostModel newPost) {
-                System.out.println("POST DONE");
-                Toast.makeText(getApplicationContext(), "POST DONE", LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), getString(R.string.is_uploading), LENGTH_SHORT).show();
+                finish();
             }
         };
-        FileRepository fileRepository = new FileRepositoryImpl(this);
-//        String realPath = fileRepository.getRealPathFromURI(resourceToUploadUri);
 
-        PostInteractor postInteractor = new PostInteractorImpl(
+        PostInteractorImpl postInteractor = new PostInteractorImpl(
                 executor,
                 mainThread,
                 callback,
@@ -233,6 +245,7 @@ public class CameraInit extends AppCompatActivity {
         );
 
         postInteractor.execute();
+
     }
 
     private void setPic() {
@@ -240,7 +253,7 @@ public class CameraInit extends AppCompatActivity {
         int targetW = imageView.getWidth();
         int targetH = imageView.getHeight();
 
-
+        // Hardcoded width and height in case the imageView does not have fixed size. The bigger the best the resolution of the image
         if(targetH == 0) targetH = 1024;
         if(targetW == 0) targetW = 1024;
 

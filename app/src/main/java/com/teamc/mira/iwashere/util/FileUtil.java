@@ -41,9 +41,11 @@ public class FileUtil {
         return photo;
     }
 
-    public static File getFileFromBitmap(Bitmap bitmap) {
-//        bitmap.compress(Bitmap.CompressFormat.PNG, quality, outStream);
-        return null;
+    public static String getFileExtension(String path) {
+        String filename = path;
+        String filenameArray[] = filename.split("\\.");
+        String extension = filenameArray[filenameArray.length - 1];
+        return extension;
     }
 
     public static Bitmap rotateImage(Bitmap source, float angle) {

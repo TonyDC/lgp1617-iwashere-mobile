@@ -86,4 +86,9 @@
     <string name="gallery">Gallery</string>
     <string name="beta_message">We\'re sorry, but this is still a beta! Coming soon</string>
     <string name="photo_fail_msg">Failed to open camera!</string>
+    <string name="post_uploaded">Post uploaded successfuly</string>
+    <string name="post_upload_failed">Error uploading the post</string>
+    <string name="video_beta_message">We\'re sorry, but this is still a bet and uploading video is still not working :(</string>
+    <string name="start_uploading">Uploaded started</string>
+    <string name="is_uploading">Post is uploading</string>
 </resources>

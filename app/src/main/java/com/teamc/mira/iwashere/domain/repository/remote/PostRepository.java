@@ -1,5 +1,6 @@
 package com.teamc.mira.iwashere.domain.repository.remote;
 
+import com.teamc.mira.iwashere.data.source.remote.exceptions.BasicRemoteException;
 import com.teamc.mira.iwashere.data.source.remote.exceptions.RemoteDataException;
 import com.teamc.mira.iwashere.domain.model.PoiModel;
 import com.teamc.mira.iwashere.domain.model.PostModel;
@@ -30,7 +31,7 @@ public interface PostRepository {
 
     boolean getPostLike(PostModel post) throws RemoteDataException;
 
-    boolean post(String poiId, String description, ArrayList<String> tags, File resource);
+    boolean post(String poiId, String description, ArrayList<String> tags, File resource) throws BasicRemoteException;
 
     boolean updatePostLike(PostModel post, String userId, boolean liked) throws RemoteDataException;
 }

@@ -1,19 +1,21 @@
 package com.teamc.mira.iwashere.domain.interactors.impl;
 
+import com.teamc.mira.iwashere.data.source.remote.exceptions.RemoteDataException;
 import com.teamc.mira.iwashere.domain.executor.Executor;
 import com.teamc.mira.iwashere.domain.executor.MainThread;
-import com.teamc.mira.iwashere.domain.interactors.PostInteractor;
-import com.teamc.mira.iwashere.domain.interactors.base.AbstractInteractor;
+import com.teamc.mira.iwashere.domain.interactors.base.AbstractTemplateInteractor;
+import com.teamc.mira.iwashere.domain.interactors.base.TemplateInteractor;
 import com.teamc.mira.iwashere.domain.model.PostModel;
 import com.teamc.mira.iwashere.domain.repository.remote.PostRepository;
 
 import java.io.File;
 import java.util.ArrayList;
 
+import static com.teamc.mira.iwashere.data.source.remote.base.ErrorCodes.UNKNOWN_ERROR;
 
-public class PostInteractorImpl extends AbstractInteractor implements PostInteractor {
+
+public class PostInteractorImpl extends AbstractTemplateInteractor{
     PostRepository repository;
-    CallBack callBack;
     String poiId;
     String description;
     ArrayList<String> tags;
@@ -23,16 +25,15 @@ public class PostInteractorImpl extends AbstractInteractor implements PostIntera
 
     public PostInteractorImpl(Executor threadExecutor,
                               MainThread mainThread,
-                              CallBack callBack,
+                              TemplateInteractor.CallBack callBack,
                               PostRepository postRepository,
                               PostModel post,
                               String poiId,
                               String description,
                               ArrayList<String> tags,
                               File resource) {
-        super(threadExecutor, mainThread);
+        super(threadExecutor, mainThread, callBack);
 
-        this.callBack = callBack;
         repository = postRepository;
         this.poiId = poiId;
         this.description = description;
@@ -41,38 +42,17 @@ public class PostInteractorImpl extends AbstractInteractor implements PostIntera
     }
 
     @Override
-    public void notifyError(final String code, final String message) {
-        mMainThread.post(new Runnable() {
-            @Override
-            public void run() {
-                if (code.equals("network-fail")) {
-                    callBack.onNetworkFail();
-                } else {
-                    callBack.onError(code, message);
-                }
-            }
-        });
-    }
-
-    @Override
-    public void notifySuccess(final PostModel post) {
-        mMainThread.post(new Runnable() {
-            @Override
-            public void run() {
-                callBack.onSuccess(post);
-            }
-        });
-
-    }
-
-    @Override
-    public void notifyError(String code) {
-        notifyError(code, "");
-    }
-
-    @Override
     public void run() {
-        repository.post(poiId, description, tags, resource);
-        notifySuccess(post);
+        try{
+            boolean success = repository.post(poiId, description, tags, resource);
+
+            if (success) {
+                notifySuccess(post);
+            } else {
+                notifyError(UNKNOWN_ERROR, "");
+            }
+        } catch (RemoteDataException e) {
+            notifyError(e.getCode(), e.getErrorMessage());
+        }
     }
 }
