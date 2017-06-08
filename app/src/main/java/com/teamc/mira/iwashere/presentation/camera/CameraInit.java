@@ -13,6 +13,7 @@ import android.provider.MediaStore;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -43,10 +44,10 @@ import java.util.Date;
 
 import static android.widget.Toast.LENGTH_SHORT;
 import static com.teamc.mira.iwashere.util.FileUtil.requireRotation;
-import static com.teamc.mira.iwashere.util.FileUtil.scaleBitmap;
 
 public class CameraInit extends AppCompatActivity {
-    private static final int CAMERA_REQUEST = 1888;
+    private static final String TAG = CameraInit.class.getSimpleName();
+    static final int REQUEST_TAKE_PHOTO = 1888;
     private static final int REQUEST_VIDEO_CAPTURE = 1;
     private static final int RESULT_LOAD_IMAGE = 2;
 
@@ -56,10 +57,11 @@ public class CameraInit extends AppCompatActivity {
     private VideoView videoView;
     private Button postButton;
     private Uri resourceToUploadUri;
-    private EditText descriptionText, poi_text;
+    private EditText descriptionText;
     String key = "";
     ArrayList<String> tags = null;
     String poiId = null;
+    private File photoFile;
 
 
     @Override
@@ -79,14 +81,19 @@ public class CameraInit extends AppCompatActivity {
         videoView = (VideoView) this.findViewById(R.id.videodisplay);
         postButton = (Button) this.findViewById(R.id.postBtn);
         descriptionText = (EditText) this.findViewById(R.id.description_text);
-        poi_text = (EditText) this.findViewById(R.id.poi_text);
+//        poi_text = (EditText) this.findViewById(R.id.poi_text);
 
         callCamera();
 
         postButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sendPost();
+                try {
+                    sendPost();
+                } catch (IOException e) {
+                    Toast.makeText(CameraInit.this, getString(R.string.error_request), LENGTH_SHORT);
+                    e.printStackTrace();
+                }
             }
         });
 
@@ -100,17 +107,8 @@ public class CameraInit extends AppCompatActivity {
 
 
         if (key.equals("photo")) {
-            cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-            File f = new File(Environment.getExternalStorageDirectory(), imageFileName + ".jpg");
 
-            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M) {
-                cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, FileProvider.getUriForFile(CameraInit.this, CameraInit.this.getApplicationContext().getPackageName() + ".provider", f));
-                resourceToUploadUri = FileProvider.getUriForFile(CameraInit.this, CameraInit.this.getApplicationContext().getPackageName() + ".provider", f);
-            } else {
-                cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(f));
-                resourceToUploadUri = Uri.fromFile(f);
-            }
-            startActivityForResult(cameraIntent, CAMERA_REQUEST);
+            dispatchTakePictureIntent();
 
         } else if (key.equals("video")) {
             cameraIntent = new Intent(android.provider.MediaStore.ACTION_VIDEO_CAPTURE);
@@ -139,6 +137,7 @@ public class CameraInit extends AppCompatActivity {
 
     }
 
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         if (resultCode != Activity.RESULT_OK) {
@@ -147,16 +146,10 @@ public class CameraInit extends AppCompatActivity {
             finish();
         }
 
-        if (requestCode == CAMERA_REQUEST && resultCode == Activity.RESULT_OK) {
-            String filePath = resourceToUploadUri.getPath();
-
-            Bitmap photo = new FileRepositoryImpl(this).getBitmap(resourceToUploadUri);
-            photo = scaleBitmap(photo, 512);
-
-            photo = requireRotation(filePath, photo);
-
+        if (requestCode ==  REQUEST_TAKE_PHOTO && resultCode == Activity.RESULT_OK) {
+            Log.d(TAG, photoFile.getAbsolutePath());
             videoView.setVisibility(View.GONE);
-            imageView.setImageBitmap(photo);
+            setPic();
         }
         if (requestCode == REQUEST_VIDEO_CAPTURE && resultCode == RESULT_OK) {
             imageView.setVisibility(View.GONE);
@@ -204,7 +197,7 @@ public class CameraInit extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
-    public void sendPost(){ Toast.makeText(CameraInit.this, key, Toast.LENGTH_SHORT).show();
+    public void sendPost() throws IOException { Toast.makeText(CameraInit.this, key, Toast.LENGTH_SHORT).show();
 
         MainThread mainThread = MainThreadImpl.getInstance();
         Executor executor = ThreadExecutor.getInstance();
@@ -228,7 +221,7 @@ public class CameraInit extends AppCompatActivity {
             }
         };
         FileRepository fileRepository = new FileRepositoryImpl(this);
-        String realPath = fileRepository.getRealPathFromURI(resourceToUploadUri);
+//        String realPath = fileRepository.getRealPathFromURI(resourceToUploadUri);
 
         PostInteractor postInteractor = new PostInteractorImpl(
                 executor,
@@ -236,9 +229,61 @@ public class CameraInit extends AppCompatActivity {
                 callback,
                 postRepository,
                 post, poiId, descriptionText.getText().toString(), tags,
-                new File(realPath)
+                photoFile
         );
 
-        postInteractor.execute();}
+        postInteractor.execute();
+    }
 
+    private void setPic() {
+        // Get the dimensions of the View
+        int targetW = imageView.getWidth();
+        int targetH = imageView.getHeight();
+
+
+        if(targetH == 0) targetH = 1024;
+        if(targetW == 0) targetW = 1024;
+
+        // Get the dimensions of the bitmap
+        BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+        bmOptions.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(photoFile.getAbsolutePath(), bmOptions);
+        int photoW = bmOptions.outWidth;
+        int photoH = bmOptions.outHeight;
+
+        // Determine how much to scale down the image
+        int scaleFactor = Math.min(photoW / targetW, photoH / targetH);
+
+        // Decode the image file into a Bitmap sized to fill the View
+        bmOptions.inJustDecodeBounds = false;
+        bmOptions.inSampleSize = scaleFactor;
+        bmOptions.inPurgeable = true;
+
+        Bitmap bitmap = BitmapFactory.decodeFile(photoFile.getAbsolutePath(), bmOptions);
+        imageView.setImageBitmap(bitmap);
+    }
+
+    private void dispatchTakePictureIntent() {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        // Ensure that there's a camera activity to handle the intent
+        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+            try {
+                FileRepository fileRepository = new FileRepositoryImpl(this);
+                photoFile = fileRepository.createImageFile();
+//                resourceToUploadUri = photoFile.toURI();
+            } catch (IOException ex) {
+                // Error occurred while creating the File
+                Toast.makeText(this, getString(R.string.photo_fail_msg), LENGTH_SHORT);
+                finish();
+            }
+            // Continue only if the File was successfully created
+            if (photoFile != null) {
+                resourceToUploadUri = FileProvider.getUriForFile(this,
+                        "com.teamc.mira.iwashere",
+                        photoFile);
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, resourceToUploadUri);
+                startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
+            }
+        }
+    }
 }

@@ -5,8 +5,10 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.provider.MediaStore;
 
-public interface FileRepository {
-    String getRealPathFromURI(Uri contentURI);
+import java.io.File;
+import java.io.IOException;
 
-    Bitmap getBitmap(Uri uri);
+public interface FileRepository {
+
+    File createImageFile() throws IOException;
 }

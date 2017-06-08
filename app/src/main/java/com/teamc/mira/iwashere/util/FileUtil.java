@@ -4,21 +4,10 @@ import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.media.ExifInterface;
 
+import java.io.File;
 import java.io.IOException;
 
 public class FileUtil {
-    public static  Bitmap scaleBitmap(Bitmap myBitmap, int scale) {
-        int nh = (int) (myBitmap.getHeight() * (((float)scale) / myBitmap.getWidth()));
-        Bitmap scaled = Bitmap.createScaledBitmap(myBitmap, scale, nh, true);
-        return scaled;
-    }
-
-    public static String getFileExtension(String path){
-        String filename = path;
-        String filenameArray[] = filename.split("\\.");
-        String extension = filenameArray[filenameArray.length-1];
-        return extension;
-    }
 
     public static Bitmap requireRotation(String filePath, Bitmap photo) {
         try {
@@ -50,6 +39,11 @@ public class FileUtil {
             e.printStackTrace();
         }
         return photo;
+    }
+
+    public static File getFileFromBitmap(Bitmap bitmap) {
+//        bitmap.compress(Bitmap.CompressFormat.PNG, quality, outStream);
+        return null;
     }
 
     public static Bitmap rotateImage(Bitmap source, float angle) {
