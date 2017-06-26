@@ -2,21 +2,39 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.teamc.mira.iwashere">
 
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-feature android:name="android.hardware.camera"/>
+
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/ic_launcher_round"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
-        <uses-permission android:name="android.permission.INTERNET" />
+        android:theme="@style/AppTheme"
+        android:versionCode="@string/versionCode"
+        android:versionName="@string/versionName">
 
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id" />
 
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyBZmrnuImjti0VsMecT8ytNoz7F0UTOZDQ" />
+
+        <meta-data android:name="android.app.searchable"
+            android:resource="@xml/searchable"/>
+
         <activity
             android:name=".IWasHereActivity"
+            android:label="@string/app_name"
             android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -31,7 +49,17 @@
         <activity
             android:name=".presentation.main.MainActivity"
             android:label="@string/title_activity_profile"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH" />
+            </intent-filter>
+            <meta-data
+                android:name="android.app.searchable"
+                android:resource="@xml/searchable" />
+
+            <meta-data android:name="android.app.default_searchable"
+                android:value=".presentation.main.MainActivity" />
+        </activity>
         <activity
             android:name=".presentation.auth.AuthenticateActivity"
             android:label="@string/title_activity_profile"
@@ -43,6 +71,21 @@
         <activity
             android:name=".presentation.auth.LoginActivity"
             android:label="@string/title_activity_login"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".presentation.poi.PoiDetailActivity"
+            android:label="@string/title_activity_poi_detail"
+            android:parentActivityName=".presentation.main.MainActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".presentation.route.RouteDetailActivity"
+            android:label="@string/title_activity_route_detail"
+            android:parentActivityName=".presentation.main.MainActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".presentation.misc.AboutActivity"
+            android:label="@string/title_activity_about"
+            android:parentActivityName=".presentation.main.MainActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".presentation.auth.GoogleActivity"
@@ -65,9 +108,28 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".presentation.camera.CameraInit"
+            android:windowSoftInputMode="adjustPan"
+            android:parentActivityName=".presentation.main.MainActivity"
+            android:theme="@style/AppTheme.NoActionBar" >
+        </activity>
+        <activity
             android:name=".presentation.auth.FacebookActivity"
             android:label="@string/title_activity_facebook"
             android:theme="@style/AppTheme.NoActionBar" />
+
+        <service
+            android:name=".domain.services.LocationService"
+            android:enabled="true" />
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="com.teamc.mira.iwashere"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths"/>
+        </provider>
     </application>
 
 </manifest>

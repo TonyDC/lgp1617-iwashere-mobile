@@ -7,11 +7,14 @@
     <color name="windowBackground">#FFFFFF</color>
     <color name="textColorPrimary">#000000</color>
     <color name="textColorSecundary">#FFFFFF</color>
+    <color name="colorStartButton">#E5402A</color>
+    <color name="colorEndButton">#AF2A18</color>
     C5CAE9
     <color name="bg_login">#3F51B5</color>
     <color name="bg_register">#2e3237</color>
     <color name="bg_main">#C5CAE9</color>
     <color name="white">#ffffff</color>
+    <color name="black">#000000</color>
     <color name="input_login">#222222</color>
     <color name="input_login_hint">#999999</color>
     <color name="input_register">#888888</color>
